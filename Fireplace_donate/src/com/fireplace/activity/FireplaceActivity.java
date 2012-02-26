@@ -55,7 +55,7 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 	// RECORDING HOW MUCH TIMES BUTTON WAS CLICKED
 	int clickCounter = 1;
 	
-	private static final String BASE64_PUBLIC_KEY ="Place android developer account key, here before testing or releasing.";
+	private static final String BASE64_PUBLIC_KEY ="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3Z3LN/g1lqWcvOt99MrKu4hfNTuoVQJIQV14KSG8QmrPWiuxWEY+0pZ1aXk2MkuSVyF0Zr0fMBQl+IHPzquSHpqP0eK08OjCD/I1L5u8hzI56D0eI6I05T7NaiLvD/tJ1LqVod0l7FFkWx0p9dnzaoixK2w7GUqWcEbr40LWeHMB5DpMxW3UqecMavgn1mct9DgVMOpOMusTGGVJ9g67tu/NcWosKYojYwLlD8v6Dy4zOn0LjWz3i/up1TZNSz77VxbiNxBpV7D012fiIKvQLQbeMzbkiMhJlavwy7ara/lRkN5DlU6GnnB+eBATXoltsCNeLQeop6zbdi1SQ4zrhQIDAQAB";
 	
 	private static final byte[] SALT = new byte[] {
 	        -26, 65, 30, -118, -113, -57, 74, -64, 53, 69, -95, -25, 71, -117, -36, -113, -11, 37, -64,
