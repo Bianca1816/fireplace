@@ -34,7 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fireplace.software.ChangeLog;
-import com.fireplace.software.ListInstalledApps;
 import com.fireplace.adsup.R;
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
@@ -320,7 +319,7 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 			// Show packages installed
 			final Context contextPack = this;
 
-			Intent intentPack = new Intent(contextPack, ListInstalledApps.class);
+			Intent intentPack = new Intent(contextPack, ListInstalledAppsActivity.class);
 			startActivityForResult(intentPack, 0);
 			break;
 
@@ -349,7 +348,7 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 			final Context contextStorage2 = this;
 
 			Intent intentStorage2 = new Intent(contextStorage2,
-					GetContentFromDBActivity3.class);
+					GetContentFromDBActivity.class);
 			startActivityForResult(intentStorage2, 0);
 			return true;
 		}
