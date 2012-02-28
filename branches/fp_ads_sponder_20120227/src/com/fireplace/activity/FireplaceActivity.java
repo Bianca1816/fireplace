@@ -1,13 +1,24 @@
 package com.fireplace.activity;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -17,8 +28,10 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,16 +40,21 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fireplace.software.ChangeLog;
 import com.fireplace.adsup.R;
+import com.fireplace.software.ChangeLog;
+import com.fireplace.software.ItemSkel;
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 public class FireplaceActivity extends ListActivity implements OnClickListener {
 
@@ -48,8 +66,11 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 
 	// RECORDING HOW MUCH TIMES BUTTON WAS CLICKED
 	int clickCounter = 1;
-	
+	private EditText etSearchText;
 	AdView adView;
+	final static String TAG = "FireplaceActivity";
+	ArrayList<ItemSkel> list;
+	boolean listReceived = false;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -70,12 +91,12 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 		adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, listItems);
 		setListAdapter(adapter);
-//		listItems.add("Network Tools");
-//		listItems.add("Root utilities");
-//		listItems.add("System Tools");
-//		listItems.add("Security");
-//		listItems.add("Tweaks");
-//		listItems.add("Themes");
+		listItems.add("Network Tools");
+		listItems.add("Root utilities");
+		listItems.add("System Tools");
+		listItems.add("Security");
+		listItems.add("Tweaks");
+		listItems.add("Themes");
 		
 		File folder = new File("/sdcard/Fireplace/");
 
@@ -108,9 +129,15 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 		ts.setContent(R.id.tab3);
 		ts.setIndicator("Browse");
 		th.addTab(ts);
-
+		
+		// Tab 4
+		ts = th.newTabSpec("tag4"); // ts = TabSpec
+		ts.setContent(R.id.tab4);
+		ts.setIndicator("Search");
+		th.addTab(ts);
+		
 		TextView txtLoading = (TextView) findViewById(R.id.txtLoading);
-		txtLoading.setText("Setting up components"); // Initial loading
+		txtLoading.setText(getResources().getString(R.string.strSetUpComp)); // Initial loading
 
 		Button btnRepo = (Button) findViewById(R.id.btnRepo);
 		btnRepo.setOnClickListener(this);
@@ -133,12 +160,14 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 		TextView txtDeviceInfo = (TextView) findViewById(R.id.txtDeviceInfo);
 		txtDeviceInfo.setText("Android: " + android.os.Build.VERSION.RELEASE
 				+ "/ Device: " + android.os.Build.DEVICE);
+		
+		etSearchText = (EditText) findViewById(R.id.etSearchField);
+		Button btnSearch = (Button) findViewById(R.id.btnSearch);
+		btnSearch.setOnClickListener(this);
 
 		txtLoading.setText("Runnning network check");
 
 		startupNetworkCheck();
-
-		// Should be firstTimeRun in string in strings.xml
 
 		// create a dir
 		txtLoading.setText("Loading folders");
@@ -148,21 +177,9 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 
 		txtLoading.setText("All done!");
 
-		LoadData();
-
 		txtLoading.setVisibility(View.GONE);
 		ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar1);
 		pBar.setVisibility(View.GONE);
-	}
-
-	public boolean onCreateOptionMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.menu, menu);
-		return true;
-	}
-
-	void LoadData() {
-		// TextView v = (TextView)findViewById(R.id.txtStatusError);
 	}
 
 	public void updateProgress(int currentSize, int totalSize) {
@@ -292,64 +309,120 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 	}
 
 	public void onClick(View v) {
-		switch (v.getId()) {
+		if (isOnline()) {
+			switch (v.getId()) {
 
-		case R.id.btnTwitter: // Twitter Button
-			Intent browsetwitter = new Intent(Intent.ACTION_VIEW,
-					Uri.parse("http://twitter.com/#!/FireplaceMarket"));
-			startActivity(browsetwitter);
-			break;
+			case R.id.btnTwitter: // Twitter Button
+				Intent browsetwitter = new Intent(Intent.ACTION_VIEW,
+						Uri.parse("http://twitter.com/#!/FireplaceMarket"));
+				startActivity(browsetwitter);
+				break;
 
-		case R.id.btnFacebook: // Facebook Button
-			Intent browseFacebook = new Intent(Intent.ACTION_VIEW,
-					Uri.parse("http://www.facebook.com/pages/Fireplace-Market/379268035417930"));
-			startActivity(browseFacebook);
-			
-			break;
+			case R.id.btnFacebook: // Facebook Button
+				Intent browseFacebook = new Intent(
+						Intent.ACTION_VIEW,
+						Uri.parse("http://www.facebook.com/pages/Fireplace-Market/379268035417930"));
+				startActivity(browseFacebook);
 
-		case R.id.btnRepo: // Repository button
-			// Show repo's
-			final Context contextRepo = this;
+				break;
 
-			Intent intentRepo = new Intent(contextRepo, RepoActivity.class);
-			startActivityForResult(intentRepo, 0);
-			break;
+			case R.id.btnRepo: // Repository button
+				// Show repo's
+				final Context contextRepo = this;
 
-		case R.id.btnPack: // Packages button
-			// Show packages installed
-			final Context contextPack = this;
+				Intent intentRepo = new Intent(contextRepo, RepoActivity.class);
+				startActivityForResult(intentRepo, 0);
+				break;
 
-			Intent intentPack = new Intent(contextPack, ListInstalledAppsActivity.class);
-			startActivityForResult(intentPack, 0);
-			break;
+			case R.id.btnPack: // Packages button
+				// Show packages installed
+				final Context contextPack = this;
 
-		case R.id.btnStorage: // Storage button
-			// Show storage left on phone and SD card
-			final Context contextStorage = this;
+				Intent intentPack = new Intent(contextPack,
+						ListInstalledAppsActivity.class);
+				startActivityForResult(intentPack, 0);
+				break;
 
-			Intent intentStorage = new Intent(contextStorage,
-					StorageActivity.class);
-			startActivityForResult(intentStorage, 0);
-			break;
+			case R.id.btnStorage: // Storage button
+				// Show storage left on phone and SD card
+				final Context contextStorage = this;
 
-		case R.id.btnViewAll:
-			// Show all apps
-			isOnline();
-			break;
+				Intent intentStorage = new Intent(contextStorage,
+						StorageActivity.class);
+				startActivityForResult(intentStorage, 0);
+				break;
+
+			case R.id.btnViewAll:
+				// Show all apps
+				
+					final Context contextAllApps = this;
+					Toast.makeText(FireplaceActivity.this, "Loading apps...",
+							Toast.LENGTH_LONG).show();
+					Intent intentStorage2 = new Intent(contextAllApps,
+							GetContentFromDBActivity.class);
+					startActivityForResult(intentStorage2, 0);
+				
+				break;
+
+			case R.id.btnSearch:
+				
+				
+				
+				break;
+			}
 		}
 	}
 
+	/**
+	 * This Asynchronous task handles retrieving the list items from the server.
+	 *
+	 */
+	private class getListTask extends
+			AsyncTask<String, Integer, ArrayList<ItemSkel>> {
+
+		@Override
+		protected ArrayList<ItemSkel> doInBackground(String... params) {
+			try {
+				HttpClient httpClient = new DefaultHttpClient();
+				HttpContext localContext = new BasicHttpContext();
+				HttpGet httpGet = new HttpGet(
+						"http://www.fireplace-market.com/getdata.php");
+				HttpResponse response = httpClient.execute(httpGet,
+						localContext);
+				String result = "";
+
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(response.getEntity().getContent()));
+
+				String line = null;
+				while ((line = reader.readLine()) != null)
+					result += line;
+
+				Type type = new TypeToken<ArrayList<ItemSkel>>() {
+				}.getType();
+				Gson g = new Gson();
+				list = g.fromJson(result, type);
+				listReceived = true;				
+				return list;
+			} catch (JsonSyntaxException e) {
+				Log.e(TAG, e.getMessage());
+			} catch (ClientProtocolException e) {
+				Log.e(TAG, e.getMessage());
+			} catch (IllegalStateException e) {
+				Log.e(TAG, e.getMessage());
+			} catch (IOException e) {
+				Log.e(TAG, e.getMessage());
+			}
+			return null;
+		}
+
+	}
+
+	
 	public boolean isOnline() {
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo netInfo = cm.getActiveNetworkInfo();
 		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-			Toast.makeText(FireplaceActivity.this, "Loading apps...",
-					Toast.LENGTH_LONG).show();
-			final Context contextStorage2 = this;
-
-			Intent intentStorage2 = new Intent(contextStorage2,
-					GetContentFromDBActivity.class);
-			startActivityForResult(intentStorage2, 0);
 			return true;
 		}
 		Toast.makeText(FireplaceActivity.this, "You need network connection!",
@@ -375,7 +448,7 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 	public boolean updateChecketwork() {
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo netInfo = cm.getActiveNetworkInfo();
-		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+		if (isOnline()) {
 			try {
 
 				// set the download URL, a url that points to a file on the
@@ -463,6 +536,12 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 		Toast.makeText(FireplaceActivity.this, "No update available",
 				Toast.LENGTH_LONG).show();
 		return false;
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		etSearchText.setText("");
 	}
 	
 	@Override

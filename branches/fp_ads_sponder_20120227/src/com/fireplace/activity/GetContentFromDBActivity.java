@@ -42,7 +42,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 public class GetContentFromDBActivity extends ListActivity {
-	final static String TAG = "GetContentFromDBActivty3";
+	final static String TAG = "GetContentFromDBActivty";
 	ArrayList<String> stringArray = new ArrayList<String>();
 	ArrayList<String> iconLocArray = new ArrayList<String>();
 	ArrayList<Bitmap> iconArrayList = new ArrayList<Bitmap>();
@@ -112,7 +112,7 @@ public class GetContentFromDBActivity extends ListActivity {
 	}
 
 	/**
-	 * This loads data for the lsit items...
+	 * This loads data for the list items...
 	 */
 	@SuppressWarnings("unchecked")
 	void LoadData() {

@@ -13,7 +13,7 @@
     <meta-data android:value="a14f43802ef4101" android:name="ADMOB_PUBLISHER_ID" />
     <application
         android:icon="@drawable/ic_launcher_ic"
-        android:label="Fireplace">
+        android:label="Fireplace Market">
              
         <activity
             android:name="com.fireplace.activity.FireplaceActivity"
