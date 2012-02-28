@@ -132,8 +132,8 @@
                     
 
                     
-                </LinearLayout>        
-
+                </LinearLayout>     
+               
                 <LinearLayout
                     android:id="@+id/tab2"
                     android:layout_width="fill_parent"
@@ -188,7 +188,42 @@
                     </RelativeLayout>
                    
                 </LinearLayout>
-                
+                                <LinearLayout
+                    android:id="@+id/tab4"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical" >
+
+                    <EditText 
+                        android:id="@+id/etSearchField"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:hint="@string/etSearchHint"
+        				android:inputType="text"
+        				android:singleLine="true"
+                        />
+
+                    <Button
+                        android:id="@+id/btnSearch"
+                        style="@style/button_holo_dark_button"
+                        android:textColor="@color/white" 
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/btnSearchLabel" />
+                    
+                    <ListView
+                        android:id="@android:id/list"
+                        android:layout_width="fill_parent"
+                        android:layout_height="132dp"
+                        android:layout_weight="0.58" 
+                        android:cacheColorHint="#00000000">
+                    </ListView>
+                    
+                    
+
+                    
+                </LinearLayout> 
                 
             </FrameLayout>
         </LinearLayout>
