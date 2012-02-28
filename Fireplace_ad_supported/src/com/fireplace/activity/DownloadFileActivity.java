@@ -212,7 +212,7 @@ public class DownloadFileActivity extends Activity implements
 	 * execute argument (for doInBackground). The Integer is how it reports progress. The final
 	 * String is what is returned from doInBackground and taken as an argument into postExecute.
 	 */
-	class DownloadFileAsync extends AsyncTask<String, Integer, String> {
+	private class DownloadFileAsync extends AsyncTask<String, Integer, String> {
 		
 		public final static int DOWNLOAD_COMPLETE = 0;
 		public final static int DOWNLOAD_ERROR = 1;

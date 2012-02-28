@@ -1,4 +1,4 @@
-package com.fireplace.software;
+package com.fireplace.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.fireplace.adapter.AppListAdapter;
 import com.fireplace.adsup.R;
+import com.fireplace.software.App;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -29,7 +30,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class ListInstalledApps extends Activity implements OnItemClickListener, OnClickListener {
+public class ListInstalledAppsActivity extends Activity implements OnItemClickListener, OnClickListener {
    
    /* whether or not to include system apps */
    private static final boolean INCLUDE_SYSTEM_APPS = false;
@@ -84,7 +85,7 @@ public class ListInstalledApps extends Activity implements OnItemClickListener, 
                   startActivity(i);
                }
             } catch (ActivityNotFoundException err) {
-               Toast.makeText(ListInstalledApps.this, "Error launching app", Toast.LENGTH_SHORT).show();
+               Toast.makeText(ListInstalledAppsActivity.this, "Error launching app", Toast.LENGTH_SHORT).show();
             }
          }
       })

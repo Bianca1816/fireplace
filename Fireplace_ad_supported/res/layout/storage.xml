@@ -4,7 +4,7 @@
     android:layout_height="fill_parent"
     android:orientation="horizontal"
     android:background="@drawable/background_holo_dark" >
-
+
     <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="fill_parent"
@@ -100,30 +100,7 @@
             android:layout_alignLeft="@+id/infoModel"
             android:text="Large Text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/infoCredits"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/textView5"
-            android:layout_marginTop="51dp"
-            android:gravity="center"
-            android:text="Copyright 2012"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/infoTeam"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:gravity="center"
-            android:text="Rooted Dev Team"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
+
         <Button
             android:id="@+id/full_changelog"
             style="@style/button_holo_dark_button"
