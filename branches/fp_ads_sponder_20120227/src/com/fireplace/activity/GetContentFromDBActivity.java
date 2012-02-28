@@ -43,6 +43,7 @@ import com.google.gson.reflect.TypeToken;
 
 public class GetContentFromDBActivity extends ListActivity {
 	final static String TAG = "GetContentFromDBActivty";
+
 	ArrayList<String> stringArray = new ArrayList<String>();
 	ArrayList<String> iconLocArray = new ArrayList<String>();
 	ArrayList<Bitmap> iconArrayList = new ArrayList<Bitmap>();
@@ -157,7 +158,7 @@ public class GetContentFromDBActivity extends ListActivity {
 							i.putExtra("icon", iconArrayList.get(position));
 						} else {
 							i.putExtra("icon", ((BitmapDrawable) getResources()
-									.getDrawable(R.drawable.icon)).getBitmap());
+									.getDrawable(R.drawable.ic_no_icon)).getBitmap());
 						}
 						i.putExtra("link", currentItem.getPath());
 						i.putExtra("desc", currentItem.getDescription());
@@ -238,7 +239,7 @@ public class GetContentFromDBActivity extends ListActivity {
 					// runs.
 					Bitmap bm;
 					bm = ((BitmapDrawable) getResources().getDrawable(
-							R.drawable.icon)).getBitmap();
+							R.drawable.ic_no_icon)).getBitmap();
 					bitmapArrayList.add(bm);
 				}
 

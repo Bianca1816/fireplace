@@ -57,6 +57,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 public class FireplaceActivity extends ListActivity implements OnClickListener {
+	
 
 	// LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
 	ArrayList<String> listItems = new ArrayList<String>();
