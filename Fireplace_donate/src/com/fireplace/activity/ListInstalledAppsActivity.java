@@ -1,11 +1,9 @@
-package com.fireplace.software;
+package com.fireplace.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.fireplace.adapter.AppListAdapter;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,11 +22,15 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
-public class ListInstalledApps extends Activity implements OnItemClickListener, OnClickListener {
+import com.fireplace.adapter.AppListAdapter;
+import com.fireplace.software.App;
+import com.fireplace.software.R;
+
+public class ListInstalledAppsActivity extends Activity implements OnItemClickListener, OnClickListener {
    
    /* whether or not to include system apps */
    private static final boolean INCLUDE_SYSTEM_APPS = false;
@@ -36,6 +38,7 @@ public class ListInstalledApps extends Activity implements OnItemClickListener, 
    private ListView mAppsList;
    private AppListAdapter mAdapter;
    private List<App> mApps;
+   private boolean iconsLoaded = false;
    
    /** Called when the activity is first created. */
    @Override
@@ -67,10 +70,12 @@ public class ListInstalledApps extends Activity implements OnItemClickListener, 
          app.getVersionCode() + ")" +
          (app.getDescription() != null ? ("\n\n" + app.getDescription()) : "");
       
+      Drawable icon = (iconsLoaded) ? mAdapter.getIcons().get(app.getPackageName()) : getResources().getDrawable(R.drawable.icon);
+      
       builder.setMessage(msg)
       .setCancelable(true)
       .setTitle(app.getTitle())
-      .setIcon(mAdapter.getIcons().get(app.getPackageName()))
+      .setIcon(icon)
       .setPositiveButton("Launch", new DialogInterface.OnClickListener() {
          public void onClick(DialogInterface dialog, int id) {
             // start the app by invoking its launch intent
@@ -83,16 +88,16 @@ public class ListInstalledApps extends Activity implements OnItemClickListener, 
                   startActivity(i);
                }
             } catch (ActivityNotFoundException err) {
-               Toast.makeText(ListInstalledApps.this, "Error launching app", Toast.LENGTH_SHORT).show();
+               Toast.makeText(ListInstalledAppsActivity.this, "Error launching app", Toast.LENGTH_SHORT).show();
             }
          }
       })
       .setNegativeButton("Remove", new DialogInterface.OnClickListener() {
          public void onClick(DialogInterface dialog, int id) {
-        	 
-        	 Uri packageURI = Uri.parse("package:" + app.getPackageName());
-        	 Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
-        	 startActivity(uninstallIntent);
+                 
+                 Uri packageURI = Uri.parse("package:" + app.getPackageName());
+                 Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
+                 startActivity(uninstallIntent);
             dialog.cancel();
          }
       });
@@ -166,14 +171,13 @@ public class ListInstalledApps extends Activity implements OnItemClickListener, 
       @Override
       protected void onPostExecute(Void result) {
          mAdapter.notifyDataSetChanged();
-         
+         iconsLoaded = true;
       }
   }
 
 public void onClick(View arg0) {
-	// TODO Auto-generated method stub
-	
+        // TODO Auto-generated method stub
+        
 }
 
 }
-
