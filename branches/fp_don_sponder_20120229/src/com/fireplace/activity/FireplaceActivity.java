@@ -7,6 +7,10 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.taptwo.android.widget.TitleFlowIndicator;
 import org.taptwo.android.widget.ViewFlow;
@@ -14,35 +18,48 @@ import org.taptwo.android.widget.ViewFlow;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings.Secure;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.android.vending.licensing.AESObfuscator;
 import com.android.vending.licensing.LicenseChecker;
 import com.android.vending.licensing.LicenseCheckerCallback;
 import com.android.vending.licensing.ServerManagedPolicy;
+import com.fireplace.adapter.AppListAdapter;
 import com.fireplace.adapter.MainViewAdapter;
+import com.fireplace.software.App;
 import com.fireplace.software.ChangeLog;
 import com.fireplace.software.R;
 
-public class FireplaceActivity extends Activity implements OnClickListener {
+public class FireplaceActivity extends Activity implements OnItemClickListener, OnClickListener {
 
 //	// LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
 //	ArrayList<String> listItems = new ArrayList<String>();
@@ -64,6 +81,14 @@ public class FireplaceActivity extends Activity implements OnClickListener {
     private LicenseChecker mChecker;
 	private Handler mHandler;
 	private ViewFlow viewFlow;
+	
+	
+    private static final boolean INCLUDE_SYSTEM_APPS = false;
+   
+    private ListView mAppsList;
+    private AppListAdapter mAdapter;
+    private List<App> mApps;
+    private boolean iconsLoaded = false;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -186,6 +211,16 @@ public class FireplaceActivity extends Activity implements OnClickListener {
 //		txtLoading.setVisibility(View.GONE);
 //		ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar1);
 //		pBar.setVisibility(View.GONE);
+		
+		mAppsList = (ListView) findViewById(R.id.listView1);
+	      mAppsList.setOnItemClickListener(this);
+	   
+	      mApps = loadInstalledApps(INCLUDE_SYSTEM_APPS);
+	      
+	      mAdapter = new AppListAdapter(getApplicationContext());
+	      mAdapter.setListItems(mApps);
+	      mAppsList.setAdapter(mAdapter);
+	      new LoadIconsTask().execute(mApps.toArray(new App[]{}));
 	}
 	
 	private void doCheck() {
@@ -566,5 +601,113 @@ public class FireplaceActivity extends Activity implements OnClickListener {
 		super.onConfigurationChanged(newConfig);
 		viewFlow.onConfigurationChanged(newConfig);
 	}
+
+	   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		      
+		      final App app = (App) parent.getItemAtPosition(position);
+
+		      AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		      
+		      String msg = app.getTitle() + "\n\n" + 
+		         "Version " + app.getVersionName() + " (" +
+		         app.getVersionCode() + ")" +
+		         (app.getDescription() != null ? ("\n\n" + app.getDescription()) : "");
+		      
+		      Drawable icon = (iconsLoaded) ? mAdapter.getIcons().get(app.getPackageName()) : getResources().getDrawable(R.drawable.icon);
+		      
+		      builder.setMessage(msg)
+		      .setCancelable(true)
+		      .setTitle(app.getTitle())
+		      .setIcon(icon)
+		      .setPositiveButton("Launch", new DialogInterface.OnClickListener() {
+		         public void onClick(DialogInterface dialog, int id) {
+		            // start the app by invoking its launch intent
+		            Intent i = getPackageManager().getLaunchIntentForPackage(app.getPackageName());
+		            try {
+		               if (i != null) {
+		                  startActivity(i);
+		               } else {
+		                  i = new Intent(app.getPackageName());
+		                  startActivity(i);
+		               }
+		            } catch (ActivityNotFoundException err) {
+		               Toast.makeText(FireplaceActivity.this, "Error launching app", Toast.LENGTH_SHORT).show();
+		            }
+		         }
+		      })
+		      .setNegativeButton("Remove", new DialogInterface.OnClickListener() {
+		         public void onClick(DialogInterface dialog, int id) {
+		                 
+		                 Uri packageURI = Uri.parse("package:" + app.getPackageName());
+		                 Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
+		                 startActivity(uninstallIntent);
+		            dialog.cancel();
+		         }
+		      });
+		      AlertDialog dialog = builder.create();
+		      dialog.show();
+		      
+		   }
+	   
+	   private List<App> loadInstalledApps(boolean includeSysApps) {
+		      List<App> apps = new ArrayList<App>();
+		      
+		      // the package manager contains the information about all installed apps
+		      PackageManager packageManager = getPackageManager();
+		      
+		      List<PackageInfo> packs = packageManager.getInstalledPackages(0); //PackageManager.GET_META_DATA 
+		      
+		      for(int i=0; i < packs.size(); i++) {
+		         PackageInfo p = packs.get(i);
+		         ApplicationInfo a = p.applicationInfo;
+		         // skip system apps if they shall not be included
+		         if ((!includeSysApps) && ((a.flags & ApplicationInfo.FLAG_SYSTEM) == 1)) {
+		            continue;
+		         }
+		         App app = new App();
+		         app.setTitle(p.applicationInfo.loadLabel(packageManager).toString());
+		         app.setPackageName(p.packageName);
+		         app.setVersionName(p.versionName);
+		         app.setVersionCode(p.versionCode);
+		         CharSequence description = p.applicationInfo.loadDescription(packageManager);
+		         app.setDescription(description != null ? description.toString() : "");
+		         apps.add(app);
+		      }
+		      return apps;
+		   }
+	   /**
+	    * An asynchronous task to load the icons of the installed applications.
+	    */
+	   private class LoadIconsTask extends AsyncTask<App, Void, Void> {
+	      @Override
+	      protected Void doInBackground(App... apps) {
+	         
+	         Map<String, Drawable> icons = new HashMap<String, Drawable>();
+	         PackageManager manager = getApplicationContext().getPackageManager();
+	         
+	         for (App app : apps) {
+	            String pkgName = app.getPackageName();
+	            Drawable ico = null;
+	            try {
+	               Intent i = manager.getLaunchIntentForPackage(pkgName);
+	               if (i != null) {
+	                  ico = manager.getActivityIcon(i);
+	               }
+	            } catch (NameNotFoundException e) {
+	               Log.e("ERROR", "Unable to find icon for package '" + pkgName + "': " + e.getMessage());
+	            }
+	            icons.put(app.getPackageName(), ico);
+	         }
+	         mAdapter.setIcons(icons);
+	         
+	         return null;
+	      }
+	      
+	      @Override
+	      protected void onPostExecute(Void result) {
+	         mAdapter.notifyDataSetChanged();
+	         iconsLoaded = true;
+	      }
+	  }
 
 }

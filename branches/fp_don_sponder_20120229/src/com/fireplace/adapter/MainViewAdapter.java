@@ -49,6 +49,7 @@ public class MainViewAdapter extends BaseAdapter implements TitleProvider {
         } 
 		if(convertView == null) {
 			convertView = mInflater.inflate(resId, null);
+			
 		}
 		return convertView;
 	}
