@@ -59,14 +59,16 @@ public class DownloadFileActivity extends Activity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//Getting the extras from the previous activity
-		Bundle extras = getIntent().getExtras();		
+		Bundle extras = getIntent().getExtras();	
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.conatininfo);
 		
     	if (getLastNonConfigurationInstance() != null)
     	{    		
     		//If Async task is running, grab hook here, after configuration change
     		myAsyncDownloadTask = (DownloadFileAsync) getLastNonConfigurationInstance();
     		myAsyncDownloadTask.handlerOfCaller = myHandlerOfThis;
-    		requestWindowFeature(Window.FEATURE_NO_TITLE);
+    		
     		
     		switch(myAsyncDownloadTask.getStatus())
     		{
@@ -98,7 +100,7 @@ public class DownloadFileActivity extends Activity implements
     	}
 	    
 		if (extras != null) {
-			setContentView(R.layout.conatininfo);
+			
 			
 			Button btnShare = (Button) findViewById(R.id.btnShare);
 			btnShare.setOnClickListener(this);

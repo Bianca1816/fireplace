@@ -31,8 +31,6 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TabHost;
-import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +39,6 @@ import com.android.vending.licensing.LicenseChecker;
 import com.android.vending.licensing.LicenseCheckerCallback;
 import com.android.vending.licensing.ServerManagedPolicy;
 import com.fireplace.software.ChangeLog;
-import com.fireplace.software.ListInstalledApps;
 import com.fireplace.software.R;
 
 public class FireplaceActivity extends ListActivity implements OnClickListener {
@@ -116,26 +113,26 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 			}
 		}
 
-		TabHost th = (TabHost) findViewById(R.id.tabhost);
-		th.setup();
-
-		// Tab 1
-		TabSpec ts = th.newTabSpec("tag1"); // ts = TabSpec
-		ts.setContent(R.id.tab1);
-		ts.setIndicator("Home");
-		th.addTab(ts);
-
-		// Tab 2
-		ts = th.newTabSpec("tag2"); // ts = TabSpec
-		ts.setContent(R.id.tab2);
-		ts.setIndicator("Manage");
-		th.addTab(ts);
-
-		// Tab 3
-		ts = th.newTabSpec("tag3"); // ts = TabSpec
-		ts.setContent(R.id.tab3);
-		ts.setIndicator("Browse");
-		th.addTab(ts);
+//		TabHost th = (TabHost) findViewById(R.id.tabhost);
+//		th.setup();
+//
+//		// Tab 1
+//		TabSpec ts = th.newTabSpec("tag1"); // ts = TabSpec
+//		ts.setContent(R.id.tab1);
+//		ts.setIndicator("Home");
+//		th.addTab(ts);
+//
+//		// Tab 2
+//		ts = th.newTabSpec("tag2"); // ts = TabSpec
+//		ts.setContent(R.id.tab2);
+//		ts.setIndicator("Manage");
+//		th.addTab(ts);
+//
+//		// Tab 3
+//		ts = th.newTabSpec("tag3"); // ts = TabSpec
+//		ts.setContent(R.id.tab3);
+//		ts.setIndicator("Browse");
+//		th.addTab(ts);
 
 		TextView txtLoading = (TextView) findViewById(R.id.txtLoading);
 		txtLoading.setText("Setting up components"); // Initial loading
@@ -390,7 +387,7 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 			// Show packages installed
 			final Context contextPack = this;
 
-			Intent intentPack = new Intent(contextPack, ListInstalledApps.class);
+			Intent intentPack = new Intent(contextPack, ListInstalledAppsActivity.class);
 			startActivityForResult(intentPack, 0);
 			break;
 
@@ -419,7 +416,7 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 			final Context contextStorage2 = this;
 
 			Intent intentStorage2 = new Intent(contextStorage2,
-					GetContentFromDBActivity3.class);
+					GetContentFromDBActivity.class);
 			startActivityForResult(intentStorage2, 0);
 			return true;
 		}
@@ -443,99 +440,99 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 		return false;
 	}
 
-	public boolean updateChecketwork() {
-		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo netInfo = cm.getActiveNetworkInfo();
-		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-			try {
+//	public boolean updateCheckNetwork() {
+//		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//		NetworkInfo netInfo = cm.getActiveNetworkInfo();
+//		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+//			try {
+//
+//				// set the download URL, a url that points to a file on the
+//				// internet
+//				// this is the file to be downloaded
+//				// Toast.makeText(this, "Preparing: Packages",
+//				// Toast.LENGTH_SHORT).show();
+//				String updateString = getString(R.string.updateTo);
+//				URL url = new URL(
+//						"http://www.u2worlds.com/fp/updates/Fireplace_update"
+//								+ updateString + ".apk");
+//
+//				// create the new connection
+//				HttpURLConnection urlConnection = (HttpURLConnection) url
+//						.openConnection();
+//
+//				// set up some things on the connection
+//				urlConnection.setRequestMethod("GET");
+//				urlConnection.setDoOutput(true);
+//
+//				// and connect!
+//				urlConnection.connect();
+//
+//				// set the path where we want to save the file
+//				// in this case, going to save it on the root directory of the
+//				// sd card.
+//
+//				File SDCardRoot = Environment.getExternalStorageDirectory();
+//				// create a new file, specifying the path, and the filename
+//				// which we want to save the file as.
+//				File file = new File(SDCardRoot + "/Fireplace/Fireplace_update"
+//						+ updateString + ".apk");
+//
+//				// this will be used to write the downloaded data into the file
+//				// we created
+//				FileOutputStream fileOutput = new FileOutputStream(file);
+//
+//				// this will be used in reading the data from the internet
+//				InputStream inputStream = urlConnection.getInputStream();
+//
+//				// this is the total size of the file
+//				int totalSize = urlConnection.getContentLength();
+//				// variable to store total downloaded bytes
+//				int downloadedSize = 0;
+//
+//				// create a buffer...
+//				byte[] buffer = new byte[1024];
+//				int bufferLength = 0; // used to store a temporary size of the
+//										// buffer
+//
+//				// now, read through the input buffer and write the contents to
+//				// the file
+//				while ((bufferLength = inputStream.read(buffer)) > 0) {
+//					// add the data in the buffer to the file in the file output
+//					// stream (the file on the sd card
+//					fileOutput.write(buffer, 0, bufferLength);
+//					// add up the size so we know how much is downloaded
+//					downloadedSize += bufferLength;
+//					// this is where you would do something to report the
+//					// prgress, like this maybe
+//					updateProgress(downloadedSize, totalSize);
+//
+//				}
+//				// close the output stream when done
+//				fileOutput.close();
+//
+//				// catch some possible errors...
+//			} catch (MalformedURLException e) {
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//
+//			String updateString = getString(R.string.updateTo);
+//
+//			File appFile = new File("/sdcard/Fireplace/Fireplace_update"
+//					+ updateString + ".apk");
+//			Intent installIntent = new Intent(Intent.ACTION_VIEW);
+//			installIntent.setDataAndType(Uri.fromFile(appFile),
+//					"application/vnd.android.package-archive");
+//			startActivity(installIntent);
+//
+//			return true;
+//		}
+//		Toast.makeText(FireplaceActivity.this, "No update available",
+//				Toast.LENGTH_LONG).show();
+//		return false;
+//	}
 
-				// set the download URL, a url that points to a file on the
-				// internet
-				// this is the file to be downloaded
-				// Toast.makeText(this, "Preparing: Packages",
-				// Toast.LENGTH_SHORT).show();
-				String updateString = getString(R.string.updateTo);
-				URL url = new URL(
-						"http://www.u2worlds.com/fp/updates/Fireplace_update"
-								+ updateString + ".apk");
-
-				// create the new connection
-				HttpURLConnection urlConnection = (HttpURLConnection) url
-						.openConnection();
-
-				// set up some things on the connection
-				urlConnection.setRequestMethod("GET");
-				urlConnection.setDoOutput(true);
-
-				// and connect!
-				urlConnection.connect();
-
-				// set the path where we want to save the file
-				// in this case, going to save it on the root directory of the
-				// sd card.
-
-				File SDCardRoot = Environment.getExternalStorageDirectory();
-				// create a new file, specifying the path, and the filename
-				// which we want to save the file as.
-				File file = new File(SDCardRoot + "/Fireplace/Fireplace_update"
-						+ updateString + ".apk");
-
-				// this will be used to write the downloaded data into the file
-				// we created
-				FileOutputStream fileOutput = new FileOutputStream(file);
-
-				// this will be used in reading the data from the internet
-				InputStream inputStream = urlConnection.getInputStream();
-
-				// this is the total size of the file
-				int totalSize = urlConnection.getContentLength();
-				// variable to store total downloaded bytes
-				int downloadedSize = 0;
-
-				// create a buffer...
-				byte[] buffer = new byte[1024];
-				int bufferLength = 0; // used to store a temporary size of the
-										// buffer
-
-				// now, read through the input buffer and write the contents to
-				// the file
-				while ((bufferLength = inputStream.read(buffer)) > 0) {
-					// add the data in the buffer to the file in the file output
-					// stream (the file on the sd card
-					fileOutput.write(buffer, 0, bufferLength);
-					// add up the size so we know how much is downloaded
-					downloadedSize += bufferLength;
-					// this is where you would do something to report the
-					// prgress, like this maybe
-					updateProgress(downloadedSize, totalSize);
-
-				}
-				// close the output stream when done
-				fileOutput.close();
-
-				// catch some possible errors...
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			String updateString = getString(R.string.updateTo);
-
-			File appFile = new File("/sdcard/Fireplace/Fireplace_update"
-					+ updateString + ".apk");
-			Intent installIntent = new Intent(Intent.ACTION_VIEW);
-			installIntent.setDataAndType(Uri.fromFile(appFile),
-					"application/vnd.android.package-archive");
-			startActivity(installIntent);
-
-			return true;
-		}
-		Toast.makeText(FireplaceActivity.this, "No update available",
-				Toast.LENGTH_LONG).show();
-		return false;
-	}
-	
 	protected Dialog onCreateDialog(int id) {
         // We have only one dialog.
         return new AlertDialog.Builder(this)

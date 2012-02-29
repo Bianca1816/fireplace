@@ -1,5 +1,4 @@
 package com.fireplace.software;
-
 import android.util.Log; 
 import java.io.File; 
 import java.io.FileInputStream; 
@@ -9,7 +8,7 @@ import java.util.zip.ZipInputStream;
  
 /** 
  * 
- * @author Spxc
+ * @author jon 
  */ 
 public class Decompress { 
   private String _zipFile; 
