@@ -59,7 +59,8 @@ public class GetContentFromDBActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.listofappswithicons);
+//		setContentView(R.layout.listofappswithicons);
+		setContentView(R.layout.two);
 		lv = (ListView) findViewById(android.R.id.list);
 		modeAdapter = new IconicAdapter();
 		new getListTask().execute();

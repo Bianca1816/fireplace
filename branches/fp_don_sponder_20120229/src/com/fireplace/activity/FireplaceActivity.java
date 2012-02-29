@@ -7,14 +7,17 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 
+import org.taptwo.android.widget.TitleFlowIndicator;
+import org.taptwo.android.widget.ViewFlow;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -28,26 +31,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.vending.licensing.AESObfuscator;
 import com.android.vending.licensing.LicenseChecker;
 import com.android.vending.licensing.LicenseCheckerCallback;
 import com.android.vending.licensing.ServerManagedPolicy;
+import com.fireplace.adapter.MainViewAdapter;
 import com.fireplace.software.ChangeLog;
 import com.fireplace.software.R;
 
-public class FireplaceActivity extends ListActivity implements OnClickListener {
+public class FireplaceActivity extends Activity implements OnClickListener {
 
-	// LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
-	ArrayList<String> listItems = new ArrayList<String>();
-
-	// DEFINING STRING ADAPTER WHICH WILL HANDLE DATA OF LISTVIEW
-	ArrayAdapter<String> adapter;
+//	// LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
+//	ArrayList<String> listItems = new ArrayList<String>();
+//
+//	// DEFINING STRING ADAPTER WHICH WILL HANDLE DATA OF LISTVIEW
+//	ArrayAdapter<String> adapter;
 
 	// RECORDING HOW MUCH TIMES BUTTON WAS CLICKED
 	int clickCounter = 1;
@@ -62,15 +63,22 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 	private LicenseCheckerCallback mLicenseCheckerCallback;
     private LicenseChecker mChecker;
 	private Handler mHandler;
+	private ViewFlow viewFlow;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setContentView(R.layout.main);
-
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);		
+		setContentView(R.layout.newviewflow);
+		
+		viewFlow = (ViewFlow) findViewById(R.id.viewflow);
+		MainViewAdapter mvAdapter = new MainViewAdapter(this);
+		viewFlow.setAdapter(mvAdapter, 1);
+		TitleFlowIndicator indicator = (TitleFlowIndicator) findViewById(R.id.viewflowindic);
+		indicator.setTitleProvider(mvAdapter);
+		viewFlow.setFlowIndicator(indicator);
 		mHandler = new Handler();
 		
 		// Construct the LicenseCheckerCallback. The library calls this when done.
@@ -86,15 +94,15 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
             BASE64_PUBLIC_KEY  // Your public licensing key.
             );
         
-        doCheck();
+//        doCheck();
 		
 		ChangeLog cl = new ChangeLog(this);
         if (cl.firstRun())
             cl.getLogDialog().show();
 		        
-		adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, listItems);
-		setListAdapter(adapter);
+//		adapter = new ArrayAdapter<String>(this,
+//				android.R.layout.simple_list_item_1, listItems);
+//		setListAdapter(adapter);
 //		listItems.add("Network Tools");
 //		listItems.add("Root utilities");
 //		listItems.add("System Tools");
@@ -134,50 +142,50 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 //		ts.setIndicator("Browse");
 //		th.addTab(ts);
 
-		TextView txtLoading = (TextView) findViewById(R.id.txtLoading);
-		txtLoading.setText("Setting up components"); // Initial loading
-
-		Button btnRepo = (Button) findViewById(R.id.btnRepo);
-		btnRepo.setOnClickListener(this);
-
-		Button btnPack = (Button) findViewById(R.id.btnPack);
-		btnPack.setOnClickListener(this);
-
-		Button btnStorage = (Button) findViewById(R.id.btnStorage);
-		btnStorage.setOnClickListener(this);
-
-		Button btnViewAll = (Button) findViewById(R.id.btnViewAll);
-		btnViewAll.setOnClickListener(this);
-
-		Button btnFacebook = (Button) findViewById(R.id.btnFacebook);
-		btnFacebook.setOnClickListener(this);
-
-		Button btnTwitter = (Button) findViewById(R.id.btnTwitter);
-		btnTwitter.setOnClickListener(this);
-
-		TextView txtDeviceInfo = (TextView) findViewById(R.id.txtDeviceInfo);
-		txtDeviceInfo.setText("Android: " + android.os.Build.VERSION.RELEASE
-				+ "/ Device: " + android.os.Build.DEVICE);
-
-		txtLoading.setText("Runnning network check");
+//		TextView txtLoading = (TextView) findViewById(R.id.txtLoading);
+//		txtLoading.setText("Setting up components"); // Initial loading
+//
+//		Button btnRepo = (Button) findViewById(R.id.btnRepo);
+//		btnRepo.setOnClickListener(this);
+//
+//		Button btnPack = (Button) findViewById(R.id.btnPack);
+//		btnPack.setOnClickListener(this);
+//
+//		Button btnStorage = (Button) findViewById(R.id.btnStorage);
+//		btnStorage.setOnClickListener(this);
+//
+//		Button btnViewAll = (Button) findViewById(R.id.btnViewAll);
+//		btnViewAll.setOnClickListener(this);
+//
+//		Button btnFacebook = (Button) findViewById(R.id.btnFacebook);
+//		btnFacebook.setOnClickListener(this);
+//
+//		Button btnTwitter = (Button) findViewById(R.id.btnTwitter);
+//		btnTwitter.setOnClickListener(this);
+//
+//		TextView txtDeviceInfo = (TextView) findViewById(R.id.txtDeviceInfo);
+//		txtDeviceInfo.setText("Android: " + android.os.Build.VERSION.RELEASE
+//				+ "/ Device: " + android.os.Build.DEVICE);
+//
+//		txtLoading.setText("Runnning network check");
 
 		startupNetworkCheck();
 
 		// Should be firstTimeRun in string in strings.xml
 
 		// create a dir
-		txtLoading.setText("Loading folders");
+//		txtLoading.setText("Loading folders");
 
 		File fireplaceDir = new File("/sdcard/Fireplace/");
 		fireplaceDir.mkdirs();
 
-		txtLoading.setText("All done!");
+//		txtLoading.setText("All done!");
 
-		LoadData();
+//		LoadData();
 
-		txtLoading.setVisibility(View.GONE);
-		ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar1);
-		pBar.setVisibility(View.GONE);
+//		txtLoading.setVisibility(View.GONE);
+//		ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar1);
+//		pBar.setVisibility(View.GONE);
 	}
 	
 	private void doCheck() {
@@ -223,15 +231,9 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
 		}
     }
 
-	public boolean onCreateOptionMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.menu, menu);
-		return true;
-	}
-
-	void LoadData() {
-		// TextView v = (TextView)findViewById(R.id.txtStatusError);
-	}
+//	void LoadData() {
+//		// TextView v = (TextView)findViewById(R.id.txtStatusError);
+//	}
 
 	public void updateProgress(int currentSize, int totalSize) {
 		// Toast.makeText(this, "Packages: " +
@@ -558,5 +560,11 @@ public class FireplaceActivity extends ListActivity implements OnClickListener {
         super.onDestroy();
         mChecker.onDestroy();
     }
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		viewFlow.onConfigurationChanged(newConfig);
+	}
 
 }
