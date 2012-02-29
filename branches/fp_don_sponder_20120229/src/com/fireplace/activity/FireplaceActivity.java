@@ -44,6 +44,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -59,82 +60,99 @@ import com.fireplace.software.App;
 import com.fireplace.software.ChangeLog;
 import com.fireplace.software.R;
 
-public class FireplaceActivity extends Activity implements OnItemClickListener, OnClickListener {
+public class FireplaceActivity extends Activity implements OnItemClickListener,
+		OnClickListener {
 
-//	// LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
-//	ArrayList<String> listItems = new ArrayList<String>();
-//
-//	// DEFINING STRING ADAPTER WHICH WILL HANDLE DATA OF LISTVIEW
-//	ArrayAdapter<String> adapter;
+	// LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
+	ArrayList<String> listItems = new ArrayList<String>();
+
+	// DEFINING STRING ADAPTER WHICH WILL HANDLE DATA OF LISTVIEW
+	ArrayAdapter<String> adapter;
+
+	ListView categoryView;
 
 	// RECORDING HOW MUCH TIMES BUTTON WAS CLICKED
 	int clickCounter = 1;
-	
-	private static final String BASE64_PUBLIC_KEY ="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3Z3LN/g1lqWcvOt99MrKu4hfNTuoVQJIQV14KSG8QmrPWiuxWEY+0pZ1aXk2MkuSVyF0Zr0fMBQl+IHPzquSHpqP0eK08OjCD/I1L5u8hzI56D0eI6I05T7NaiLvD/tJ1LqVod0l7FFkWx0p9dnzaoixK2w7GUqWcEbr40LWeHMB5DpMxW3UqecMavgn1mct9DgVMOpOMusTGGVJ9g67tu/NcWosKYojYwLlD8v6Dy4zOn0LjWz3i/up1TZNSz77VxbiNxBpV7D012fiIKvQLQbeMzbkiMhJlavwy7ara/lRkN5DlU6GnnB+eBATXoltsCNeLQeop6zbdi1SQ4zrhQIDAQAB";
-	
-	private static final byte[] SALT = new byte[] {
-	        -26, 65, 30, -118, -113, -57, 74, -64, 53, 69, -95, -25, 71, -117, -36, -113, -11, 37, -64,
-	        49
-	    };
-	
+
+	private static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3Z3LN/g1lqWcvOt99MrKu4hfNTuoVQJIQV14KSG8QmrPWiuxWEY+0pZ1aXk2MkuSVyF0Zr0fMBQl+IHPzquSHpqP0eK08OjCD/I1L5u8hzI56D0eI6I05T7NaiLvD/tJ1LqVod0l7FFkWx0p9dnzaoixK2w7GUqWcEbr40LWeHMB5DpMxW3UqecMavgn1mct9DgVMOpOMusTGGVJ9g67tu/NcWosKYojYwLlD8v6Dy4zOn0LjWz3i/up1TZNSz77VxbiNxBpV7D012fiIKvQLQbeMzbkiMhJlavwy7ara/lRkN5DlU6GnnB+eBATXoltsCNeLQeop6zbdi1SQ4zrhQIDAQAB";
+
+	private static final byte[] SALT = new byte[] { -26, 65, 30, -118, -113,
+			-57, 74, -64, 53, 69, -95, -25, 71, -117, -36, -113, -11, 37, -64,
+			49 };
+
 	private LicenseCheckerCallback mLicenseCheckerCallback;
-    private LicenseChecker mChecker;
+	private LicenseChecker mChecker;
 	private Handler mHandler;
 	private ViewFlow viewFlow;
-	
-	
-    private static final boolean INCLUDE_SYSTEM_APPS = false;
-   
-    private ListView mAppsList;
-    private AppListAdapter mAdapter;
-    private List<App> mApps;
-    private boolean iconsLoaded = false;
+
+	private MainViewAdapter mvAdapter;
+
+	private static final boolean INCLUDE_SYSTEM_APPS = false;
+
+	private ListView mAppsList;
+	private AppListAdapter mAdapter;
+	private List<App> mApps;
+	private boolean iconsLoaded = false;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);		
+		// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.newviewflow);
-		
+
 		viewFlow = (ViewFlow) findViewById(R.id.viewflow);
-		MainViewAdapter mvAdapter = new MainViewAdapter(this);
+		mvAdapter = new MainViewAdapter(this);
 		viewFlow.setAdapter(mvAdapter, 1);
 		TitleFlowIndicator indicator = (TitleFlowIndicator) findViewById(R.id.viewflowindic);
 		indicator.setTitleProvider(mvAdapter);
 		viewFlow.setFlowIndicator(indicator);
-		mHandler = new Handler();
-		
-		// Construct the LicenseCheckerCallback. The library calls this when done.
-        mLicenseCheckerCallback = new MyLicenseCheckerCallback();
 
-        //SetUp device ID
-        String deviceId = Secure.getString(getContentResolver(), Secure.ANDROID_ID + Secure.LOGGING_ID);
-        
-        // Construct the LicenseChecker with a Policy.
-        mChecker = new LicenseChecker(
-            this, new ServerManagedPolicy(this,
-                new AESObfuscator(SALT, getPackageName(), deviceId)),
-            BASE64_PUBLIC_KEY  // Your public licensing key.
-            );
-        
-//        doCheck();
-		
+		mHandler = new Handler();
+		categoryView = (ListView) findViewById(R.id.tabThreeListView);
+
+		// Construct the LicenseCheckerCallback. The library calls this when
+		// done.
+		mLicenseCheckerCallback = new MyLicenseCheckerCallback();
+
+		// SetUp device ID
+		String deviceId = Secure.getString(getContentResolver(),
+				Secure.ANDROID_ID + Secure.LOGGING_ID);
+
+		// Construct the LicenseChecker with a Policy.
+		mChecker = new LicenseChecker(this, new ServerManagedPolicy(this,
+				new AESObfuscator(SALT, getPackageName(), deviceId)),
+				BASE64_PUBLIC_KEY // Your public licensing key.
+		);
+
+		// doCheck();
+
 		ChangeLog cl = new ChangeLog(this);
-        if (cl.firstRun())
-            cl.getLogDialog().show();
-		        
-//		adapter = new ArrayAdapter<String>(this,
-//				android.R.layout.simple_list_item_1, listItems);
-//		setListAdapter(adapter);
-//		listItems.add("Network Tools");
-//		listItems.add("Root utilities");
-//		listItems.add("System Tools");
-//		listItems.add("Security");
-//		listItems.add("Tweaks");
-//		listItems.add("Themes");
-		
+		if (cl.firstRun())
+			cl.getLogDialog().show();
+
+		adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, listItems);
+		categoryView.setAdapter(adapter);
+		listItems.add("All");
+		listItems.add("Network Tools");
+		listItems.add("Root utilities");
+		listItems.add("System Tools");
+		listItems.add("Security");
+		listItems.add("Tweaks");
+		listItems.add("Themes");
+
+		categoryView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Intent getAppListIntent = new Intent(FireplaceActivity.this,
+						GetContentFromDBActivity.class);
+				getAppListIntent.putExtra("position", position);
+				startActivity(getAppListIntent);
+			}
+		});
+
 		File folder = new File("/sdcard/Fireplace/");
 
 		if (folder.exists()) {
@@ -146,129 +164,129 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 			}
 		}
 
-//		TabHost th = (TabHost) findViewById(R.id.tabhost);
-//		th.setup();
-//
-//		// Tab 1
-//		TabSpec ts = th.newTabSpec("tag1"); // ts = TabSpec
-//		ts.setContent(R.id.tab1);
-//		ts.setIndicator("Home");
-//		th.addTab(ts);
-//
-//		// Tab 2
-//		ts = th.newTabSpec("tag2"); // ts = TabSpec
-//		ts.setContent(R.id.tab2);
-//		ts.setIndicator("Manage");
-//		th.addTab(ts);
-//
-//		// Tab 3
-//		ts = th.newTabSpec("tag3"); // ts = TabSpec
-//		ts.setContent(R.id.tab3);
-//		ts.setIndicator("Browse");
-//		th.addTab(ts);
+		// TabHost th = (TabHost) findViewById(R.id.tabhost);
+		// th.setup();
+		//
+		// // Tab 1
+		// TabSpec ts = th.newTabSpec("tag1"); // ts = TabSpec
+		// ts.setContent(R.id.tab1);
+		// ts.setIndicator("Home");
+		// th.addTab(ts);
+		//
+		// // Tab 2
+		// ts = th.newTabSpec("tag2"); // ts = TabSpec
+		// ts.setContent(R.id.tab2);
+		// ts.setIndicator("Manage");
+		// th.addTab(ts);
+		//
+		// // Tab 3
+		// ts = th.newTabSpec("tag3"); // ts = TabSpec
+		// ts.setContent(R.id.tab3);
+		// ts.setIndicator("Browse");
+		// th.addTab(ts);
 
-//		TextView txtLoading = (TextView) findViewById(R.id.txtLoading);
-//		txtLoading.setText("Setting up components"); // Initial loading
-//
-//		Button btnRepo = (Button) findViewById(R.id.btnRepo);
-//		btnRepo.setOnClickListener(this);
-//
-//		Button btnPack = (Button) findViewById(R.id.btnPack);
-//		btnPack.setOnClickListener(this);
-//
-//		Button btnStorage = (Button) findViewById(R.id.btnStorage);
-//		btnStorage.setOnClickListener(this);
-//
-//		Button btnViewAll = (Button) findViewById(R.id.btnViewAll);
-//		btnViewAll.setOnClickListener(this);
-//
-//		Button btnFacebook = (Button) findViewById(R.id.btnFacebook);
-//		btnFacebook.setOnClickListener(this);
-//
-//		Button btnTwitter = (Button) findViewById(R.id.btnTwitter);
-//		btnTwitter.setOnClickListener(this);
-//
-//		TextView txtDeviceInfo = (TextView) findViewById(R.id.txtDeviceInfo);
-//		txtDeviceInfo.setText("Android: " + android.os.Build.VERSION.RELEASE
-//				+ "/ Device: " + android.os.Build.DEVICE);
-//
-//		txtLoading.setText("Runnning network check");
+		// TextView txtLoading = (TextView) findViewById(R.id.txtLoading);
+		// txtLoading.setText("Setting up components"); // Initial loading
+		//
+		// Button btnRepo = (Button) findViewById(R.id.btnRepo);
+		// btnRepo.setOnClickListener(this);
+		//
+		// Button btnPack = (Button) findViewById(R.id.btnPack);
+		// btnPack.setOnClickListener(this);
+		//
+		// Button btnStorage = (Button) findViewById(R.id.btnStorage);
+		// btnStorage.setOnClickListener(this);
+		//
+		// Button btnViewAll = (Button) findViewById(R.id.btnViewAll);
+		// btnViewAll.setOnClickListener(this);
+		//
+		// Button btnFacebook = (Button) findViewById(R.id.btnFacebook);
+		// btnFacebook.setOnClickListener(this);
+		//
+		// Button btnTwitter = (Button) findViewById(R.id.btnTwitter);
+		// btnTwitter.setOnClickListener(this);
+		//
+		// TextView txtDeviceInfo = (TextView) findViewById(R.id.txtDeviceInfo);
+		// txtDeviceInfo.setText("Android: " + android.os.Build.VERSION.RELEASE
+		// + "/ Device: " + android.os.Build.DEVICE);
+		//
+		// txtLoading.setText("Runnning network check");
 
 		startupNetworkCheck();
 
 		// Should be firstTimeRun in string in strings.xml
 
 		// create a dir
-//		txtLoading.setText("Loading folders");
+		// txtLoading.setText("Loading folders");
 
 		File fireplaceDir = new File("/sdcard/Fireplace/");
 		fireplaceDir.mkdirs();
 
-//		txtLoading.setText("All done!");
+		// txtLoading.setText("All done!");
 
-//		LoadData();
+		// LoadData();
 
-//		txtLoading.setVisibility(View.GONE);
-//		ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar1);
-//		pBar.setVisibility(View.GONE);
-		
+		// txtLoading.setVisibility(View.GONE);
+		// ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar1);
+		// pBar.setVisibility(View.GONE);
+
 		mAppsList = (ListView) findViewById(R.id.listView1);
-	      mAppsList.setOnItemClickListener(this);
-	   
-	      mApps = loadInstalledApps(INCLUDE_SYSTEM_APPS);
-	      
-	      mAdapter = new AppListAdapter(getApplicationContext());
-	      mAdapter.setListItems(mApps);
-	      mAppsList.setAdapter(mAdapter);
-	      new LoadIconsTask().execute(mApps.toArray(new App[]{}));
-	}
-	
-	private void doCheck() {
-        setProgressBarIndeterminateVisibility(true);
-        mChecker.checkAccess(mLicenseCheckerCallback);
-    }
-	
-	private void displayResult(final String result) {
-        mHandler.post(new Runnable() {
-            public void run() {
-                setProgressBarIndeterminateVisibility(false);
-            }
-        });
-    }
-	
-	private class MyLicenseCheckerCallback implements LicenseCheckerCallback {
-        public void allow() {
-            if (isFinishing()) {
-                // Don't update UI if Activity is finishing.
-                return;
-            }
-            // Should allow user access.
-            displayResult(getString(R.string.allow));
-        }
+		mAppsList.setOnItemClickListener(this);
 
-        public void dontAllow() {
-            if (isFinishing()) {
-                // Don't update UI if Activity is finishing.
-                return;
-            }
-            displayResult(getString(R.string.dont_allow));
-            // Should not allow access. An app can handle as needed,
-            // typically by informing the user that the app is not licensed
-            // and then shutting down the app or limiting the user to a
-            // restricted set of features.
-            // In this example, we show a dialog that takes the user to Market.
-            showDialog(0);
-        }
+		mApps = loadInstalledApps(INCLUDE_SYSTEM_APPS);
+
+		mAdapter = new AppListAdapter(getApplicationContext());
+		mAdapter.setListItems(mApps);
+		mAppsList.setAdapter(mAdapter);
+		new LoadIconsTask().execute(mApps.toArray(new App[] {}));
+	}
+
+	private void doCheck() {
+		setProgressBarIndeterminateVisibility(true);
+		mChecker.checkAccess(mLicenseCheckerCallback);
+	}
+
+	private void displayResult(final String result) {
+		mHandler.post(new Runnable() {
+			public void run() {
+				setProgressBarIndeterminateVisibility(false);
+			}
+		});
+	}
+
+	private class MyLicenseCheckerCallback implements LicenseCheckerCallback {
+		public void allow() {
+			if (isFinishing()) {
+				// Don't update UI if Activity is finishing.
+				return;
+			}
+			// Should allow user access.
+			displayResult(getString(R.string.allow));
+		}
+
+		public void dontAllow() {
+			if (isFinishing()) {
+				// Don't update UI if Activity is finishing.
+				return;
+			}
+			displayResult(getString(R.string.dont_allow));
+			// Should not allow access. An app can handle as needed,
+			// typically by informing the user that the app is not licensed
+			// and then shutting down the app or limiting the user to a
+			// restricted set of features.
+			// In this example, we show a dialog that takes the user to Market.
+			showDialog(0);
+		}
 
 		public void applicationError(ApplicationErrorCode errorCode) {
 			// TODO Auto-generated method stub
-			
-		}
-    }
 
-//	void LoadData() {
-//		// TextView v = (TextView)findViewById(R.id.txtStatusError);
-//	}
+		}
+	}
+
+	// void LoadData() {
+	// // TextView v = (TextView)findViewById(R.id.txtStatusError);
+	// }
 
 	public void updateProgress(int currentSize, int totalSize) {
 		// Toast.makeText(this, "Packages: " +
@@ -318,8 +336,10 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 				// set the download URL, a url that points to a file on the
 				// internet
 				// this is the file to be downloaded
-				URL url = new URL("http://www.fireplace-market.com/fireplaceUpdate.v"
-						+ getResources().getString(R.string.updateTo) + ".apk");
+				URL url = new URL(
+						"http://www.fireplace-market.com/fireplaceUpdate.v"
+								+ getResources().getString(R.string.updateTo)
+								+ ".apk");
 
 				// create the new connection
 				HttpURLConnection urlConnection = (HttpURLConnection) url
@@ -406,10 +426,11 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 			break;
 
 		case R.id.btnFacebook: // Facebook Button
-			Intent browseFacebook = new Intent(Intent.ACTION_VIEW,
+			Intent browseFacebook = new Intent(
+					Intent.ACTION_VIEW,
 					Uri.parse("http://www.facebook.com/pages/Fireplace-Market/379268035417930"));
 			startActivity(browseFacebook);
-			
+
 			break;
 
 		case R.id.btnRepo: // Repository button
@@ -424,7 +445,8 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 			// Show packages installed
 			final Context contextPack = this;
 
-			Intent intentPack = new Intent(contextPack, ListInstalledAppsActivity.class);
+			Intent intentPack = new Intent(contextPack,
+					ListInstalledAppsActivity.class);
 			startActivityForResult(intentPack, 0);
 			break;
 
@@ -477,237 +499,279 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 		return false;
 	}
 
-//	public boolean updateCheckNetwork() {
-//		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//		NetworkInfo netInfo = cm.getActiveNetworkInfo();
-//		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-//			try {
-//
-//				// set the download URL, a url that points to a file on the
-//				// internet
-//				// this is the file to be downloaded
-//				// Toast.makeText(this, "Preparing: Packages",
-//				// Toast.LENGTH_SHORT).show();
-//				String updateString = getString(R.string.updateTo);
-//				URL url = new URL(
-//						"http://www.u2worlds.com/fp/updates/Fireplace_update"
-//								+ updateString + ".apk");
-//
-//				// create the new connection
-//				HttpURLConnection urlConnection = (HttpURLConnection) url
-//						.openConnection();
-//
-//				// set up some things on the connection
-//				urlConnection.setRequestMethod("GET");
-//				urlConnection.setDoOutput(true);
-//
-//				// and connect!
-//				urlConnection.connect();
-//
-//				// set the path where we want to save the file
-//				// in this case, going to save it on the root directory of the
-//				// sd card.
-//
-//				File SDCardRoot = Environment.getExternalStorageDirectory();
-//				// create a new file, specifying the path, and the filename
-//				// which we want to save the file as.
-//				File file = new File(SDCardRoot + "/Fireplace/Fireplace_update"
-//						+ updateString + ".apk");
-//
-//				// this will be used to write the downloaded data into the file
-//				// we created
-//				FileOutputStream fileOutput = new FileOutputStream(file);
-//
-//				// this will be used in reading the data from the internet
-//				InputStream inputStream = urlConnection.getInputStream();
-//
-//				// this is the total size of the file
-//				int totalSize = urlConnection.getContentLength();
-//				// variable to store total downloaded bytes
-//				int downloadedSize = 0;
-//
-//				// create a buffer...
-//				byte[] buffer = new byte[1024];
-//				int bufferLength = 0; // used to store a temporary size of the
-//										// buffer
-//
-//				// now, read through the input buffer and write the contents to
-//				// the file
-//				while ((bufferLength = inputStream.read(buffer)) > 0) {
-//					// add the data in the buffer to the file in the file output
-//					// stream (the file on the sd card
-//					fileOutput.write(buffer, 0, bufferLength);
-//					// add up the size so we know how much is downloaded
-//					downloadedSize += bufferLength;
-//					// this is where you would do something to report the
-//					// prgress, like this maybe
-//					updateProgress(downloadedSize, totalSize);
-//
-//				}
-//				// close the output stream when done
-//				fileOutput.close();
-//
-//				// catch some possible errors...
-//			} catch (MalformedURLException e) {
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//
-//			String updateString = getString(R.string.updateTo);
-//
-//			File appFile = new File("/sdcard/Fireplace/Fireplace_update"
-//					+ updateString + ".apk");
-//			Intent installIntent = new Intent(Intent.ACTION_VIEW);
-//			installIntent.setDataAndType(Uri.fromFile(appFile),
-//					"application/vnd.android.package-archive");
-//			startActivity(installIntent);
-//
-//			return true;
-//		}
-//		Toast.makeText(FireplaceActivity.this, "No update available",
-//				Toast.LENGTH_LONG).show();
-//		return false;
-//	}
+	// public boolean updateCheckNetwork() {
+	// ConnectivityManager cm = (ConnectivityManager)
+	// getSystemService(Context.CONNECTIVITY_SERVICE);
+	// NetworkInfo netInfo = cm.getActiveNetworkInfo();
+	// if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+	// try {
+	//
+	// // set the download URL, a url that points to a file on the
+	// // internet
+	// // this is the file to be downloaded
+	// // Toast.makeText(this, "Preparing: Packages",
+	// // Toast.LENGTH_SHORT).show();
+	// String updateString = getString(R.string.updateTo);
+	// URL url = new URL(
+	// "http://www.u2worlds.com/fp/updates/Fireplace_update"
+	// + updateString + ".apk");
+	//
+	// // create the new connection
+	// HttpURLConnection urlConnection = (HttpURLConnection) url
+	// .openConnection();
+	//
+	// // set up some things on the connection
+	// urlConnection.setRequestMethod("GET");
+	// urlConnection.setDoOutput(true);
+	//
+	// // and connect!
+	// urlConnection.connect();
+	//
+	// // set the path where we want to save the file
+	// // in this case, going to save it on the root directory of the
+	// // sd card.
+	//
+	// File SDCardRoot = Environment.getExternalStorageDirectory();
+	// // create a new file, specifying the path, and the filename
+	// // which we want to save the file as.
+	// File file = new File(SDCardRoot + "/Fireplace/Fireplace_update"
+	// + updateString + ".apk");
+	//
+	// // this will be used to write the downloaded data into the file
+	// // we created
+	// FileOutputStream fileOutput = new FileOutputStream(file);
+	//
+	// // this will be used in reading the data from the internet
+	// InputStream inputStream = urlConnection.getInputStream();
+	//
+	// // this is the total size of the file
+	// int totalSize = urlConnection.getContentLength();
+	// // variable to store total downloaded bytes
+	// int downloadedSize = 0;
+	//
+	// // create a buffer...
+	// byte[] buffer = new byte[1024];
+	// int bufferLength = 0; // used to store a temporary size of the
+	// // buffer
+	//
+	// // now, read through the input buffer and write the contents to
+	// // the file
+	// while ((bufferLength = inputStream.read(buffer)) > 0) {
+	// // add the data in the buffer to the file in the file output
+	// // stream (the file on the sd card
+	// fileOutput.write(buffer, 0, bufferLength);
+	// // add up the size so we know how much is downloaded
+	// downloadedSize += bufferLength;
+	// // this is where you would do something to report the
+	// // prgress, like this maybe
+	// updateProgress(downloadedSize, totalSize);
+	//
+	// }
+	// // close the output stream when done
+	// fileOutput.close();
+	//
+	// // catch some possible errors...
+	// } catch (MalformedURLException e) {
+	// e.printStackTrace();
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	//
+	// String updateString = getString(R.string.updateTo);
+	//
+	// File appFile = new File("/sdcard/Fireplace/Fireplace_update"
+	// + updateString + ".apk");
+	// Intent installIntent = new Intent(Intent.ACTION_VIEW);
+	// installIntent.setDataAndType(Uri.fromFile(appFile),
+	// "application/vnd.android.package-archive");
+	// startActivity(installIntent);
+	//
+	// return true;
+	// }
+	// Toast.makeText(FireplaceActivity.this, "No update available",
+	// Toast.LENGTH_LONG).show();
+	// return false;
+	// }
 
 	protected Dialog onCreateDialog(int id) {
-        // We have only one dialog.
-        return new AlertDialog.Builder(this)
-            .setTitle(R.string.unlicensed_dialog_title)
-            .setMessage(R.string.unlicensed_dialog_body)
-            .setPositiveButton(R.string.buy_button, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent marketIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-                        "http://market.android.com/details?id=" + getPackageName()));
-                    startActivity(marketIntent);
-                }
-            })
-            .setNegativeButton(R.string.quit_button, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    finish();
-                }
-            })
-            .create();
-    }
-	
+		// We have only one dialog.
+		return new AlertDialog.Builder(this)
+				.setTitle(R.string.unlicensed_dialog_title)
+				.setMessage(R.string.unlicensed_dialog_body)
+				.setPositiveButton(R.string.buy_button,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								Intent marketIntent = new Intent(
+										Intent.ACTION_VIEW,
+										Uri.parse("http://market.android.com/details?id="
+												+ getPackageName()));
+								startActivity(marketIntent);
+							}
+						})
+				.setNegativeButton(R.string.quit_button,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								finish();
+							}
+						}).create();
+	}
+
 	@Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mChecker.onDestroy();
-    }
-	
+	protected void onDestroy() {
+		super.onDestroy();
+		mChecker.onDestroy();
+	}
+
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		viewFlow.onConfigurationChanged(newConfig);
 	}
 
-	   public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		      
-		      final App app = (App) parent.getItemAtPosition(position);
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
 
-		      AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		      
-		      String msg = app.getTitle() + "\n\n" + 
-		         "Version " + app.getVersionName() + " (" +
-		         app.getVersionCode() + ")" +
-		         (app.getDescription() != null ? ("\n\n" + app.getDescription()) : "");
-		      
-		      Drawable icon = (iconsLoaded) ? mAdapter.getIcons().get(app.getPackageName()) : getResources().getDrawable(R.drawable.icon);
-		      
-		      builder.setMessage(msg)
-		      .setCancelable(true)
-		      .setTitle(app.getTitle())
-		      .setIcon(icon)
-		      .setPositiveButton("Launch", new DialogInterface.OnClickListener() {
-		         public void onClick(DialogInterface dialog, int id) {
-		            // start the app by invoking its launch intent
-		            Intent i = getPackageManager().getLaunchIntentForPackage(app.getPackageName());
-		            try {
-		               if (i != null) {
-		                  startActivity(i);
-		               } else {
-		                  i = new Intent(app.getPackageName());
-		                  startActivity(i);
-		               }
-		            } catch (ActivityNotFoundException err) {
-		               Toast.makeText(FireplaceActivity.this, "Error launching app", Toast.LENGTH_SHORT).show();
-		            }
-		         }
-		      })
-		      .setNegativeButton("Remove", new DialogInterface.OnClickListener() {
-		         public void onClick(DialogInterface dialog, int id) {
-		                 
-		                 Uri packageURI = Uri.parse("package:" + app.getPackageName());
-		                 Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
-		                 startActivity(uninstallIntent);
-		            dialog.cancel();
-		         }
-		      });
-		      AlertDialog dialog = builder.create();
-		      dialog.show();
-		      
-		   }
-	   
-	   private List<App> loadInstalledApps(boolean includeSysApps) {
-		      List<App> apps = new ArrayList<App>();
-		      
-		      // the package manager contains the information about all installed apps
-		      PackageManager packageManager = getPackageManager();
-		      
-		      List<PackageInfo> packs = packageManager.getInstalledPackages(0); //PackageManager.GET_META_DATA 
-		      
-		      for(int i=0; i < packs.size(); i++) {
-		         PackageInfo p = packs.get(i);
-		         ApplicationInfo a = p.applicationInfo;
-		         // skip system apps if they shall not be included
-		         if ((!includeSysApps) && ((a.flags & ApplicationInfo.FLAG_SYSTEM) == 1)) {
-		            continue;
-		         }
-		         App app = new App();
-		         app.setTitle(p.applicationInfo.loadLabel(packageManager).toString());
-		         app.setPackageName(p.packageName);
-		         app.setVersionName(p.versionName);
-		         app.setVersionCode(p.versionCode);
-		         CharSequence description = p.applicationInfo.loadDescription(packageManager);
-		         app.setDescription(description != null ? description.toString() : "");
-		         apps.add(app);
-		      }
-		      return apps;
-		   }
-	   /**
-	    * An asynchronous task to load the icons of the installed applications.
-	    */
-	   private class LoadIconsTask extends AsyncTask<App, Void, Void> {
-	      @Override
-	      protected Void doInBackground(App... apps) {
-	         
-	         Map<String, Drawable> icons = new HashMap<String, Drawable>();
-	         PackageManager manager = getApplicationContext().getPackageManager();
-	         
-	         for (App app : apps) {
-	            String pkgName = app.getPackageName();
-	            Drawable ico = null;
-	            try {
-	               Intent i = manager.getLaunchIntentForPackage(pkgName);
-	               if (i != null) {
-	                  ico = manager.getActivityIcon(i);
-	               }
-	            } catch (NameNotFoundException e) {
-	               Log.e("ERROR", "Unable to find icon for package '" + pkgName + "': " + e.getMessage());
-	            }
-	            icons.put(app.getPackageName(), ico);
-	         }
-	         mAdapter.setIcons(icons);
-	         
-	         return null;
-	      }
-	      
-	      @Override
-	      protected void onPostExecute(Void result) {
-	         mAdapter.notifyDataSetChanged();
-	         iconsLoaded = true;
-	      }
-	  }
+		final App app = (App) parent.getItemAtPosition(position);
 
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+		String msg = app.getTitle()
+				+ "\n\n"
+				+ "Version "
+				+ app.getVersionName()
+				+ " ("
+				+ app.getVersionCode()
+				+ ")"
+				+ (app.getDescription() != null ? ("\n\n" + app
+						.getDescription()) : "");
+
+		Drawable icon = (iconsLoaded) ? mAdapter.getIcons().get(
+				app.getPackageName()) : getResources().getDrawable(
+				R.drawable.icon);
+
+		builder.setMessage(msg)
+				.setCancelable(true)
+				.setTitle(app.getTitle())
+				.setIcon(icon)
+				.setPositiveButton("Launch",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								// start the app by invoking its launch intent
+								Intent i = getPackageManager()
+										.getLaunchIntentForPackage(
+												app.getPackageName());
+								try {
+									if (i != null) {
+										startActivity(i);
+									} else {
+										i = new Intent(app.getPackageName());
+										startActivity(i);
+									}
+								} catch (ActivityNotFoundException err) {
+									Toast.makeText(FireplaceActivity.this,
+											"Error launching app",
+											Toast.LENGTH_SHORT).show();
+								}
+							}
+						})
+				.setNegativeButton("Remove",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+
+								Uri packageURI = Uri.parse("package:"
+										+ app.getPackageName());
+								Intent uninstallIntent = new Intent(
+										Intent.ACTION_DELETE, packageURI);
+								startActivity(uninstallIntent);
+								dialog.cancel();
+							}
+						});
+		AlertDialog dialog = builder.create();
+		dialog.show();
+
+	}
+
+	private List<App> loadInstalledApps(boolean includeSysApps) {
+		List<App> apps = new ArrayList<App>();
+
+		// the package manager contains the information about all installed apps
+		PackageManager packageManager = getPackageManager();
+
+		List<PackageInfo> packs = packageManager.getInstalledPackages(0); // PackageManager.GET_META_DATA
+
+		for (int i = 0; i < packs.size(); i++) {
+			PackageInfo p = packs.get(i);
+			ApplicationInfo a = p.applicationInfo;
+			// skip system apps if they shall not be included
+			if ((!includeSysApps)
+					&& ((a.flags & ApplicationInfo.FLAG_SYSTEM) == 1)) {
+				continue;
+			}
+			App app = new App();
+			app.setTitle(p.applicationInfo.loadLabel(packageManager).toString());
+			app.setPackageName(p.packageName);
+			app.setVersionName(p.versionName);
+			app.setVersionCode(p.versionCode);
+			CharSequence description = p.applicationInfo
+					.loadDescription(packageManager);
+			app.setDescription(description != null ? description.toString()
+					: "");
+			apps.add(app);
+		}
+		return apps;
+	}
+
+	/**
+	 * An asynchronous task to load the icons of the installed applications.
+	 */
+	private class LoadIconsTask extends AsyncTask<App, Void, Void> {
+		@Override
+		protected Void doInBackground(App... apps) {
+
+			Map<String, Drawable> icons = new HashMap<String, Drawable>();
+			PackageManager manager = getApplicationContext()
+					.getPackageManager();
+
+			for (App app : apps) {
+				String pkgName = app.getPackageName();
+				Drawable ico = null;
+				try {
+					Intent i = manager.getLaunchIntentForPackage(pkgName);
+					if (i != null) {
+						ico = manager.getActivityIcon(i);
+					}
+				} catch (NameNotFoundException e) {
+					Log.e("ERROR", "Unable to find icon for package '"
+							+ pkgName + "': " + e.getMessage());
+				}
+				icons.put(app.getPackageName(), ico);
+			}
+			mAdapter.setIcons(icons);
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			mAdapter.notifyDataSetChanged();
+			iconsLoaded = true;
+		}
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState)
+	{
+		outState.putInt("ViewInFocus", viewFlow.getFocusedChild().getId());
+		super.onSaveInstanceState(outState);
+	}
+	
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState)
+	{
+		super.onRestoreInstanceState(savedInstanceState);
+		viewFlow.findViewById(savedInstanceState.getInt("ViewInFocus")).requestFocus();
+	}
+	
 }
