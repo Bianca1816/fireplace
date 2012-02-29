@@ -5,10 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fireplace.adapter.AppListAdapter;
-import com.fireplace.adsup.R;
-import com.fireplace.software.App;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -26,9 +22,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
+
+import com.fireplace.adapter.AppListAdapter;
+import com.fireplace.adsup.R;
+import com.fireplace.software.App;
 
 public class ListInstalledAppsActivity extends Activity implements OnItemClickListener, OnClickListener {
    
@@ -38,6 +38,7 @@ public class ListInstalledAppsActivity extends Activity implements OnItemClickLi
    private ListView mAppsList;
    private AppListAdapter mAdapter;
    private List<App> mApps;
+   private boolean iconsLoaded = false;
    
    /** Called when the activity is first created. */
    @Override
@@ -69,10 +70,12 @@ public class ListInstalledAppsActivity extends Activity implements OnItemClickLi
          app.getVersionCode() + ")" +
          (app.getDescription() != null ? ("\n\n" + app.getDescription()) : "");
       
+      Drawable icon = (iconsLoaded) ? mAdapter.getIcons().get(app.getPackageName()) : getResources().getDrawable(R.drawable.icon);
+      
       builder.setMessage(msg)
       .setCancelable(true)
       .setTitle(app.getTitle())
-      .setIcon(mAdapter.getIcons().get(app.getPackageName()))
+      .setIcon(icon)
       .setPositiveButton("Launch", new DialogInterface.OnClickListener() {
          public void onClick(DialogInterface dialog, int id) {
             // start the app by invoking its launch intent
@@ -168,7 +171,7 @@ public class ListInstalledAppsActivity extends Activity implements OnItemClickLi
       @Override
       protected void onPostExecute(Void result) {
          mAdapter.notifyDataSetChanged();
-         
+         iconsLoaded = true;
       }
   }
 
