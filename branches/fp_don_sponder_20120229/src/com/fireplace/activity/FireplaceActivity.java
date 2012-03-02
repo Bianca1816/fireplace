@@ -639,12 +639,6 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		}
 		return apps;
 	}
-	@Override
-	public void onUserInteraction() {
-		// TODO Auto-generated method stub
-		super.onUserInteraction();
-//		Toast.makeText(this, " " + viewFlow.getCurrentView(), Toast.LENGTH_LONG).show();
-	}
 	
 	/**
 	 * An asynchronous task to load the icons of the installed applications.
@@ -683,7 +677,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		}
 	}
 	
-/*---------------------------Trying to save View location--------------------------*/	
+/*---------------------------Saving View Location--------------------------*/	
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState)
