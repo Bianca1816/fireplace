@@ -40,6 +40,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -104,14 +105,14 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		if(savedInstanceState == null){
 			viewFlow.setAdapter(mvAdapter, 1);
 		} else {
-			viewFlow.setAdapter(mvAdapter);
+			viewFlow.setAdapter(mvAdapter, savedInstanceState.getInt("CurrentView"));
+//			viewFlow.setSelection(1);//This is where I should set it.
 		}
-//		viewFlow.setAdapter(mvAdapter, 1);
 		
 		TitleFlowIndicator indicator = (TitleFlowIndicator) findViewById(R.id.viewflowindic);
 		indicator.setTitleProvider(mvAdapter);
 		viewFlow.setFlowIndicator(indicator);
-
+		
 		mHandler = new Handler();
 
 		// Construct the LicenseCheckerCallback. The library calls this when done.
@@ -185,7 +186,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		mAdapter.setListItems(mApps);
 		mAppsList.setAdapter(mAdapter);
 		new LoadIconsTask().execute(mApps.toArray(new App[] {}));
-		
+				
 /*-----------------------Unused-----------------------------------------/
 		 TabHost th = (TabHost) findViewById(R.id.tabhost);
 		 th.setup();
@@ -638,7 +639,13 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		}
 		return apps;
 	}
-
+	@Override
+	public void onUserInteraction() {
+		// TODO Auto-generated method stub
+		super.onUserInteraction();
+//		Toast.makeText(this, " " + viewFlow.getCurrentView(), Toast.LENGTH_LONG).show();
+	}
+	
 	/**
 	 * An asynchronous task to load the icons of the installed applications.
 	 */
@@ -681,16 +688,8 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	@Override
 	public void onSaveInstanceState(Bundle outState)
 	{
-		outState.putInt("ViewInFocus", viewFlow.getFocusedChild().getId());
+		outState.putInt("CurrentView", viewFlow.getCurrentView());
 		super.onSaveInstanceState(outState);
-	}
-	
-	@Override
-	public void onRestoreInstanceState(Bundle savedInstanceState)
-	{
-		super.onRestoreInstanceState(savedInstanceState);
-//		viewFlow.findViewById(savedInstanceState.getInt("ViewInFocus")).requestFocus();
-		
 	}
 	
 /*-----------------------------Currently Unused-------------------------------------/
