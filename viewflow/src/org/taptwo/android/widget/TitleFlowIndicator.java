@@ -255,6 +255,10 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 		curViewBound.left = curViewBound.right - curViewWidth;
 	}
 
+	public int getCurrentPosition(){
+		return currentPosition;
+	}
+	
 	/**
 	 * Set bounds for the left textView including clip padding.
 	 * 
