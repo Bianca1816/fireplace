@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.text.util.Linkify;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -112,8 +113,10 @@ public class DownloadFileActivity extends Activity implements
 			setTitle("About " + title);
 			TextView txtDesc = (TextView) findViewById(R.id.lbInfo);
 			txtDesc.setText(extras.getString("desc"));
+			Linkify.addLinks(txtDesc, Linkify.ALL);
 			TextView txtDevlName = (TextView) findViewById(R.id.lbDevlName);
 			txtDevlName.setText(extras.getString("devl"));
+			Linkify.addLinks(txtDevlName, Linkify.ALL);
 			TextView txtCategory = (TextView) findViewById(R.id.lbCategory);
 			txtCategory.setVisibility(View.GONE);
 			txtCategory.setText("Category: " + extras.getString("ptype"));
@@ -183,7 +186,6 @@ public class DownloadFileActivity extends Activity implements
 		Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
 		sharingIntent.setType("text/plain");
 		String shareBody = "I just installed " + title + " using Fireplace Market.";
-		sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
 		sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
 		startActivity(Intent.createChooser(sharingIntent, "Share via"));
 		}
