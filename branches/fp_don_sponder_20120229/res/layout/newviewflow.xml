@@ -15,11 +15,11 @@
 			app:textColor="#ffffffff"
 			app:selectedColor="#ff33b5e5"
 			app:footerColor="#ff33b5e5"
-			app:titlePadding="10dp"
-			app:textSize="11dp"
-			app:selectedSize="12dp"
-			android:layout_marginTop="10dip"
-			app:clipPadding="5dp" />
+			app:titlePadding="10dip"
+			app:textSize="13dip"
+			app:selectedSize="14dip"
+			android:layout_marginTop="9dip"
+			app:clipPadding="5dip" />
 	</LinearLayout>
 	<org.taptwo.android.widget.ViewFlow
 		android:duplicateParentState="true" android:id="@+id/viewflow"

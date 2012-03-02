@@ -139,13 +139,13 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 				R.layout.category_list_item, listItems);
 		
 		categoryView.setAdapter(adapter);
-		listItems.add("All");
-		listItems.add("Network Tools");
-		listItems.add("Root utilities");
-		listItems.add("System Tools");
-		listItems.add("Security");
-		listItems.add("Tweaks");
-		listItems.add("Themes");
+		listItems.add("All");//ptype
+		listItems.add("Network Tools");//2
+		listItems.add("Root utilities");//3
+		listItems.add("System Tools");//4
+		listItems.add("Security");//5
+		listItems.add("Tweaks");//6
+		listItems.add("Themes");//7
 
 		categoryView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,

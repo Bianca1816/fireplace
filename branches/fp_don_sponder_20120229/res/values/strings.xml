@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="app_name">Fireplace</string>
+    <string name="app_name">Fireplace Market</string>
     <string-array name="Category">
         <item>Development</item>
         <item>Network</item>
@@ -31,7 +31,7 @@
     <string name="share_label">Share</string>
     <string name="allow">Thanks for donating to the Rooted Dev Team</string>
     <string name="dont_allow">You must download the donate version from the Android Market.</string>
-    <string name="checking_license">Checking License...</string>
+    <string name="checking_license">Checking License&#8230;</string>
     <string name="quit_button">Quit</string>
     <string name="buy_button">Donate</string>
     <string name="unlicensed_dialog_title">Warning</string>

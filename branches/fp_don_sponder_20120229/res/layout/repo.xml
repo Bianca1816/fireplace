@@ -35,7 +35,9 @@
             android:layout_alignBottom="@+id/addBtn"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/addBtn"
-            android:textColor="@color/white" >
+            android:textColor="@color/white"
+            android:inputType="text" 
+            android:hint="Repo name" >
 
             <requestFocus />
         </EditText>
