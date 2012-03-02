@@ -258,7 +258,8 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 					+ "\n\nProject started by Spxc"
 					+ "\n\nCopyright 2012"
 					+ "\nRooted Dev Team"
-					+ "\nStian Insteb� & Sachira Chinthana Jayasanka");
+					+ "\nStian Insteb�, Sachira Chinthana Jayasanka,"
+					+ "\nSimon Ponder & Zachary Spong");
 			alertbox.setNeutralButton("Close",
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface arg0, int arg1) {
