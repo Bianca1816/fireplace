@@ -138,6 +138,10 @@ public class ViewFlow extends AdapterView<Adapter> {
 	public int getViewsCount() {
 		return mAdapter.getCount();
 	}
+	
+	public int getCurrentView() {
+		return mCurrentScreen; 
+	}
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
