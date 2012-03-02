@@ -37,23 +37,29 @@ import android.widget.Toast;
 
 import com.fireplace.software.ItemSkel;
 import com.fireplace.adsup.R;
+import com.google.ads.AdRequest;
+import com.google.ads.AdView;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 public class GetContentFromDBActivity extends ListActivity {
 	final static String TAG = "GetContentFromDBActivty";
-
 	ArrayList<String> stringArray = new ArrayList<String>();
 	ArrayList<String> iconLocArray = new ArrayList<String>();
 	ArrayList<Bitmap> iconArrayList = new ArrayList<Bitmap>();
 	ArrayList<ItemSkel> list;
+	ArrayList<ItemSkel> needsFilteredList;
+	
+	Integer ptype;
 	IconicAdapter modeAdapter;
 	boolean iconsReceived = false;
 	boolean listReceived = false;
 	ListView lv;
 	ImageView icon;
 
+	AdView adView4;
+	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
@@ -63,6 +69,15 @@ public class GetContentFromDBActivity extends ListActivity {
 		setContentView(R.layout.listofappswithicons);
 		lv = (ListView) findViewById(android.R.id.list);
 		modeAdapter = new IconicAdapter();
+		Bundle extras = getIntent().getExtras();
+		
+		adView4 = (AdView) findViewById(R.id.adView4);
+        
+        // Initiate a generic request to load it with an ad
+        adView4.loadAd(new AdRequest());
+		
+		ptype = extras.getInt("position") + 1;
+		list = new ArrayList<ItemSkel>();
 		new getListTask().execute();
 		LoadData();
 	}
@@ -95,7 +110,15 @@ public class GetContentFromDBActivity extends ListActivity {
 				Type type = new TypeToken<ArrayList<ItemSkel>>() {
 				}.getType();
 				Gson g = new Gson();
-				list = g.fromJson(result, type);
+				needsFilteredList = g.fromJson(result, type);
+				
+				if (!list.isEmpty())
+					list.clear();
+				
+				for(ItemSkel item: needsFilteredList) {
+					if (item.getPtype().equals(ptype.toString()) || ptype == 1) list.add(item);
+				}
+				
 				listReceived = true;				
 				return list;
 			} catch (JsonSyntaxException e) {
@@ -113,7 +136,7 @@ public class GetContentFromDBActivity extends ListActivity {
 	}
 
 	/**
-	 * This loads data for the list items...
+	 * This loads data for the lsit items...
 	 */
 	@SuppressWarnings("unchecked")
 	void LoadData() {
@@ -127,8 +150,7 @@ public class GetContentFromDBActivity extends ListActivity {
 			}
 		}
 		
-		//Make sure list is not null before proceeding to use list to file array's
-		if (list != null) {
+		if (!list.isEmpty()) {
 			try {
 
 				if (!stringArray.isEmpty())
@@ -174,7 +196,7 @@ public class GetContentFromDBActivity extends ListActivity {
 			}
 		} else {
 			Toast.makeText(GetContentFromDBActivity.this,
-					"Could not connect.", Toast.LENGTH_LONG).show();
+					"No applications in this category...", Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -260,5 +282,11 @@ public class GetContentFromDBActivity extends ListActivity {
 			}
 		}
 	}
+	
+	@Override
+	  public void onDestroy() {
+	    adView4.destroy();
+	    super.onDestroy();
+	  }
 
 }

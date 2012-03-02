@@ -19,6 +19,14 @@
     </style>
   </head>
   <body>
+$ 2.3
+  % Version 2.3
+  _ 2012-03-03
+    * New UI (ICS-like)
+    * Categories
+    * Featured Applications
+    * Bug Fixes  
+  
 $ 2.2
   % Version 2.2
   _ 2012-02-24
@@ -37,34 +45,28 @@ $ 2.1
     * New Theme Due to Request
 $ 2.0
   % Version 2.0
-  _ 0000-00-00
     * Fix the server/host issue (server no longer overloaded!)
     * Fixed the update process for futher updates
 $ 1.6
   % Version 1.6
-  _ 0000-00-00
     * New Icon
 $ 1.5
   % Version 1.5
-  _ 0000-00-00
     * New update button (Browse tab)
     * When installing/downlading app, notification update will display
     * Donate button works
 $ 1.4
   % Version 1.4
-  _ 0000-00-00
     * Added Credits, Copyright and donate button
     * Added Fireplace Market version in Manage --> Storage
 $ 1.3
   % Version 1.3
-  _ 0000-00-00
     * Different save dir and download dir
     * More devices
     * UI fixes
     * Change the way it handles downloads and XML
 $ 1.0
   % Version 1.0
-  _ 0000-00-00
     * Initial release
     $ END_OF_CHANGE_LOG
   </body>
