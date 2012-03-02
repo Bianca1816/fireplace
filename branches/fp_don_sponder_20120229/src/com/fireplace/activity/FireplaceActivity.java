@@ -40,7 +40,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -96,7 +95,6 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.newviewflow);
 
 		viewFlow = (ViewFlow) findViewById(R.id.viewflow);
@@ -106,7 +104,6 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 			viewFlow.setAdapter(mvAdapter, 1);
 		} else {
 			viewFlow.setAdapter(mvAdapter, savedInstanceState.getInt("CurrentView"));
-//			viewFlow.setSelection(1);//This is where I should set it.
 		}
 		
 		TitleFlowIndicator indicator = (TitleFlowIndicator) findViewById(R.id.viewflowindic);
@@ -135,11 +132,12 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		if (cl.firstRun())
 			cl.getLogDialog().show();
 		
-		/*----------------caetgory view-----------------------*/
+		/*----------------category view-----------------------*/
 		categoryView = (ListView) findViewById(R.id.tabThreeListView);
 		
 		adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, listItems);
+				R.layout.category_list_item, listItems);
+		
 		categoryView.setAdapter(adapter);
 		listItems.add("All");
 		listItems.add("Network Tools");
@@ -158,7 +156,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 				startActivity(getAppListIntent);
 			}
 		});
-
+		
 		/*------------------------------------------------------*/
 		
 		File folder = new File("/sdcard/Fireplace/");
@@ -183,8 +181,10 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		mApps = loadInstalledApps(INCLUDE_SYSTEM_APPS);
 
 		mAdapter = new AppListAdapter(getApplicationContext());
+		
 		mAdapter.setListItems(mApps);
 		mAppsList.setAdapter(mAdapter);
+		
 		new LoadIconsTask().execute(mApps.toArray(new App[] {}));
 				
 /*-----------------------Unused-----------------------------------------/
