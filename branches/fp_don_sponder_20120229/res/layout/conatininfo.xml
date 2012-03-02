@@ -33,16 +33,20 @@
             android:isScrollContainer="true"
             android:textAppearance="?android:attr/textAppearanceMedium" />
         
-        <TextView
-            android:id="@+id/lbInfo"
+        <ScrollView 
+            android:id="@+id/svDesc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/btnDownload"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/lbInfoText"
-            android:text="@string/prev_activity_label" />
-
+            android:layout_below="@+id/lbInfoText">
+	        <TextView
+	            android:id="@+id/lbInfo"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="@string/prev_activity_label" />
+		</ScrollView>
+
         <Button
             android:id="@+id/btnDownload"
             style="@style/button_holo_dark_button"
