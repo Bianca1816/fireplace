@@ -25,11 +25,16 @@
     <string name="prev_activity_label">Info from prev activity</string>
     <string name="info_label">INFORMATION</string>
     <string name="app_title_label">App Title</string>
-        <string name="changelog_ok_button">Okay</string>
+    <string name="changelog_ok_button">Okay</string>
     <string name="changelog_full_title">Changelog</string>
     <string name="changelog_title">Whats New!</string>
     <string name="share_label">Share</string>
     <string name="btnSearchLabel">Search</string>
     <string name="strSetUpComp">Setting up components</string>
     <string name="etSearchHint">What are you looking for?</string>
+    <string-array name="ViewTitles">
+        <item>Installed</item>
+        <item>Featured</item>
+        <item>Category</item>
+    </string-array>
 </resources>

@@ -14,10 +14,11 @@ public class MainViewAdapter extends BaseAdapter implements TitleProvider {
 	
 	private LayoutInflater mInflater;
 	
-	private static final String[] names = {"Installed Apps","Featured Apps","Categories"};
+	private static String[] names = null;
 	
 	public MainViewAdapter(Context context) {
 		mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		names = context.getResources().getStringArray(R.array.ViewTitles);
 	}
 	
 	public int getCount() {
