@@ -37,4 +37,9 @@
     <string name="unlicensed_dialog_title">Warning</string>
     <string name="unlicensed_dialog_body">Your copy of this application is not licensed.</string>
     <string name="check_license">License Check</string>
+    <string-array name="ViewTitles">
+        <item>Installed</item>
+        <item>Featured</item>
+        <item>Category</item>
+    </string-array>
 </resources>
