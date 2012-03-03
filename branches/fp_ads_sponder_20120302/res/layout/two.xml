@@ -1,16 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
-    <ListView
-        android:id="@android:id/list"
+    <RelativeLayout 
+        android:id="@+id/relTwoLay"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent" >
+	 <ListView
+        android:id="@+id/featureList"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:cacheColorHint="#00000000" >
+
     </ListView>
+
+    <LinearLayout
+        android:id="@+id/socialLinLay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:paddingBottom="80dip" >
+
+        <ImageView
+            android:id="@+id/googleCon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dip"
+            android:paddingRight="20dip"
+            android:contentDescription="Google Icon" />
+
+        <ImageView
+            android:id="@+id/twiiterCon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dip"
+            android:paddingRight="20dip"
+            android:contentDescription="Twitter Icon" />
+
+        <ImageView
+            android:id="@+id/fbCon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dip"
+            android:paddingRight="20dip"
+            android:contentDescription="Facebook Icon" />
+    </LinearLayout>
     <com.google.ads.AdView
                         android:id="@+id/adView2"
                         android:layout_width="wrap_content"
@@ -22,3 +61,6 @@
                     </com.google.ads.AdView>
 
 </RelativeLayout>
+    
+
+</LinearLayout>

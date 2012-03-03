@@ -43,6 +43,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -62,6 +63,9 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 
 	// DEFINING STRING ADAPTER WHICH WILL HANDLE DATA OF LISTVIEW
 	ArrayAdapter<String> adapter;
+	ImageView gPlusView;
+	ImageView twitView;
+	ImageView fbView;
 
 	private ListView categoryView;
 	
@@ -105,6 +109,18 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 		TitleFlowIndicator indicator = (TitleFlowIndicator) findViewById(R.id.viewflowindic);
 		indicator.setTitleProvider(mvAdapter);
 		viewFlow.setFlowIndicator(indicator);
+		
+		gPlusView = (ImageView) findViewById(R.id.googleCon);
+		twitView = (ImageView) findViewById(R.id.twiiterCon);
+		fbView = (ImageView) findViewById(R.id.fbCon);
+		
+		gPlusView.setImageResource(R.drawable.googleplus);
+		twitView.setImageResource(R.drawable.twitter);
+		fbView.setImageResource(R.drawable.fb);
+		
+		gPlusView.setOnClickListener(this);
+		twitView.setOnClickListener(this);
+		fbView.setOnClickListener(this);
 		
         adView1 = (AdView) findViewById(R.id.adView1);
         adView2 = (AdView) findViewById(R.id.adView2);
@@ -367,18 +383,26 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 	public void onClick(View v) {
 		switch (v.getId()) {
 
-		case R.id.btnTwitter: // Twitter Button
+		case R.id.twiiterCon: // Twitter Button
 			Intent browsetwitter = new Intent(Intent.ACTION_VIEW,
 					Uri.parse("http://twitter.com/#!/FireplaceMarket"));
 			startActivity(browsetwitter);
 			break;
 
-		case R.id.btnFacebook: // Facebook Button
+		case R.id.fbCon: // Facebook Button
 			Intent browseFacebook = new Intent(
 					Intent.ACTION_VIEW,
 					Uri.parse("http://www.facebook.com/pages/Fireplace-Market/379268035417930"));
 			startActivity(browseFacebook);
 
+			break;
+			
+		case R.id.googleCon: //Google+ Button
+			Intent browseGplus = new Intent(
+				Intent.ACTION_VIEW,
+				Uri.parse("https://plus.google.com/106118854945132150428"));
+				startActivity(browseGplus);
+				
 			break;
 
 		case R.id.btnRepo: // Repository button
