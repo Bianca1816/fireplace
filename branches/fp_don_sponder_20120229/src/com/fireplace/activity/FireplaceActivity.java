@@ -44,11 +44,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.android.vending.licensing.AESObfuscator;
 import com.android.vending.licensing.LicenseChecker;
@@ -68,7 +69,10 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 
 	// DEFINING STRING ADAPTER WHICH WILL HANDLE DATA OF LISTVIEW
 	private ArrayAdapter<String> adapter;
-
+	ImageView gPlusView;
+	ImageView twitView;
+	ImageView fbView;
+	
 	private ListView categoryView;
 
 	private static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3Z3LN/g1lqWcvOt99MrKu4hfNTuoVQJIQV14KSG8QmrPWiuxWEY+0pZ1aXk2MkuSVyF0Zr0fMBQl+IHPzquSHpqP0eK08OjCD/I1L5u8hzI56D0eI6I05T7NaiLvD/tJ1LqVod0l7FFkWx0p9dnzaoixK2w7GUqWcEbr40LWeHMB5DpMxW3UqecMavgn1mct9DgVMOpOMusTGGVJ9g67tu/NcWosKYojYwLlD8v6Dy4zOn0LjWz3i/up1TZNSz77VxbiNxBpV7D012fiIKvQLQbeMzbkiMhJlavwy7ara/lRkN5DlU6GnnB+eBATXoltsCNeLQeop6zbdi1SQ4zrhQIDAQAB";
@@ -109,6 +113,18 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		TitleFlowIndicator indicator = (TitleFlowIndicator) findViewById(R.id.viewflowindic);
 		indicator.setTitleProvider(mvAdapter);
 		viewFlow.setFlowIndicator(indicator);
+		
+		gPlusView = (ImageView) findViewById(R.id.googleCon);
+		twitView = (ImageView) findViewById(R.id.twiiterCon);
+		fbView = (ImageView) findViewById(R.id.fbCon);
+		
+		gPlusView.setImageResource(R.drawable.googleplus);
+		twitView.setImageResource(R.drawable.twitter);
+		fbView.setImageResource(R.drawable.fb);
+		
+		gPlusView.setOnClickListener(this);
+		twitView.setOnClickListener(this);
+		fbView.setOnClickListener(this);
 		
 		mHandler = new Handler();
 
@@ -429,18 +445,26 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	public void onClick(View v) {
 		switch (v.getId()) {
 
-		case R.id.btnTwitter: // Twitter Button
+		case R.id.twiiterCon: // Twitter Button
 			Intent browsetwitter = new Intent(Intent.ACTION_VIEW,
 					Uri.parse("http://twitter.com/#!/FireplaceMarket"));
 			startActivity(browsetwitter);
 			break;
 
-		case R.id.btnFacebook: // Facebook Button
+		case R.id.fbCon: // Facebook Button
 			Intent browseFacebook = new Intent(
 					Intent.ACTION_VIEW,
 					Uri.parse("http://www.facebook.com/pages/Fireplace-Market/379268035417930"));
 			startActivity(browseFacebook);
 
+			break;
+			
+		case R.id.googleCon: //Google+ Button
+			Intent browseGplus = new Intent(
+				Intent.ACTION_VIEW,
+				Uri.parse("https://plus.google.com/106118854945132150428"));
+				startActivity(browseGplus);
+				
 			break;
 
 		case R.id.btnRepo: // Repository button

@@ -4,11 +4,52 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <ListView
-        android:id="@android:id/list"
+    <RelativeLayout 
+        android:id="@+id/relTwoLay"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent" >
+	 <ListView
+        android:id="@+id/featureList"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:cacheColorHint="#00000000" >
+
     </ListView>
 
+    <LinearLayout
+        android:id="@+id/socialLinLay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:paddingBottom="80dip" >
+
+        <ImageView
+            android:id="@+id/googleCon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dip"
+            android:paddingRight="20dip"
+            android:contentDescription="Google Icon" />
+
+        <ImageView
+            android:id="@+id/twiiterCon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dip"
+            android:paddingRight="20dip"
+            android:contentDescription="Twitter Icon" />
+
+        <ImageView
+            android:id="@+id/fbCon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dip"
+            android:paddingRight="20dip"
+            android:contentDescription="Facebook Icon" />
+    </LinearLayout>
+
+</RelativeLayout>
 </LinearLayout>
