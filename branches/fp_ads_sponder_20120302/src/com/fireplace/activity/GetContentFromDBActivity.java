@@ -254,11 +254,7 @@ public class GetContentFromDBActivity extends ListActivity {
 					bis.close();
 				} catch (Exception e) {
 					e.printStackTrace();
-					// This throws the default icon image into the array list
-					// when it fails to download an image. Most likely because
-					// the icon is not in the db.
-					// This makes for an easy check when the activity first
-					// runs.
+
 					Bitmap bm;
 					bm = ((BitmapDrawable) getResources().getDrawable(
 							R.drawable.ic_no_icon)).getBitmap();

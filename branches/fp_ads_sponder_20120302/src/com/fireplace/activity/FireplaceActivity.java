@@ -1,17 +1,22 @@
 package com.fireplace.activity;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.taptwo.android.widget.TitleFlowIndicator;
 import org.taptwo.android.widget.ViewFlow;
 
@@ -32,7 +37,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,40 +53,42 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.fireplace.adapter.AppListAdapter;
+import com.fireplace.adapter.FeaturedAppAdapter;
 import com.fireplace.adapter.MainViewAdapter;
 import com.fireplace.adsup.R;
 import com.fireplace.software.App;
 import com.fireplace.software.ChangeLog;
+import com.fireplace.software.ItemSkel;
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 public class FireplaceActivity extends Activity implements OnItemClickListener, OnClickListener {
 	
 	// LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
-	ArrayList<String> listItems = new ArrayList<String>();
+	private ArrayList<String> listItems = new ArrayList<String>();
 
 	// DEFINING STRING ADAPTER WHICH WILL HANDLE DATA OF LISTVIEW
-	ArrayAdapter<String> adapter;
-	ImageView gPlusView;
-	ImageView twitView;
-	ImageView fbView;
-
-	private ListView categoryView;
+	private ArrayAdapter<String> adapter;
+	private ImageView gPlusView, twitView, fbView;
+	private Button btnShare, btnDownload;
+	private ListView categoryView, mAppsList, mFeatList;
 	
 	private ViewFlow viewFlow;
 	
 	private MainViewAdapter mvAdapter;
+	private FeaturedAppAdapter faAdapter;
 
 	private static final boolean INCLUDE_SYSTEM_APPS = false;
 
-	private ListView mAppsList;
 	private AppListAdapter mAdapter;
 	private List<App> mApps;
 	private boolean iconsLoaded = false;
+	private ArrayList<ItemSkel> list;
 	
-	AdView adView1;
-	AdView adView2;
-	AdView adView3;
+	AdView adView1, adView2, adView3;
 	final static String TAG = "FireplaceActivity";
 	boolean listReceived = false;
 
@@ -99,6 +105,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 
 		viewFlow = (ViewFlow) findViewById(R.id.viewflow);
 		mvAdapter = new MainViewAdapter(this);
+		faAdapter = new FeaturedAppAdapter(this);
 	
 		if(savedInstanceState == null){
 			viewFlow.setAdapter(mvAdapter, 1);
@@ -109,6 +116,9 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 		TitleFlowIndicator indicator = (TitleFlowIndicator) findViewById(R.id.viewflowindic);
 		indicator.setTitleProvider(mvAdapter);
 		viewFlow.setFlowIndicator(indicator);
+		
+		list = new ArrayList<ItemSkel>();
+		new getFeaturedApp().execute();
 		
 		gPlusView = (ImageView) findViewById(R.id.googleCon);
 		twitView = (ImageView) findViewById(R.id.twiiterCon);
@@ -183,6 +193,11 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 		
 		mAdapter.setListItems(mApps);
 		mAppsList.setAdapter(mAdapter);
+		
+		mFeatList = (ListView) findViewById(R.id.featureList);
+		faAdapter = new FeaturedAppAdapter(getApplicationContext());
+		faAdapter.setListItems(list);
+		mFeatList.setAdapter(faAdapter);
 		
 		new LoadIconsTask().execute(mApps.toArray(new App[] {}));
 				
@@ -287,79 +302,80 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 			alertbox.show();
 
 			break;
+			
 		case R.id.textCheckUpdate:
-			try {
-				// set the download URL, a url that points to a file on the
-				// internet
-				// this is the file to be downloaded
-				URL url = new URL(
-						"http://www.fireplace-market.com/fireplaceUpdate.v"
-								+ getResources().getString(R.string.updateTo)
-								+ ".apk");
-
-				// create the new connection
-				HttpURLConnection urlConnection = (HttpURLConnection) url
-						.openConnection();
-
-				// set up some things on the connection
-				urlConnection.setRequestMethod("GET");
-				urlConnection.setDoOutput(true);
-
-				// and connect!
-				urlConnection.connect();
-
-				// set the path where we want to save the file
-				// in this case, going to save it on the root directory of the
-				// sd card.
-				File SDCardRoot = Environment.getExternalStorageDirectory();
-				// create a new file, specifying the path, and the filename
-				// which we want to save the file as.
-				File file = new File(SDCardRoot + "Fireplace/", "update.apk");
-
-				// this will be used to write the downloaded data into the file
-				// we created
-				FileOutputStream fileOutput = new FileOutputStream(file);
-
-				// this will be used in reading the data from the internet
-				InputStream inputStream = urlConnection.getInputStream();
-
-				// this is the total size of the file
-				int totalSize = urlConnection.getContentLength();
-				// variable to store total downloaded bytes
-				int downloadedSize = 0;
-
-				// create a buffer...
-				byte[] buffer = new byte[1024];
-				int bufferLength = 0; // used to store a temporary size of the
-										// buffer
-
-				// now, read through the input buffer and write the contents to
-				// the file
-				while ((bufferLength = inputStream.read(buffer)) > 0) {
-					// add the data in the buffer to the file in the file output
-					// stream (the file on the sd card
-					fileOutput.write(buffer, 0, bufferLength);
-					// add up the size so we know how much is downloaded
-					downloadedSize += bufferLength;
-					// this is where you would do something to report the
-					// prgress, like this maybe
-					updateProgress(downloadedSize, totalSize);
-
-				}
-				// close the output stream when done
-				fileOutput.close();
-
-				Intent promptInstall = new Intent(Intent.ACTION_VIEW).setData(
-						Uri.parse(SDCardRoot + "Fireplace/update.apk"))
-						.setType("application/vnd.android.package-archive");
-				startActivity(promptInstall);
-
-				// catch some possible errors...
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+//			try {
+//				// set the download URL, a url that points to a file on the
+//				// internet
+//				// this is the file to be downloaded
+//				URL url = new URL(
+//						"http://www.fireplace-market.com/fireplaceUpdate.v"
+//								+ getResources().getString(R.string.updateTo)
+//								+ ".apk");
+//
+//				// create the new connection
+//				HttpURLConnection urlConnection = (HttpURLConnection) url
+//						.openConnection();
+//
+//				// set up some things on the connection
+//				urlConnection.setRequestMethod("GET");
+//				urlConnection.setDoOutput(true);
+//
+//				// and connect!
+//				urlConnection.connect();
+//
+//				// set the path where we want to save the file
+//				// in this case, going to save it on the root directory of the
+//				// sd card.
+//				File SDCardRoot = Environment.getExternalStorageDirectory();
+//				// create a new file, specifying the path, and the filename
+//				// which we want to save the file as.
+//				File file = new File(SDCardRoot + "Fireplace/", "update.apk");
+//
+//				// this will be used to write the downloaded data into the file
+//				// we created
+//				FileOutputStream fileOutput = new FileOutputStream(file);
+//
+//				// this will be used in reading the data from the internet
+//				InputStream inputStream = urlConnection.getInputStream();
+//
+//				// this is the total size of the file
+//				int totalSize = urlConnection.getContentLength();
+//				// variable to store total downloaded bytes
+//				int downloadedSize = 0;
+//
+//				// create a buffer...
+//				byte[] buffer = new byte[1024];
+//				int bufferLength = 0; // used to store a temporary size of the
+//										// buffer
+//
+//				// now, read through the input buffer and write the contents to
+//				// the file
+//				while ((bufferLength = inputStream.read(buffer)) > 0) {
+//					// add the data in the buffer to the file in the file output
+//					// stream (the file on the sd card
+//					fileOutput.write(buffer, 0, bufferLength);
+//					// add up the size so we know how much is downloaded
+//					downloadedSize += bufferLength;
+//					// this is where you would do something to report the
+//					// prgress, like this maybe
+//					updateProgress(downloadedSize, totalSize);
+//
+//				}
+//				// close the output stream when done
+//				fileOutput.close();
+//
+//				Intent promptInstall = new Intent(Intent.ACTION_VIEW).setData(
+//						Uri.parse(SDCardRoot + "Fireplace/update.apk"))
+//						.setType("application/vnd.android.package-archive");
+//				startActivity(promptInstall);
+//
+//				// catch some possible errors...
+//			} catch (MalformedURLException e) {
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
 			// see
 			// http://androidsnippets.com/download-an-http-file-to-sdcard-with-progress-notification
 
@@ -403,6 +419,18 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 				Uri.parse("https://plus.google.com/106118854945132150428"));
 				startActivity(browseGplus);
 				
+			break;
+			
+		case R.id.btnShare:
+			
+			Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
+			
+			break;
+			
+		case R.id.btnDownload:
+			
+			Toast.makeText(this, "Download", Toast.LENGTH_SHORT).show();
+			
 			break;
 
 		case R.id.btnRepo: // Repository button
@@ -575,6 +603,55 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 			apps.add(app);
 		}
 		return apps;
+	}
+	
+	private class getFeaturedApp extends AsyncTask<Void, Integer, ArrayList<ItemSkel>> {
+
+		@Override
+		protected ArrayList<ItemSkel> doInBackground(Void... params) {
+			try {
+				HttpClient httpClient = new DefaultHttpClient();
+				HttpContext localContext = new BasicHttpContext();
+				HttpGet httpGet = new HttpGet(
+						"http://www.fireplace-market.com/getdata.php?feat=true");
+				HttpResponse response = httpClient.execute(httpGet,
+						localContext);
+				String result = "";
+
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(response.getEntity().getContent()));
+
+				String line = null;
+				while ((line = reader.readLine()) != null)
+					result += line;
+
+				if (!list.isEmpty())
+					list.clear();
+				
+				Type type = new TypeToken<ArrayList<ItemSkel>>() {
+				}.getType();
+				Gson g = new Gson();
+				list = g.fromJson(result, type);
+
+				listReceived = true;				
+				return list;
+			} catch (JsonSyntaxException e) {
+				Log.e(TAG, e.getMessage());
+			} catch (ClientProtocolException e) {
+				Log.e(TAG, e.getMessage());
+			} catch (IllegalStateException e) {
+				Log.e(TAG, e.getMessage());
+			} catch (IOException e) {
+				Log.e(TAG, e.getMessage());
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(ArrayList<ItemSkel> items) {
+			faAdapter.notifyDataSetChanged();
+		}
+		
 	}
 	
 	/**
