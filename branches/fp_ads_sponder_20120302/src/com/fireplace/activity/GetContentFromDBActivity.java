@@ -76,7 +76,7 @@ public class GetContentFromDBActivity extends ListActivity {
         // Initiate a generic request to load it with an ad
         adView4.loadAd(new AdRequest());
 		
-		ptype = extras.getInt("position") + 1;
+		ptype = extras.getInt("position");
 		list = new ArrayList<ItemSkel>();
 		new getListTask().execute();
 		LoadData();
@@ -116,7 +116,7 @@ public class GetContentFromDBActivity extends ListActivity {
 					list.clear();
 				
 				for(ItemSkel item: needsFilteredList) {
-					if (item.getPtype().equals(ptype.toString()) || ptype == 1) list.add(item);
+					if (item.getPtype().equals(ptype.toString()) || ptype == 0) list.add(item);
 				}
 				
 				listReceived = true;				
