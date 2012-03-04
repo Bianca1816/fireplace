@@ -155,7 +155,7 @@ public class DownloadFileActivity extends Activity implements
 				mProgressDialog.setMessage("Downloading application...");
 				mProgressDialog.setIndeterminate(false);
 				mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-				mProgressDialog.setCancelable(false);
+				mProgressDialog.setCancelable(true);
 			} else {
 				mProgressDialog.setMax(carryOverFileLength);
 			}

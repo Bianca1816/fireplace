@@ -350,84 +350,84 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 
 			break;
 		case R.id.textCheckUpdate:
-			try {
-				// set the download URL, a url that points to a file on the
-				// internet
-				// this is the file to be downloaded
-				URL url = new URL(
-						"http://www.fireplace-market.com/fireplaceUpdate.v"
-								+ getResources().getString(R.string.updateTo)
-								+ ".apk");
-
-				// create the new connection
-				HttpURLConnection urlConnection = (HttpURLConnection) url
-						.openConnection();
-
-				// set up some things on the connection
-				urlConnection.setRequestMethod("GET");
-				urlConnection.setDoOutput(true);
-
-				// and connect!
-				urlConnection.connect();
-
-				// set the path where we want to save the file
-				// in this case, going to save it on the root directory of the
-				// sd card.
-				File SDCardRoot = Environment.getExternalStorageDirectory();
-				// create a new file, specifying the path, and the filename
-				// which we want to save the file as.
-				File file = new File(SDCardRoot + "Fireplace/", "update.apk");
-
-				// this will be used to write the downloaded data into the file
-				// we created
-				FileOutputStream fileOutput = new FileOutputStream(file);
-
-				// this will be used in reading the data from the internet
-				InputStream inputStream = urlConnection.getInputStream();
-
-				// this is the total size of the file
-				int totalSize = urlConnection.getContentLength();
-				// variable to store total downloaded bytes
-				int downloadedSize = 0;
-
-				// create a buffer...
-				byte[] buffer = new byte[1024];
-				int bufferLength = 0; // used to store a temporary size of the
-										// buffer
-
-				// now, read through the input buffer and write the contents to
-				// the file
-				while ((bufferLength = inputStream.read(buffer)) > 0) {
-					// add the data in the buffer to the file in the file output
-					// stream (the file on the sd card
-					fileOutput.write(buffer, 0, bufferLength);
-					// add up the size so we know how much is downloaded
-					downloadedSize += bufferLength;
-					// this is where you would do something to report the
-					// prgress, like this maybe
-					updateProgress(downloadedSize, totalSize);
-
-				}
-				// close the output stream when done
-				fileOutput.close();
-
-				Intent promptInstall = new Intent(Intent.ACTION_VIEW).setData(
-						Uri.parse(SDCardRoot + "Fireplace/update.apk"))
-						.setType("application/vnd.android.package-archive");
-				startActivity(promptInstall);
-
-				// catch some possible errors...
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			// see
-			// http://androidsnippets.com/download-an-http-file-to-sdcard-with-progress-notification
-
-			Toast.makeText(this, "No new updates available!", Toast.LENGTH_LONG)
-					.show();
-			break;
+//			try {
+//				// set the download URL, a url that points to a file on the
+//				// internet
+//				// this is the file to be downloaded
+//				URL url = new URL(
+//						"http://www.fireplace-market.com/fireplaceUpdate.v"
+//								+ getResources().getString(R.string.updateTo)
+//								+ ".apk");
+//
+//				// create the new connection
+//				HttpURLConnection urlConnection = (HttpURLConnection) url
+//						.openConnection();
+//
+//				// set up some things on the connection
+//				urlConnection.setRequestMethod("GET");
+//				urlConnection.setDoOutput(true);
+//
+//				// and connect!
+//				urlConnection.connect();
+//
+//				// set the path where we want to save the file
+//				// in this case, going to save it on the root directory of the
+//				// sd card.
+//				File SDCardRoot = Environment.getExternalStorageDirectory();
+//				// create a new file, specifying the path, and the filename
+//				// which we want to save the file as.
+//				File file = new File(SDCardRoot + "Fireplace/", "update.apk");
+//
+//				// this will be used to write the downloaded data into the file
+//				// we created
+//				FileOutputStream fileOutput = new FileOutputStream(file);
+//
+//				// this will be used in reading the data from the internet
+//				InputStream inputStream = urlConnection.getInputStream();
+//
+//				// this is the total size of the file
+//				int totalSize = urlConnection.getContentLength();
+//				// variable to store total downloaded bytes
+//				int downloadedSize = 0;
+//
+//				// create a buffer...
+//				byte[] buffer = new byte[1024];
+//				int bufferLength = 0; // used to store a temporary size of the
+//										// buffer
+//
+//				// now, read through the input buffer and write the contents to
+//				// the file
+//				while ((bufferLength = inputStream.read(buffer)) > 0) {
+//					// add the data in the buffer to the file in the file output
+//					// stream (the file on the sd card
+//					fileOutput.write(buffer, 0, bufferLength);
+//					// add up the size so we know how much is downloaded
+//					downloadedSize += bufferLength;
+//					// this is where you would do something to report the
+//					// prgress, like this maybe
+//					updateProgress(downloadedSize, totalSize);
+//
+//				}
+//				// close the output stream when done
+//				fileOutput.close();
+//
+//				Intent promptInstall = new Intent(Intent.ACTION_VIEW).setData(
+//						Uri.parse(SDCardRoot + "Fireplace/update.apk"))
+//						.setType("application/vnd.android.package-archive");
+//				startActivity(promptInstall);
+//
+//				// catch some possible errors...
+//			} catch (MalformedURLException e) {
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//			// see
+//			// http://androidsnippets.com/download-an-http-file-to-sdcard-with-progress-notification
+//
+//			Toast.makeText(this, "No new updates available!", Toast.LENGTH_LONG)
+//					.show();
+//			break;
 		}
 
 		return true;
