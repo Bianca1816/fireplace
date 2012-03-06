@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="20dip"
             android:paddingRight="20dip"
-            android:contentDescription="Google Icon" />
+            android:contentDescription="@string/google_icon" />
 
         <ImageView
             android:id="@+id/twiiterCon"
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="20dip"
             android:paddingRight="20dip"
-            android:contentDescription="Twitter Icon" />
+            android:contentDescription="@string/twitter_icon" />
 
         <ImageView
             android:id="@+id/fbCon"
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="20dip"
             android:paddingRight="20dip"
-            android:contentDescription="Facebook Icon" />
+            android:contentDescription="@string/facebook_icon" />
     </LinearLayout>
     <com.google.ads.AdView
                         android:id="@+id/adView2"
