@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:text="Storage: "
+            android:text="@string/storage_text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/textView1"
-            android:text="Android: "
+            android:text="@string/storage_android_text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/textView2"
-            android:text="Device: "
+            android:text="@string/storage_device_text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/textView3"
-            android:text="Model:"
+            android:text="@string/storage_model_text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="34dp"
             android:layout_toRightOf="@+id/textView1"
-            android:text="Large Text"
+            android:text="@string/storage_large_text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
@@ -61,7 +61,7 @@
             android:layout_alignBaseline="@+id/textView4"
             android:layout_alignBottom="@+id/textView4"
             android:layout_alignLeft="@+id/infoStorage"
-            android:text="Large Text"
+            android:text="@string/storage_large_text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/infoModel"
             android:layout_alignLeft="@+id/infoModel"
-            android:text="Large Text"
+            android:text="@string/storage_large_text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/infoDevice"
             android:layout_alignLeft="@+id/infoDevice"
-            android:text="Large Text"
+            android:text="@string/storage_large_text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
@@ -88,7 +88,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/textView4"
-            android:text="Fireplace:"
+            android:text="@string/storage_fp_market"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
@@ -98,7 +98,7 @@
             android:layout_alignBaseline="@+id/textView5"
             android:layout_alignBottom="@+id/textView5"
             android:layout_alignLeft="@+id/infoModel"
-            android:text="Large Text"
+            android:text="@string/storage_large_text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
         <Button
             android:id="@+id/full_changelog"
@@ -106,7 +106,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:text="Full Changelog"
+            android:text="@string/storage_full_cl"
             android:textColor="@color/white" />
 
     </RelativeLayout>

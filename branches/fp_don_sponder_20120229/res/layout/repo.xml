@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="Add"
+            android:text="@string/repo_add_button_text"
             android:textColor="@color/white" />
 
         <ListView
@@ -37,7 +37,7 @@
             android:layout_toLeftOf="@+id/addBtn"
             android:textColor="@color/white"
             android:inputType="text" 
-            android:hint="Repo name" >
+            android:hint="@string/repo_name_hint" >
 
             <requestFocus />
         </EditText>
