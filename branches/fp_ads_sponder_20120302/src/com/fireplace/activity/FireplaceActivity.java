@@ -53,7 +53,6 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.fireplace.adapter.AppListAdapter;
-import com.fireplace.adapter.FeaturedAppAdapter;
 import com.fireplace.adapter.MainViewAdapter;
 import com.fireplace.adsup.R;
 import com.fireplace.software.App;
@@ -73,13 +72,11 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 	// DEFINING STRING ADAPTER WHICH WILL HANDLE DATA OF LISTVIEW
 	private ArrayAdapter<String> adapter;
 	private ImageView gPlusView, twitView, fbView;
-	private Button btnShare, btnDownload;
-	private ListView categoryView, mAppsList, mFeatList;
+	private ListView categoryView, mAppsList;
 	
 	private ViewFlow viewFlow;
 	
 	private MainViewAdapter mvAdapter;
-	private FeaturedAppAdapter faAdapter;
 
 	private static final boolean INCLUDE_SYSTEM_APPS = false;
 
@@ -105,7 +102,6 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 
 		viewFlow = (ViewFlow) findViewById(R.id.viewflow);
 		mvAdapter = new MainViewAdapter(this);
-		faAdapter = new FeaturedAppAdapter(this);
 	
 		if(savedInstanceState == null){
 			viewFlow.setAdapter(mvAdapter, 1);
@@ -118,7 +114,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 		viewFlow.setFlowIndicator(indicator);
 		
 		list = new ArrayList<ItemSkel>();
-		new getFeaturedApp().execute();
+//		new getFeaturedApp().execute();
 		
 		gPlusView = (ImageView) findViewById(R.id.googleCon);
 		twitView = (ImageView) findViewById(R.id.twiiterCon);
@@ -194,12 +190,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 		
 		mAdapter.setListItems(mApps);
 		mAppsList.setAdapter(mAdapter);
-		
-		mFeatList = (ListView) findViewById(R.id.featureList);
-		faAdapter = new FeaturedAppAdapter(getApplicationContext());
-		faAdapter.setListItems(list);
-		mFeatList.setAdapter(faAdapter);
-		
+				
 		new LoadIconsTask().execute(mApps.toArray(new App[] {}));
 				
 /*-----------------------Unused-----------------------------------------/
@@ -421,18 +412,6 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 				startActivity(browseGplus);
 				
 			break;
-			
-		case R.id.btnShare:
-			
-			Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
-			
-			break;
-			
-		case R.id.btnDownload:
-			
-			Toast.makeText(this, "Download", Toast.LENGTH_SHORT).show();
-			
-			break;
 
 		case R.id.btnRepo: // Repository button
 			// Show repo's
@@ -646,11 +625,6 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 				Log.e(TAG, e.getMessage());
 			}
 			return null;
-		}
-		
-		@Override
-		protected void onPostExecute(ArrayList<ItemSkel> items) {
-			faAdapter.notifyDataSetChanged();
 		}
 		
 	}
