@@ -71,4 +71,8 @@
     <string name="unlicensed_dialog_body">Your copy of this application is not licensed.</string>
     <string name="check_license">License Check</string>
     <string name="featured_app_promo_desc">Featured Application Tile</string>
+        <string name="menu_donate_button_text">Donate</string>
+    <string name="menu_about_button_text">About</string>
+    <string name="menu_update_button_text">Update</string>
+    <string name="menu_repo_button_text">Repo</string>
 </resources>
