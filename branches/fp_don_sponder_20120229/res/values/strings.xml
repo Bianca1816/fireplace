@@ -70,4 +70,5 @@
     <string name="unlicensed_dialog_title">Warning</string>
     <string name="unlicensed_dialog_body">Your copy of this application is not licensed.</string>
     <string name="check_license">License Check</string>
+    <string name="featured_app_promo_desc">Featured Application Tile</string>
 </resources>

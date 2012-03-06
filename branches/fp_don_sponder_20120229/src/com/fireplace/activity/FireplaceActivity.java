@@ -1,12 +1,7 @@
 package com.fireplace.activity;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,13 +22,13 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings.Secure;
 import android.util.Log;
@@ -69,9 +64,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 
 	// DEFINING STRING ADAPTER WHICH WILL HANDLE DATA OF LISTVIEW
 	private ArrayAdapter<String> adapter;
-	ImageView gPlusView;
-	ImageView twitView;
-	ImageView fbView;
+	ImageView gPlusView, twitView, fbView, featuredAppImageView;
 	
 	private ListView categoryView;
 
@@ -117,14 +110,17 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		gPlusView = (ImageView) findViewById(R.id.googleCon);
 		twitView = (ImageView) findViewById(R.id.twiiterCon);
 		fbView = (ImageView) findViewById(R.id.fbCon);
+		featuredAppImageView = (ImageView) findViewById(R.id.featureTileTop);
 		
 		gPlusView.setImageResource(R.drawable.googleplus);
 		twitView.setImageResource(R.drawable.twitter);
 		fbView.setImageResource(R.drawable.fb);
+		featuredAppImageView.setImageResource(R.drawable.su_ic_logo);
 		
 		gPlusView.setOnClickListener(this);
 		twitView.setOnClickListener(this);
 		fbView.setOnClickListener(this);
+		featuredAppImageView.setOnClickListener(this);
 		
 		mHandler = new Handler();
 
@@ -322,14 +318,14 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.textDonate:
+		case R.id.menuDonate:
 			Intent browse = new Intent(
 					Intent.ACTION_VIEW,
 					Uri.parse("https://www.paypal.com/us/cgi-bin/webscr?cmd=_flow&SESSION=Ix6KJPWgQAW6v-JBj3RnVjrNdIZAvQgsh3Yi01blXbL5tDo4PKyPeMVYDFy&dispatch=5885d80a13c0db1f8e263663d3faee8d4026841ac68a446f69dad17fb2afeca3"));
 			startActivity(browse);
 			break;
 
-		case R.id.textAbout:
+		case R.id.menuAbout:
 			AlertDialog.Builder alertbox = new AlertDialog.Builder(this);
 			alertbox.setTitle("About Fireplace Market");
 			alertbox.setMessage("Fireplace Market is a 3rd party app store which contain apps and tweaks which didn't get into Android Market"
@@ -350,7 +346,16 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 			alertbox.show();
 
 			break;
-		case R.id.textCheckUpdate:
+			
+		case R.id.menuRepo: // Repository button
+			// Show repo's
+			final Context contextRepo = this;
+
+			Intent intentRepo = new Intent(contextRepo, RepoActivity.class);
+			startActivityForResult(intentRepo, 0);
+			break;
+			
+		case R.id.menuCheckUpdate:
 //			try {
 //				// set the download URL, a url that points to a file on the
 //				// internet
@@ -466,6 +471,17 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 				Uri.parse("https://plus.google.com/106118854945132150428"));
 				startActivity(browseGplus);
 				
+			break;
+			
+		case R.id.featureTileTop: //Featured App (Static for this release, will be dynamic next release)
+			Intent featuredIntent = new Intent(FireplaceActivity.this, DownloadFileActivity.class);
+			featuredIntent.putExtra("title","Superuser");
+			featuredIntent.putExtra("desc","Hook into your phone's power.\nGrant and manage Superuser rights for your phone.\n\nThis app requires that you already have root, or a custom recovery image to work.");
+			featuredIntent.putExtra("devl","ChansDD");
+			featuredIntent.putExtra("icon",BitmapFactory.decodeResource(getResources(),R.drawable.su_icon));
+			featuredIntent.putExtra("link","http://www.fireplace-market.com/apks/superuser.apk");
+			startActivity(featuredIntent);
+			
 			break;
 
 		case R.id.btnRepo: // Repository button
