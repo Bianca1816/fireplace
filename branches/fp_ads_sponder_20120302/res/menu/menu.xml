@@ -1,11 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/textDonate"
+    <item android:id="@+id/menuDonate"
         android:icon="@drawable/ic_menu_love" 
         android:title="Donate"/>
-    <item android:id="@+id/textAbout"
+    <item android:id="@+id/menuAbout"
         android:title="About"
         android:icon="@drawable/ic_menu_sun" />
-    <item android:id="@+id/textCheckUpdate"
+    <item android:id="@+id/menuCheckUpdate"
         android:title="Update"
         android:icon="@drawable/ic_menu_globe" />
+    <item android:id="@+id/menuRepo"
+        android:title="Repo"
+        android:icon="@drawable/storage_icon" />
 </menu>

@@ -8,15 +8,14 @@
         android:id="@+id/relTwoLay"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent" >
-	 <ListView
-        android:id="@+id/featureList"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="160dip"
-        android:layout_alignParentRight="true"
-        android:cacheColorHint="#00000000" >
-
-    </ListView>
+	 <ImageView 
+	     android:id="@+id/featureTileTop"
+	     android:layout_width="wrap_content"
+	     android:layout_height="wrap_content"
+	     android:layout_centerHorizontal="true"
+	     android:layout_marginTop="50dip"
+	     android:background="@drawable/border_1_px"
+	     android:contentDescription="@string/featured_app_promo_desc" />
 
     <LinearLayout
         android:id="@+id/socialLinLay"

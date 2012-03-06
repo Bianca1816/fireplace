@@ -62,4 +62,5 @@
     <string name="storage_large_text">Large Text</string>
     <string name="storage_fp_market">Fireplace Market: </string>
     <string name="storage_full_cl">Full Changelog</string>
+    <string name="featured_app_promo_desc">Featured Application Tile</string>
 </resources>
