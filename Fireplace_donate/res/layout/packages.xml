@@ -8,20 +8,20 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="@string/pkgs_textview_two" />
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="@string/pkgs_textview_one" />
 
     <Button
         android:id="@+id/button1"
         style="@style/button_holo_dark_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="@string/pkgs_button_one"
         android:textColor="@color/white" />
 
 </LinearLayout>

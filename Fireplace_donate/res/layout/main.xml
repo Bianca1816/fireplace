@@ -3,11 +3,12 @@
     xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="horizontal" >
+    android:orientation="horizontal" 
+    android:baselineAligned="false">
 
     <LinearLayout
         android:id="@+id/linearLayout1"
-        android:layout_width="wrap_content"
+        android:layout_width="0dip"
         android:layout_height="fill_parent"
         android:layout_weight="1.05"
         android:background="@drawable/background_holo_dark"
@@ -18,7 +19,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Model- OS" />
+            android:text="@string/device_info_text" />
 
         <uk.co.jasonfry.android.tools.ui.SwipeView
             android:id="@+id/swipe_view"
@@ -32,7 +33,7 @@
                 android:orientation="vertical" >
 
                 <RelativeLayout
-                    android:id="@+id/relativeLayout2"
+                    android:id="@+id/relativeLayout1"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content" >
 
@@ -44,7 +45,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentTop="true"
                         android:drawableLeft="@drawable/twitter_icon"
-                        android:text="Twitter"
+                        android:text="@string/twit_button_text"
                         android:textColor="@color/white" />
 
                     <ListView
@@ -62,7 +63,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_below="@+id/btnTwitter"
                         android:drawableLeft="@drawable/facebook_icon"
-                        android:text="Facebook"
+                        android:text="@string/facebook_button_text"
                         android:textColor="@color/white" />
 
                     <TextView
@@ -72,7 +73,7 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
                         android:layout_marginBottom="73dp"
-                        android:text="Under developing" />
+                        android:text="@string/under_dev_text" />
 
                     <ProgressBar
                         android:id="@+id/progressBar1"
@@ -102,7 +103,7 @@
                         style="@style/button_holo_dark_button"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:text="All Applications"
+                        android:text="@string/view_all_button_text"
                         android:textColor="@color/white" />
 
                     <ListView
@@ -122,7 +123,7 @@
                 android:layout_height="fill_parent" >
 
                 <RelativeLayout
-                    android:id="@+id/relativeLayout1"
+                    android:id="@+id/relativeLayout3"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content" >
 
@@ -135,7 +136,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_alignParentTop="true"
                         android:drawableLeft="@drawable/repo_icon"
-                        android:text="Repository"
+                        android:text="@string/repo_button_text"
                         android:textColor="@color/white" />
 
                     <Button
@@ -148,7 +149,7 @@
                         android:layout_below="@+id/btnRepo"
                         android:drawableLeft="@drawable/storage_icon"
                         android:scaleType="center"
-                        android:text="Packages"
+                        android:text="@string/packages_button_text"
                         android:textColor="@color/white" />
 
                     <Button
@@ -160,7 +161,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_below="@+id/btnPack"
                         android:drawableLeft="@drawable/packages_icon"
-                        android:text="Storage"
+                        android:text="@string/storage_button_text"
                         android:textColor="@color/white" />
 
                 </RelativeLayout>
