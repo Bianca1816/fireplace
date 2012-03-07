@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="app_name">Marché Cheminée</string>
+    <string-array name="Category">
+        <item>Tous</item>
+        <item>Applications</item>
+        <item>Outils de réseau</item>
+        <item>Utilitaires racines</item>
+        <item>Outils système</item>
+        <item>sécurité</item>
+        <item>Tweaks</item>
+        <item>Thèmes</item>
+    </string-array>
+    <string name="up_one_level">..</string>
+    <string name="current_dir">.</string>
+    <string name="version">2.3</string>
+    <string name="updateTo">2.3</string>
+    <string name="info_changelog">
+        Marché Cheminée 2.3
+        \n- Nouvelle interface utilisateur
+        \n- Télécharger notifications
+        \n- Catégories
+        \n- Application en vedette
+        \n- Corrections de bugs</string>
+    <string name="app_icon">Application Icon</string>
+    <string name="category_label">Catégorie: </string>
+    <string name="developer_label">Developer</string>
+    <string name="download_label">Promoteur</string>
+    <string name="prev_activity_label">Infos de l\'activité précédente</string>
+    <string name="info_label">INFORMATION</string>
+    <string name="app_title_label">App Titre</string>
+    <string name="changelog_ok_button">Bien</string>
+    <string name="changelog_full_title">des modifications</string>
+    <string name="changelog_title">Quoi de neuf!</string>
+    <string name="share_label">Répartir</string>
+    <string name="btnSearchLabel">Recherche</string>
+    <string name="strSetUpComp">Mise en place des composants</string>
+    <string name="etSearchHint">Qu\'est-ce que vous cherchez?</string>
+    <string-array name="ViewTitles">
+        <item>Installé</item>
+        <item>En vedette</item>
+        <item>Catégorie</item>
+    </string-array>
+    <string name="empty_list_placeholder">Pas de données</string>
+    <string name="device_info_text">Modèle - OS</string>
+    <string name="twit_button_text">Twitter</string>
+    <string name="facebook_button_text">Facebook</string>
+    <string name="under_dev_text">En développement</string>
+    <string name="view_all_button_text">Tous Applications</string>
+    <string name="repo_button_text">Dépôt</string>
+    <string name="packages_button_text">Forfaits</string>
+    <string name="storage_button_text">Stockage</string>
+    <string name="pkgs_textview_two">Deux TextView</string>
+    <string name="pkgs_textview_one">Un TextView</string>
+    <string name="pkgs_button_one">Bouton On</string>
+    <string name="repo_add_button_text">Ajouter</string>
+    <string name="repo_name_hint">Nom Repo</string>
+    <string name="google_icon">Google Icône</string>
+    <string name="twitter_icon">Twitter Icône</string>
+    <string name="facebook_icon">Facebook Icône</string>
+    <string name="storage_text">Stockage: </string>
+    <string name="storage_android_text">Androïde: </string>
+    <string name="storage_device_text">Dispositif: </string>
+    <string name="storage_model_text">Modèle: </string>
+    <string name="storage_large_text">la taille du texte</string>
+    <string name="storage_fp_market">Marché Cheminée: </string>
+    <string name="storage_full_cl">Journal pleine mutation</string>
+    <string name="featured_app_promo_desc">Titre de l\'application vedette</string>
+    <string name="menu_donate_button_text">Donner</string>
+    <string name="menu_about_button_text">Sur</string>
+    <string name="menu_update_button_text">Réviser</string>
+    <string name="menu_repo_button_text">Repo</string>
+</resources>
