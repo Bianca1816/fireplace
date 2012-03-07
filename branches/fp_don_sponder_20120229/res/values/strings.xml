@@ -2,11 +2,14 @@
 <resources>
     <string name="app_name">Fireplace Market +</string>
     <string-array name="Category">
-        <item>Development</item>
-        <item>Network</item>
-        <item>System</item>
+        <item>All</item>
+        <item>Applications</item>
+        <item>Network Tools</item>
+        <item>Root Utilities</item>
+        <item>System Tools</item>
         <item>Security</item>
-        <item>Permissions</item>
+        <item>Tweaks</item>
+        <item>Themes</item>
     </string-array>
     <string name="up_one_level">..</string>
     <string name="current_dir">.</string>
@@ -15,9 +18,9 @@
     <string name="info_changelog">
         Fireplace Market 2.3
         \n- New UI (ICS-like)
-        \n- Added download notification
+        \n- Download notifications
         \n- Categories
-        \n- Featured Applications
+        \n- Featured Application
         \n- Bug Fixes</string>
     <string name="app_icon">Application Icon</string>
     <string name="category_label">Category: </string>
