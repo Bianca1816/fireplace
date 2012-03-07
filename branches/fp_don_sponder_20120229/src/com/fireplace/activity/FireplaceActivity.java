@@ -138,7 +138,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		);
 
 		//disable doCheck(), to disable the licensing check
-		// doCheck();
+		 doCheck();
 
 		ChangeLog cl = new ChangeLog(this);
 		if (cl.firstRun())
