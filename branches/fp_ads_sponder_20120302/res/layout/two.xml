@@ -4,31 +4,64 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-    
-    <RelativeLayout 
-        android:id="@+id/relTwoLay"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent" >
-	 <WebView
-        android:id="@+id/webView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/adView2"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" />
-    <com.google.ads.AdView
-                        android:id="@+id/adView1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        ads:adSize="BANNER"
-                        ads:adUnitId="a14f43802ef4101"
-                        ads:loadAdOnCreate="true"
-                        android:layout_alignParentBottom="true">
-                    </com.google.ads.AdView>
-
-    
 
-</RelativeLayout>
-    
+    <RelativeLayout
+        android:id="@+id/relTwoLay"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <ImageView
+            android:id="@+id/featureTileTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dip"
+            android:background="@drawable/border_1_px"
+            android:contentDescription="@string/featured_app_promo_desc" />
+
+        <LinearLayout
+            android:id="@+id/socialLinLay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            android:paddingBottom="80dip" >
+
+            <ImageView
+                android:id="@+id/googleCon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/google_icon"
+                android:paddingLeft="20dip"
+                android:paddingRight="20dip" />
+
+            <ImageView
+                android:id="@+id/twiiterCon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/twitter_icon"
+                android:paddingLeft="20dip"
+                android:paddingRight="20dip" />
+
+            <ImageView
+                android:id="@+id/fbCon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/facebook_icon"
+                android:paddingLeft="20dip"
+                android:paddingRight="20dip" />
+        </LinearLayout>
+
+        <com.google.ads.AdView
+            android:id="@+id/adView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="a14f43802ef4101"
+            ads:loadAdOnCreate="true" >
+        </com.google.ads.AdView>
+    </RelativeLayout>
 
 </LinearLayout>
