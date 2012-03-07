@@ -13,6 +13,7 @@
       android:layout_marginBottom="2dip"
       android:layout_marginLeft="2dip"
       android:src="@drawable/icon"
+      android:contentDescription="@string/app_icon"
       android:layout_gravity="center_vertical" />
 
     

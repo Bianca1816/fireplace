@@ -6,10 +6,17 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -18,6 +25,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.text.util.Linkify;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -110,8 +118,10 @@ public class DownloadFileActivity extends Activity implements
 			setTitle("About " + title);
 			TextView txtDesc = (TextView) findViewById(R.id.lbInfo);
 			txtDesc.setText(extras.getString("desc"));
+			Linkify.addLinks(txtDesc, Linkify.ALL);
 			TextView txtDevlName = (TextView) findViewById(R.id.lbDevlName);
 			txtDevlName.setText(extras.getString("devl"));
+			Linkify.addLinks(txtDevlName, Linkify.ALL);
 			TextView txtCategory = (TextView) findViewById(R.id.lbCategory);
 			txtCategory.setVisibility(View.GONE);
 			txtCategory.setText("Category: " + extras.getString("ptype"));
@@ -143,7 +153,7 @@ public class DownloadFileActivity extends Activity implements
 				mProgressDialog.setMessage("Downloading application...");
 				mProgressDialog.setIndeterminate(false);
 				mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-				mProgressDialog.setCancelable(false);
+				mProgressDialog.setCancelable(true);
 			} else {
 				mProgressDialog.setMax(carryOverFileLength);
 			}
@@ -178,10 +188,10 @@ public class DownloadFileActivity extends Activity implements
 
 	private void shareIt() {
 		//sharing implementation here
+		
 		Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
 		sharingIntent.setType("text/plain");
 		String shareBody = "I just installed " + title + " using Fireplace Market.";
-		sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
 		sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
 		startActivity(Intent.createChooser(sharingIntent, "Share via"));
 		}
@@ -321,8 +331,44 @@ public class DownloadFileActivity extends Activity implements
 			Intent installIntent = new Intent(Intent.ACTION_VIEW);
 			installIntent.setDataAndType(Uri.fromFile(appFile),
 					"application/vnd.android.package-archive");
-			startActivity(installIntent);
+			boolean inFocusOrAlive = false;
+			
+			ActivityManager actManager = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+			List<RunningAppProcessInfo> appProcesses = actManager.getRunningAppProcesses();
+			
+			if(appProcesses != null) {
+				final String packageName = getApplicationContext().getPackageName();
+			    for (RunningAppProcessInfo appProcess : appProcesses) {
+			      if (appProcess.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND && appProcess.processName.equals(packageName)) {
+			    	  inFocusOrAlive = true;
+			      }
+			    }
+			}
+			if (inFocusOrAlive) {
+				startActivity(installIntent);
+			} else {
 
+				NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+				
+				int icon = R.drawable.ic_launcher_fire_in_box;
+				CharSequence tickerText = title + " has been downloaded.";
+				long when = System.currentTimeMillis();
+	
+				Notification notification = new Notification(icon, tickerText, when);
+	
+				Context context = getApplicationContext();
+				CharSequence contentTitle = title;
+				CharSequence contentText = "Click here to install...";
+				PendingIntent contentIntent = PendingIntent.getActivity(DownloadFileActivity.this, 0, installIntent, Notification.FLAG_ONLY_ALERT_ONCE);
+	
+				notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+				notification.flags |= Notification.FLAG_AUTO_CANCEL;
+				notification.defaults |= Notification.DEFAULT_SOUND;
+				
+				final int HELLO_ID = 1;
+	
+				mNotificationManager.notify(HELLO_ID, notification);
+			}
 		}
 	}
 	

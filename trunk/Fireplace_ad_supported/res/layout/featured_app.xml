@@ -28,50 +28,19 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/lbAppTitle"
-            android:layout_marginTop="16dp"
-            android:text="@string/info_label"
+            android:layout_marginTop="16dip"
             android:isScrollContainer="true"
+            android:text="@string/info_label"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-        <ScrollView 
-            android:id="@+id/svDesc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/lbInfoText">
-	        <TextView
-	            android:id="@+id/lbInfo"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/prev_activity_label" />
-		</ScrollView>
-        <Button
-            android:id="@+id/btnDownload"
-            style="@style/button_holo_dark_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="85dp"
-            android:text="@string/download_label"
-            android:textColor="@color/white" />
 
-        <TextView
-            android:id="@+id/lbDeveloper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/btnDownload"
-            android:layout_alignBottom="@+id/btnDownload"
-            android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/btnDownload"
-            android:text="@string/developer_label" />
-        <TextView
-            android:id="@+id/lbDevlName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/lbDeveloper"
-            android:textAppearance="?android:attr/textAppearanceMedium"/>
+            <TextView
+                android:id="@+id/lbInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/lbInfoText"
+                android:text="@string/prev_activity_label" />
 
         <ImageView
             android:id="@+id/imageView1"
@@ -82,25 +51,40 @@
             android:contentDescription="@string/app_icon"
             android:src="@drawable/icon" />
 
-        <TextView
-            android:id="@+id/lbCategory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/lbDeveloper"
-            android:layout_marginTop="14dp"
-            android:text="@string/category_label"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
         <Button
             android:id="@+id/btnShare"
             style="@style/button_holo_dark_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/lbInfoText"
+            android:layout_above="@+id/lbInfoText"
             android:layout_alignParentRight="true"
             android:text="@string/share_label"
             android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/btnDownload"
+            style="@style/button_holo_dark_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/lbInfo"
+            android:text="@string/download_label"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/lbDeveloper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/btnDownload"
+            android:layout_alignParentLeft="true"
+            android:text="@string/developer_label" />
+        <TextView
+            android:id="@+id/lbDevlName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lbDeveloper"
+            android:layout_alignParentLeft="true"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
     </RelativeLayout>
 
