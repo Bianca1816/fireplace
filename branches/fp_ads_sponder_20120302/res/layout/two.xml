@@ -4,54 +4,20 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
+    
     <RelativeLayout 
         android:id="@+id/relTwoLay"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent" >
-	 <ImageView 
-	     android:id="@+id/featureTileTop"
-	     android:layout_width="wrap_content"
-	     android:layout_height="wrap_content"
-	     android:layout_centerHorizontal="true"
-	     android:layout_marginTop="50dip"
-	     android:background="@drawable/border_1_px"
-	     android:contentDescription="@string/featured_app_promo_desc" />
-
-    <LinearLayout
-        android:id="@+id/socialLinLay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:orientation="horizontal"
-        android:paddingBottom="80dip" >
-
-        <ImageView
-            android:id="@+id/googleCon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dip"
-            android:paddingRight="20dip"
-            android:contentDescription="@string/google_icon" />
-
-        <ImageView
-            android:id="@+id/twiiterCon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dip"
-            android:paddingRight="20dip"
-            android:contentDescription="@string/twitter_icon" />
-
-        <ImageView
-            android:id="@+id/fbCon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dip"
-            android:paddingRight="20dip"
-            android:contentDescription="@string/facebook_icon" />
-    </LinearLayout>
+	 <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/adView2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" />
     <com.google.ads.AdView
-                        android:id="@+id/adView2"
+                        android:id="@+id/adView1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         ads:adSize="BANNER"
@@ -59,6 +25,8 @@
                         ads:loadAdOnCreate="true"
                         android:layout_alignParentBottom="true">
                     </com.google.ads.AdView>
+
+    
 
 </RelativeLayout>
     
