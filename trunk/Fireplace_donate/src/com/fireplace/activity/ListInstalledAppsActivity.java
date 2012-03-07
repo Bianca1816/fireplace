@@ -44,7 +44,8 @@ public class ListInstalledAppsActivity extends Activity implements OnItemClickLi
    @Override
    public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
-      setContentView(R.layout.browse);
+//      setContentView(R.layout.browse);
+      setContentView(R.layout.one);
       setTitle("Installed applications");
             
       mAppsList = (ListView) findViewById(R.id.listView1);
