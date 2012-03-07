@@ -31,9 +31,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -47,6 +44,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -91,6 +91,8 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 	AdView adView1, adView2, adView3;
 	final static String TAG = "FireplaceActivity";
 	boolean listReceived = false;
+	
+	final Activity activity = this;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -119,10 +121,15 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 		list = new ArrayList<ItemSkel>();
 //		new getFeaturedApp().execute();
 		
-		gPlusView = (ImageView) findViewById(R.id.googleCon);
-		twitView = (ImageView) findViewById(R.id.twiiterCon);
-		fbView = (ImageView) findViewById(R.id.fbCon);
-		featuredAppImageView = (ImageView) findViewById(R.id.featureTileTop);
+		
+		
+		//Defines icons in startup screen - G+, Facebook and Twitter
+		
+		//gPlusView = (ImageView) findViewById(R.id.googleCon);
+		//twitView = (ImageView) findViewById(R.id.twiiterCon);
+		//fbView = (ImageView) findViewById(R.id.fbCon);
+		/*
+		 featuredAppImageView = (ImageView) findViewById(R.id.featureTileTop);
 		
 		gPlusView.setImageResource(R.drawable.googleplus);
 		twitView.setImageResource(R.drawable.twitter);
@@ -132,7 +139,8 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 		gPlusView.setOnClickListener(this);
 		twitView.setOnClickListener(this);
 		fbView.setOnClickListener(this);
-		featuredAppImageView.setOnClickListener(this);
+		featuredAppImageView.setOnClickListener(this); 
+		*/
 		
         adView1 = (AdView) findViewById(R.id.adView1);
         adView2 = (AdView) findViewById(R.id.adView2);
@@ -192,7 +200,42 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 		mAppsList.setAdapter(mAdapter);
 				
 		new LoadIconsTask().execute(mApps.toArray(new App[] {}));
-				
+		
+		// Loads Featued page in webview with a progressbar
+		
+		WebView webView = (WebView) findViewById(R.id.webView);
+        webView.getSettings().setJavaScriptEnabled(true);
+ 
+        webView.setWebChromeClient(new WebChromeClient() {
+            public void onProgressChanged(WebView view, int progress)
+            {
+                activity.setTitle("Loading...");
+                activity.setProgress(progress * 100);
+ 
+                if(progress == 100)
+                    activity.setTitle(R.string.app_name);
+            }
+        });
+ 
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl)
+            {
+                // Handle the error
+            }
+ 
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url)
+            {
+                view.loadUrl(url);
+                return true;
+            }
+        });
+ 
+        webView.loadUrl("http://developer.android.com");
+    
+		
+		
 /*-----------------------Unused-----------------------------------------/
 		 TabHost th = (TabHost) findViewById(R.id.tabhost);
 		 th.setup();
@@ -399,39 +442,9 @@ public class FireplaceActivity extends Activity implements OnItemClickListener, 
 	public void onClick(View v) {
 		switch (v.getId()) {
 
-		case R.id.twiiterCon: // Twitter Button
-			Intent browsetwitter = new Intent(Intent.ACTION_VIEW,
-					Uri.parse("http://twitter.com/#!/FireplaceMarket"));
-			startActivity(browsetwitter);
-			break;
-
-		case R.id.fbCon: // Facebook Button
-			Intent browseFacebook = new Intent(
-					Intent.ACTION_VIEW,
-					Uri.parse("http://www.facebook.com/pages/Fireplace-Market/379268035417930"));
-			startActivity(browseFacebook);
-
-			break;
+		
 			
-		case R.id.googleCon: //Google+ Button
-			Intent browseGplus = new Intent(
-				Intent.ACTION_VIEW,
-				Uri.parse("https://plus.google.com/106118854945132150428"));
-				startActivity(browseGplus);
-				
-			break;
-			
-		case R.id.featureTileTop: //Featured App (Static for this release, will be dynamic next release)
-			Intent featuredIntent = new Intent(FireplaceActivity.this, DownloadFileActivity.class);
-			featuredIntent.putExtra("title","Superuser");
-			featuredIntent.putExtra("desc","Hook into your phone's power.\nGrant and manage Superuser rights for your phone.\n\nThis app requires that you already have root, or a custom recovery image to work.");
-			featuredIntent.putExtra("devl","ChansDD");
-			featuredIntent.putExtra("icon",BitmapFactory.decodeResource(getResources(),R.drawable.su_icon));
-			featuredIntent.putExtra("link","http://www.fireplace-market.com/apks/superuser.apk");
-			startActivity(featuredIntent);
-			
-			break;
-
+		
 		case R.id.btnRepo: // Repository button
 			// Show repo's
 			final Context contextRepo = this;
