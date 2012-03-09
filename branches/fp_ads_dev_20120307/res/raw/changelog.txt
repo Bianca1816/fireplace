@@ -21,7 +21,7 @@
   <body>
 $ 2.3
   % Version 2.3
-  _ 2012-03-03
+  _ 2012-03-07
     * New UI (ICS-like)
     * Added download notification
     * Categories

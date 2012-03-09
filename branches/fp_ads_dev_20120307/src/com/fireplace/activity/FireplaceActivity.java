@@ -45,13 +45,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-//import android.webkit.WebChromeClient;
-//import android.webkit.WebView;
-//import android.webkit.WebViewClient;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -80,6 +79,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	private ListView categoryView, mAppsList;
 
 	private ViewFlow viewFlow;
+	private WebView mWebView;
 
 	private MainViewAdapter mvAdapter;
 
@@ -92,7 +92,8 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 
 	AdView adView1, adView2, adView3;
 	final static String TAG = "FireplaceActivity";
-	boolean listReceived = false;
+	final static String featuredUrl = "http://www.google.com";
+	boolean listReceived, goodNetwork = false;
 
 	final Activity activity = this;
 
@@ -129,18 +130,8 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		gPlusView = (ImageView) findViewById(R.id.googleCon);
 		twitView = (ImageView) findViewById(R.id.twiiterCon);
 		fbView = (ImageView) findViewById(R.id.fbCon);
-
 		featuredAppImageView = (ImageView) findViewById(R.id.featureTileTop);
-
-		gPlusView.setImageResource(R.drawable.googleplus);
-		twitView.setImageResource(R.drawable.twitter);
-		fbView.setImageResource(R.drawable.fb);
-		featuredAppImageView.setImageResource(R.drawable.su_ic_logo);
-
-		gPlusView.setOnClickListener(this);
-		twitView.setOnClickListener(this);
-		fbView.setOnClickListener(this);
-		featuredAppImageView.setOnClickListener(this);
+		mWebView = (WebView) findViewById(R.id.webView);
 
 		adView1 = (AdView) findViewById(R.id.adView1);
 		adView2 = (AdView) findViewById(R.id.adView2);
@@ -168,7 +159,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 				Intent getAppListIntent = new Intent(FireplaceActivity.this,
 						GetContentFromDBActivity.class);
 				getAppListIntent.putExtra("position", position);
-				startActivity(getAppListIntent);
+				 if (hasGoodNetwork()) startActivity(getAppListIntent);
 			}
 		});
 
@@ -185,56 +176,64 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 			}
 		}
 
-		startupNetworkCheck();
+		goodNetwork = hasGoodNetwork();
 
 		File fireplaceDir = new File("/sdcard/Fireplace/");
 		fireplaceDir.mkdirs();
 
 		mAppsList = (ListView) findViewById(R.id.listView1);
 		mAppsList.setOnItemClickListener(this);
-
 		mApps = loadInstalledApps(INCLUDE_SYSTEM_APPS);
-
 		mAdapter = new AppListAdapter(getApplicationContext());
-
 		mAdapter.setListItems(mApps);
 		mAppsList.setAdapter(mAdapter);
 
-		new LoadIconsTask().execute(mApps.toArray(new App[] {}));
+		// load web view if network, if not show superuser and tell them they need network connection to download anything.
+		
+		if (goodNetwork) {
+			featuredAppImageView.setVisibility(View.GONE);
+			gPlusView.setVisibility(View.GONE);
+			twitView.setVisibility(View.GONE);
+			fbView.setVisibility(View.GONE);
+			// Loads Featured page in webview with a progressbar
 
-		// Loads Featued page in webview with a progressbar
+			mWebView.getSettings().setJavaScriptEnabled(true);
+			mWebView.setWebChromeClient(new WebChromeClient() {
+				public void onProgressChanged(WebView view, int progress) {
+					activity.setTitle("Loading...");
+					activity.setProgress(progress * 100);
 
-		// WebView webView = (WebView) findViewById(R.id.webView);
-		// webView.getSettings().setJavaScriptEnabled(true);
-		//
-		// webView.setWebChromeClient(new WebChromeClient() {
-		// public void onProgressChanged(WebView view, int progress)
-		// {
-		// activity.setTitle("Loading...");
-		// activity.setProgress(progress * 100);
-		//
-		// if(progress == 100)
-		// activity.setTitle(R.string.app_name);
-		// }
-		// });
-		//
-		// webView.setWebViewClient(new WebViewClient() {
-		// @Override
-		// public void onReceivedError(WebView view, int errorCode, String
-		// description, String failingUrl)
-		// {
-		// // Handle the error
-		// }
-		//
-		// @Override
-		// public boolean shouldOverrideUrlLoading(WebView view, String url)
-		// {
-		// view.loadUrl(url);
-		// return true;
-		// }
-		// });
-		//
-		// webView.loadUrl("");
+					if (progress == 100)
+						activity.setTitle(R.string.app_name);
+				}
+			});
+			mWebView.setWebViewClient(new WebViewClient() {
+				@Override
+				public void onReceivedError(WebView view, int errorCode,
+						String description, String failingUrl) {
+					// Handle the error
+				}
+
+				@Override
+				public boolean shouldOverrideUrlLoading(WebView view, String url) {
+					view.loadUrl(url);
+					return true;
+				}
+			});
+			mWebView.loadUrl("http://www.google.com");
+			mWebView.setOnClickListener(this);
+		} else {
+			mWebView.setVisibility(View.GONE);
+			gPlusView.setImageResource(R.drawable.googleplus);
+			twitView.setImageResource(R.drawable.twitter);
+			fbView.setImageResource(R.drawable.fb);
+			featuredAppImageView.setImageResource(R.drawable.su_ic_logo);
+
+			gPlusView.setOnClickListener(this);
+			twitView.setOnClickListener(this);
+			fbView.setOnClickListener(this);
+			featuredAppImageView.setOnClickListener(this);
+		}
 
 		/*-----------------------Unused-----------------------------------------/
 		 TabHost th = (TabHost) findViewById(R.id.tabhost);
@@ -296,6 +295,12 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 
 		 /------------------------------------------------------------------------------*/
 	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		new LoadIconsTask().execute(mApps.toArray(new App[] {}));
+	}
 
 	/*--------------------------------Menu Options-----------------------------------*/
 
@@ -312,8 +317,8 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		case R.id.menuDonate:
 			Intent browse = new Intent(
 					Intent.ACTION_VIEW,
-					Uri.parse("https://www.paypal.com/us/cgi-bin/webscr?cmd=_flow&SESSION=Ix6KJPWgQAW6v-JBj3RnVjrNdIZAvQgsh3Yi01blXbL5tDo4PKyPeMVYDFy&dispatch=5885d80a13c0db1f8e263663d3faee8d4026841ac68a446f69dad17fb2afeca3"));
-			startActivity(browse);
+					Uri.parse("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CVT4SNRTBSJCU"));
+			 if (hasGoodNetwork())  startActivity(browse);
 			break;
 
 		case R.id.menuAbout:
@@ -445,21 +450,21 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		case R.id.twiiterCon: // Twitter Button
 			Intent browsetwitter = new Intent(Intent.ACTION_VIEW,
 					Uri.parse("http://twitter.com/#!/FireplaceMarket"));
-			startActivity(browsetwitter);
+			 if (hasGoodNetwork()) startActivity(browsetwitter);
 			break;
 
 		case R.id.fbCon: // Facebook Button
 			Intent browseFacebook = new Intent(
 					Intent.ACTION_VIEW,
 					Uri.parse("http://www.facebook.com/pages/Fireplace-Market/379268035417930"));
-			startActivity(browseFacebook);
+			 if (hasGoodNetwork()) startActivity(browseFacebook);
 
 			break;
 
 		case R.id.googleCon: // Google+ Button
 			Intent browseGplus = new Intent(Intent.ACTION_VIEW,
 					Uri.parse("https://plus.google.com/106118854945132150428"));
-			startActivity(browseGplus);
+			 if (hasGoodNetwork()) startActivity(browseGplus);
 
 			break;
 			
@@ -470,9 +475,16 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
             featuredIntent.putExtra("devl","ChansDD");
             featuredIntent.putExtra("icon",BitmapFactory.decodeResource(getResources(),R.drawable.su_icon));
             featuredIntent.putExtra("link","http://www.fireplace-market.com/apks/superuser.apk");
-            startActivity(featuredIntent);
+            if (hasGoodNetwork()) startActivity(featuredIntent);
             
             break;
+            
+		case R.id.webView:
+			String urlVar = mWebView.getUrl().replace(featuredUrl + "/feat=", "");
+			Intent webFeaturedIntent = new Intent(FireplaceActivity.this, DownloadFileActivity.class);
+			webFeaturedIntent.putExtra("featuredAppId", urlVar);
+			startActivity(webFeaturedIntent);
+			break;
 
 		case R.id.btnRepo: // Repository button
 			// Show repo's
@@ -500,41 +512,36 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 			startActivityForResult(intentStorage, 0);
 			break;
 
-		case R.id.btnViewAll:
-			// Show all apps
-			isOnline();
-			break;
+//		case R.id.btnViewAll:
+//			// Show all apps
+//			isOnline();
+//			break;
 		}
 	}
 
 	/*------------------------------Network Checking---------------------------------------*/
+//
+//	public boolean isOnline() {
+//		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//		NetworkInfo netInfo = cm.getActiveNetworkInfo();
+//		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+//			Toast.makeText(FireplaceActivity.this, "Loading apps...",
+//					Toast.LENGTH_LONG).show();
+//			return true;
+//		}
+//		Toast.makeText(FireplaceActivity.this, "You need network connection!",
+//				Toast.LENGTH_LONG).show();
+//		return false;
+//	}
 
-	public boolean isOnline() {
+	public boolean hasGoodNetwork() {
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo netInfo = cm.getActiveNetworkInfo();
 		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-			Toast.makeText(FireplaceActivity.this, "Loading apps...",
-					Toast.LENGTH_LONG).show();
-
-			return true;
-		}
-		Toast.makeText(FireplaceActivity.this, "You need network connection!",
-				Toast.LENGTH_LONG).show();
-		return false;
-	}
-
-	public boolean startupNetworkCheck() {
-		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo netInfo = cm.getActiveNetworkInfo();
-		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-			// Toast.makeText(FireplaceActivity.this, "Network enabled!",
-			// Toast.LENGTH_LONG).show();
 			return true;
 		}
 		Toast.makeText(FireplaceActivity.this,
 				"No network connection detected!", Toast.LENGTH_LONG).show();
-		Button btnViewAll = (Button) findViewById(R.id.btnViewAll);
-		btnViewAll.setEnabled(false);
 		return false;
 	}
 
