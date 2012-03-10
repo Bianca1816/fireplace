@@ -38,10 +38,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -59,33 +61,34 @@ import com.fireplace.software.R;
 public class FireplaceActivity extends Activity implements OnItemClickListener,
 		OnClickListener {
 
-	// LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
-	private List<String> listItems = new ArrayList<String>();
+	private ViewFlow viewFlow;
 
-	// DEFINING STRING ADAPTER WHICH WILL HANDLE DATA OF LISTVIEW
-	private ArrayAdapter<String> adapter;
-	ImageView gPlusView, twitView, fbView, featuredAppImageView;
-	
-	private ListView categoryView;
+	private ImageView googlePlusImageView, twitterImageView, facebookImageView,
+			featuredAppImageView;
+	private ListView categoryListView, installedAppsListView;
+	private WebView featuredAppWebView;
 
-	private static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3Z3LN/g1lqWcvOt99MrKu4hfNTuoVQJIQV14KSG8QmrPWiuxWEY+0pZ1aXk2MkuSVyF0Zr0fMBQl+IHPzquSHpqP0eK08OjCD/I1L5u8hzI56D0eI6I05T7NaiLvD/tJ1LqVod0l7FFkWx0p9dnzaoixK2w7GUqWcEbr40LWeHMB5DpMxW3UqecMavgn1mct9DgVMOpOMusTGGVJ9g67tu/NcWosKYojYwLlD8v6Dy4zOn0LjWz3i/up1TZNSz77VxbiNxBpV7D012fiIKvQLQbeMzbkiMhJlavwy7ara/lRkN5DlU6GnnB+eBATXoltsCNeLQeop6zbdi1SQ4zrhQIDAQAB";
+	private List<App> installedAppsList;
+	private ArrayList<String> categoryListItems = new ArrayList<String>();
+
+	private ArrayAdapter<String> categoryAdapter;
+	private AppListAdapter installedAppsAdapter;
+	private MainViewAdapter mainViewAdapter;
+
+	private static final boolean INCLUDE_SYSTEM_APPS = false;
+	private final static String TAG = "FireplaceActivity";
+	private final static String FEATURED_URL = "http://www.google.com";
+
+	private static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlJkXAwlWqWf1GHzIl00JjPYrG6cSN2VJrNm8Df97yU+KsxhT51xmI8bilwJ1BQTPBWTJ0CMcoY79rGiA1rOTXEXQRSintOQ8TePGBD1NL1G0nxAf1gqd7TEvsTSGaCMlT4Cx0lXL6wsktVgdcoRN/Z6NV1ZRKRX2yz18pg8q2ps2UT5Ur4IKNRMSL0rQT17QyRpzhBkitwRcl8IsQDr1j8/rC5VjiF48QkSVDEQ5DPO+7amsGLSI9GrhCl+BR09t37Ko37erjCkJmzgAaoYH7czc8MlPhB2/EKFVcTeEYVw3gVYdYGBUUhGqxJ/RSXoBqIpdBIC4AB4wEO37wniVKwIDAQAB";
 	private static final byte[] SALT = new byte[] { -26, 65, 30, -118, -113,
 			-57, 74, -64, 53, 69, -95, -25, 71, -117, -36, -113, -11, 37, -64,
 			49 };
 
-	private LicenseCheckerCallback mLicenseCheckerCallback;
-	private LicenseChecker mChecker;
-	private Handler mHandler;
-	private ViewFlow viewFlow;
+	private LicenseCheckerCallback licenseCheckerCallback;
+	private LicenseChecker licenseChecker;
+	private Handler handler;
 
-	private MainViewAdapter mvAdapter;
-
-	private static final boolean INCLUDE_SYSTEM_APPS = false;
-
-	private ListView mAppsList;
-	private AppListAdapter mAdapter;
-	private List<App> mApps;
-	private boolean iconsLoaded = false;
+	private boolean iconsLoaded, goodNetwork = false;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -94,78 +97,64 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.newviewflow);
 
+		ChangeLog cl = new ChangeLog(this);
+		if (cl.firstRun())
+			cl.getLogDialog().show();
+
 		viewFlow = (ViewFlow) findViewById(R.id.viewflow);
-		mvAdapter = new MainViewAdapter(this);
-	
-		if(savedInstanceState == null){
-			viewFlow.setAdapter(mvAdapter, 1);
+		mainViewAdapter = new MainViewAdapter(this);
+
+		if (savedInstanceState == null) {
+			viewFlow.setAdapter(mainViewAdapter, 1);
 		} else {
-			viewFlow.setAdapter(mvAdapter, savedInstanceState.getInt("CurrentView"));
+			viewFlow.setAdapter(mainViewAdapter,
+					savedInstanceState.getInt("CurrentView"));
 		}
-		
+
 		TitleFlowIndicator indicator = (TitleFlowIndicator) findViewById(R.id.viewflowindic);
-		indicator.setTitleProvider(mvAdapter);
+		indicator.setTitleProvider(mainViewAdapter);
 		viewFlow.setFlowIndicator(indicator);
-		
-		gPlusView = (ImageView) findViewById(R.id.googleCon);
-		twitView = (ImageView) findViewById(R.id.twiiterCon);
-		fbView = (ImageView) findViewById(R.id.fbCon);
+
+		googlePlusImageView = (ImageView) findViewById(R.id.googleCon);
+		twitterImageView = (ImageView) findViewById(R.id.twiiterCon);
+		facebookImageView = (ImageView) findViewById(R.id.fbCon);
 		featuredAppImageView = (ImageView) findViewById(R.id.featureTileTop);
-		
-		gPlusView.setImageResource(R.drawable.googleplus);
-		twitView.setImageResource(R.drawable.twitter);
-		fbView.setImageResource(R.drawable.fb);
-		featuredAppImageView.setImageResource(R.drawable.su_ic_logo);
-		
-		gPlusView.setOnClickListener(this);
-		twitView.setOnClickListener(this);
-		fbView.setOnClickListener(this);
-		featuredAppImageView.setOnClickListener(this);
-		
-		mHandler = new Handler();
+		featuredAppWebView = (WebView) findViewById(R.id.webView);
 
-		// Construct the LicenseCheckerCallback. The library calls this when done.
-		mLicenseCheckerCallback = new MyLicenseCheckerCallback();
+		handler = new Handler();
 
-		// SetUp device ID
+		licenseCheckerCallback = new MyLicenseCheckerCallback();
 		String deviceId = Secure.getString(getContentResolver(),
 				Secure.ANDROID_ID + Secure.LOGGING_ID);
-
-		// Construct the LicenseChecker with a Policy.
-		mChecker = new LicenseChecker(this, new ServerManagedPolicy(this,
+		licenseChecker = new LicenseChecker(this, new ServerManagedPolicy(this,
 				new AESObfuscator(SALT, getPackageName(), deviceId)),
 				BASE64_PUBLIC_KEY // Your public licensing key.
 		);
 
-		//disable doCheck(), to disable the licensing check
-		 doCheck();
+		// disable doLicenseCheck(), to disable the licensing check
+//		doLicenseCheck();
 
-		ChangeLog cl = new ChangeLog(this);
-		if (cl.firstRun())
-			cl.getLogDialog().show();
-		
 		/*----------------category view-----------------------*/
-		categoryView = (ListView) findViewById(R.id.tabThreeListView);
-		
-		adapter = new ArrayAdapter<String>(this,
-				R.layout.category_list_item, listItems);
-		
-		categoryView.setAdapter(adapter);
-		for(String categoryName : getResources().getStringArray(R.array.Category))
-			listItems.add(categoryName);
-
-		categoryView.setOnItemClickListener(new OnItemClickListener() {
+		categoryListView = (ListView) findViewById(R.id.tabThreeListView);
+		categoryAdapter = new ArrayAdapter<String>(this,
+				R.layout.category_list_item, categoryListItems);
+		categoryListView.setAdapter(categoryAdapter);
+		for (String categoryName : getResources().getStringArray(
+				R.array.Category))
+			categoryListItems.add(categoryName);
+		categoryListView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Intent getAppListIntent = new Intent(FireplaceActivity.this,
 						GetContentFromDBActivity.class);
 				getAppListIntent.putExtra("position", position);
-				startActivity(getAppListIntent);
+				if (hasGoodNetwork())
+					startActivity(getAppListIntent);
 			}
 		});
-		
+
 		/*------------------------------------------------------*/
-		
+
 		File folder = new File("/sdcard/Fireplace/");
 
 		if (folder.exists()) {
@@ -176,25 +165,68 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 			} catch (IOException e) {
 			}
 		}
-		
-		startupNetworkCheck();
+
+		goodNetwork = hasGoodNetwork();
 
 		File fireplaceDir = new File("/sdcard/Fireplace/");
 		fireplaceDir.mkdirs();
 
-		mAppsList = (ListView) findViewById(R.id.listView1);
-		mAppsList.setOnItemClickListener(this);
+		installedAppsListView = (ListView) findViewById(R.id.listView1);
+		installedAppsListView.setOnItemClickListener(this);
+		installedAppsList = loadInstalledApps(INCLUDE_SYSTEM_APPS);
+		installedAppsAdapter = new AppListAdapter(getApplicationContext());
+		installedAppsAdapter.setListItems(installedAppsList);
+		installedAppsListView.setAdapter(installedAppsAdapter);
 
-		mApps = loadInstalledApps(INCLUDE_SYSTEM_APPS);
+		// -----------Decide to show static or dynamic content--------------
+		if (goodNetwork) {
+			featuredAppImageView.setVisibility(View.GONE);
+			googlePlusImageView.setVisibility(View.GONE);
+			twitterImageView.setVisibility(View.GONE);
+			facebookImageView.setVisibility(View.GONE);
 
-		mAdapter = new AppListAdapter(getApplicationContext());
-		
-		mAdapter.setListItems(mApps);
-		mAppsList.setAdapter(mAdapter);
-		
-		new LoadIconsTask().execute(mApps.toArray(new App[] {}));
-				
-/*-----------------------Unused-----------------------------------------/
+			featuredAppWebView.getSettings().setJavaScriptEnabled(true);
+			featuredAppWebView.setWebChromeClient(new WebChromeClient() {
+				public void onProgressChanged(WebView view, int progress) {
+					FireplaceActivity.this.setTitle("Loading...");
+					FireplaceActivity.this.setProgress(progress * 100);
+
+					if (progress == 100)
+						FireplaceActivity.this.setTitle(R.string.app_name);
+				}
+			});
+
+			featuredAppWebView.setWebViewClient(new WebViewClient() {
+				@Override
+				public void onReceivedError(WebView view, int errorCode,
+						String description, String failingUrl) {
+					// Handle the error
+				}
+
+				@Override
+				public boolean shouldOverrideUrlLoading(WebView view, String url) {
+					view.loadUrl(url);
+					return true;
+				}
+			});
+			featuredAppWebView.loadUrl(FEATURED_URL);
+			featuredAppWebView.setOnClickListener(this);
+		} else {
+			featuredAppWebView.setVisibility(View.GONE);
+			googlePlusImageView.setImageResource(R.drawable.googleplus);
+			twitterImageView.setImageResource(R.drawable.twitter);
+			facebookImageView.setImageResource(R.drawable.fb);
+			featuredAppImageView.setImageResource(R.drawable.su_ic_logo);
+
+			googlePlusImageView.setOnClickListener(this);
+			twitterImageView.setOnClickListener(this);
+			facebookImageView.setOnClickListener(this);
+			featuredAppImageView.setOnClickListener(this);
+		}
+
+		// -----------------------------------------------------------------------
+
+		/*-----------------------Unused-----------------------------------------/
 		 TabHost th = (TabHost) findViewById(R.id.tabhost);
 		 th.setup();
 		
@@ -243,7 +275,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		
 		 txtLoading.setText("Runnning network check");
 
-		// create a dir
+		 // create a dir
 		 txtLoading.setText("Loading folders");
 
 		 txtLoading.setText("All done!");
@@ -252,18 +284,24 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		 ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar1);
 		 pBar.setVisibility(View.GONE);
 
-/------------------------------------------------------------------------------*/
+		 /------------------------------------------------------------------------------*/
 	}
 
-/*-------------------------------Licensing Area--------------------------------*/
-	
-	private void doCheck() {
+	@Override
+	protected void onResume() {
+		super.onResume();
+		new LoadIconsTask().execute(installedAppsList.toArray(new App[] {}));
+	}
+
+	/*-------------------------------Licensing Area--------------------------------*/
+
+	private void doLicenseCheck() {
 		setProgressBarIndeterminateVisibility(true);
-		mChecker.checkAccess(mLicenseCheckerCallback);
+		licenseChecker.checkAccess(licenseCheckerCallback);
 	}
 
 	private void displayResult(final String result) {
-		mHandler.post(new Runnable() {
+		handler.post(new Runnable() {
 			public void run() {
 				setProgressBarIndeterminateVisibility(false);
 			}
@@ -273,50 +311,41 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	private class MyLicenseCheckerCallback implements LicenseCheckerCallback {
 		public void allow() {
 			if (isFinishing()) {
-				// Don't update UI if Activity is finishing.
 				return;
 			}
-			// Should allow user access.
 			displayResult(getString(R.string.allow));
 		}
 
 		public void dontAllow() {
 			if (isFinishing()) {
-				// Don't update UI if Activity is finishing.
 				return;
 			}
 			displayResult(getString(R.string.dont_allow));
-			// Should not allow access. An app can handle as needed,
-			// typically by informing the user that the app is not licensed
-			// and then shutting down the app or limiting the user to a
-			// restricted set of features.
-			// In this example, we show a dialog that takes the user to Market.
 			showDialog(0);
 		}
 
 		public void applicationError(ApplicationErrorCode errorCode) {
-			// TODO Auto-generated method stub
-
 		}
 	}
 
-/*--------------------------------Menu Options-----------------------------------*/
-	
+	/*--------------------------------Menu Options-----------------------------------*/
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menuDonate:
 			Intent browse = new Intent(
 					Intent.ACTION_VIEW,
-					Uri.parse("https://www.paypal.com/us/cgi-bin/webscr?cmd=_flow&SESSION=Ix6KJPWgQAW6v-JBj3RnVjrNdIZAvQgsh3Yi01blXbL5tDo4PKyPeMVYDFy&dispatch=5885d80a13c0db1f8e263663d3faee8d4026841ac68a446f69dad17fb2afeca3"));
-			startActivity(browse);
+					Uri.parse("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CVT4SNRTBSJCU"));
+			if (hasGoodNetwork())
+				startActivity(browse);
 			break;
 
 		case R.id.menuAbout:
@@ -340,7 +369,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 			alertbox.show();
 
 			break;
-			
+
 		case R.id.menuRepo: // Repository button
 			// Show repo's
 			final Context contextRepo = this;
@@ -348,99 +377,101 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 			Intent intentRepo = new Intent(contextRepo, RepoActivity.class);
 			startActivityForResult(intentRepo, 0);
 			break;
-			
+
 		case R.id.menuCheckUpdate:
-//			try {
-//				// set the download URL, a url that points to a file on the
-//				// internet
-//				// this is the file to be downloaded
-//				URL url = new URL(
-//						"http://www.fireplace-market.com/fireplaceUpdate.v"
-//								+ getResources().getString(R.string.updateTo)
-//								+ ".apk");
-//
-//				// create the new connection
-//				HttpURLConnection urlConnection = (HttpURLConnection) url
-//						.openConnection();
-//
-//				// set up some things on the connection
-//				urlConnection.setRequestMethod("GET");
-//				urlConnection.setDoOutput(true);
-//
-//				// and connect!
-//				urlConnection.connect();
-//
-//				// set the path where we want to save the file
-//				// in this case, going to save it on the root directory of the
-//				// sd card.
-//				File SDCardRoot = Environment.getExternalStorageDirectory();
-//				// create a new file, specifying the path, and the filename
-//				// which we want to save the file as.
-//				File file = new File(SDCardRoot + "Fireplace/", "update.apk");
-//
-//				// this will be used to write the downloaded data into the file
-//				// we created
-//				FileOutputStream fileOutput = new FileOutputStream(file);
-//
-//				// this will be used in reading the data from the internet
-//				InputStream inputStream = urlConnection.getInputStream();
-//
-//				// this is the total size of the file
-//				int totalSize = urlConnection.getContentLength();
-//				// variable to store total downloaded bytes
-//				int downloadedSize = 0;
-//
-//				// create a buffer...
-//				byte[] buffer = new byte[1024];
-//				int bufferLength = 0; // used to store a temporary size of the
-//										// buffer
-//
-//				// now, read through the input buffer and write the contents to
-//				// the file
-//				while ((bufferLength = inputStream.read(buffer)) > 0) {
-//					// add the data in the buffer to the file in the file output
-//					// stream (the file on the sd card
-//					fileOutput.write(buffer, 0, bufferLength);
-//					// add up the size so we know how much is downloaded
-//					downloadedSize += bufferLength;
-//					// this is where you would do something to report the
-//					// prgress, like this maybe
-//					updateProgress(downloadedSize, totalSize);
-//
-//				}
-//				// close the output stream when done
-//				fileOutput.close();
-//
-//				Intent promptInstall = new Intent(Intent.ACTION_VIEW).setData(
-//						Uri.parse(SDCardRoot + "Fireplace/update.apk"))
-//						.setType("application/vnd.android.package-archive");
-//				startActivity(promptInstall);
-//
-//				// catch some possible errors...
-//			} catch (MalformedURLException e) {
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//			// see
-//			// http://androidsnippets.com/download-an-http-file-to-sdcard-with-progress-notification
-//
-//			Toast.makeText(this, "No new updates available!", Toast.LENGTH_LONG)
-//					.show();
-//			break;
+			// try {
+			// // set the download URL, a url that points to a file on the
+			// // internet
+			// // this is the file to be downloaded
+			// URL url = new URL(
+			// "http://www.fireplace-market.com/fireplaceUpdate.v"
+			// + getResources().getString(R.string.updateTo)
+			// + ".apk");
+			//
+			// // create the new connection
+			// HttpURLConnection urlConnection = (HttpURLConnection) url
+			// .openConnection();
+			//
+			// // set up some things on the connection
+			// urlConnection.setRequestMethod("GET");
+			// urlConnection.setDoOutput(true);
+			//
+			// // and connect!
+			// urlConnection.connect();
+			//
+			// // set the path where we want to save the file
+			// // in this case, going to save it on the root directory of the
+			// // sd card.
+			// File SDCardRoot = Environment.getExternalStorageDirectory();
+			// // create a new file, specifying the path, and the filename
+			// // which we want to save the file as.
+			// File file = new File(SDCardRoot + "Fireplace/", "update.apk");
+			//
+			// // this will be used to write the downloaded data into the file
+			// // we created
+			// FileOutputStream fileOutput = new FileOutputStream(file);
+			//
+			// // this will be used in reading the data from the internet
+			// InputStream inputStream = urlConnection.getInputStream();
+			//
+			// // this is the total size of the file
+			// int totalSize = urlConnection.getContentLength();
+			// // variable to store total downloaded bytes
+			// int downloadedSize = 0;
+			//
+			// // create a buffer...
+			// byte[] buffer = new byte[1024];
+			// int bufferLength = 0; // used to store a temporary size of the
+			// // buffer
+			//
+			// // now, read through the input buffer and write the contents to
+			// // the file
+			// while ((bufferLength = inputStream.read(buffer)) > 0) {
+			// // add the data in the buffer to the file in the file output
+			// // stream (the file on the sd card
+			// fileOutput.write(buffer, 0, bufferLength);
+			// // add up the size so we know how much is downloaded
+			// downloadedSize += bufferLength;
+			// // this is where you would do something to report the
+			// // prgress, like this maybe
+			// updateProgress(downloadedSize, totalSize);
+			//
+			// }
+			// // close the output stream when done
+			// fileOutput.close();
+			//
+			// Intent promptInstall = new Intent(Intent.ACTION_VIEW).setData(
+			// Uri.parse(SDCardRoot + "Fireplace/update.apk"))
+			// .setType("application/vnd.android.package-archive");
+			// startActivity(promptInstall);
+			//
+			// // catch some possible errors...
+			// } catch (MalformedURLException e) {
+			// e.printStackTrace();
+			// } catch (IOException e) {
+			// e.printStackTrace();
+			// }
+			// // see
+			// //
+			// http://androidsnippets.com/download-an-http-file-to-sdcard-with-progress-notification
+			//
+			// Toast.makeText(this, "No new updates available!",
+			// Toast.LENGTH_LONG)
+			// .show();
+			// break;
 		}
 
 		return true;
 
 	}
-	
-	public void updateProgress(int currentSize, int totalSize) {
-		// Toast.makeText(this, "Packages: " +
-		// Long.toString((currentSize/totalSize)*100)+"% Complete",
-		// Toast.LENGTH_SHORT).show();
-	}
-	
-/*-----------------------------Various Other Click controls---------------------------*/
+
+	// public void updateProgress(int currentSize, int totalSize) {
+	// Toast.makeText(this, "Packages: " +
+	// Long.toString((currentSize/totalSize)*100)+"% Complete",
+	// Toast.LENGTH_SHORT).show();
+	// }
+
+	/*-----------------------------Various Other Click controls---------------------------*/
 
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -448,34 +479,53 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		case R.id.twiiterCon: // Twitter Button
 			Intent browsetwitter = new Intent(Intent.ACTION_VIEW,
 					Uri.parse("http://twitter.com/#!/FireplaceMarket"));
-			startActivity(browsetwitter);
+			if (hasGoodNetwork())
+				startActivity(browsetwitter);
 			break;
 
 		case R.id.fbCon: // Facebook Button
 			Intent browseFacebook = new Intent(
 					Intent.ACTION_VIEW,
 					Uri.parse("http://www.facebook.com/pages/Fireplace-Market/379268035417930"));
-			startActivity(browseFacebook);
+			if (hasGoodNetwork())
+				startActivity(browseFacebook);
+
+			break;
+
+		case R.id.googleCon: // Google+ Button
+			Intent browseGplus = new Intent(Intent.ACTION_VIEW,
+					Uri.parse("https://plus.google.com/106118854945132150428"));
+			if (hasGoodNetwork())
+				startActivity(browseGplus);
+
+			break;
+
+		case R.id.featureTileTop: // Featured App (Static for this release, will
+									// be dynamic next release)
+			Intent featuredIntent = new Intent(FireplaceActivity.this,
+					DownloadFileActivity.class);
+			featuredIntent.putExtra("title", "Superuser");
+			featuredIntent
+					.putExtra(
+							"desc",
+							"Hook into your phone's power.\nGrant and manage Superuser rights for your phone.\n\nThis app requires that you already have root, or a custom recovery image to work.");
+			featuredIntent.putExtra("devl", "ChansDD");
+			featuredIntent.putExtra("icon", BitmapFactory.decodeResource(
+					getResources(), R.drawable.su_icon));
+			featuredIntent.putExtra("link",
+					"http://www.fireplace-market.com/apks/superuser.apk");
+			if (hasGoodNetwork())
+				startActivity(featuredIntent);
 
 			break;
 			
-		case R.id.googleCon: //Google+ Button
-			Intent browseGplus = new Intent(
-				Intent.ACTION_VIEW,
-				Uri.parse("https://plus.google.com/106118854945132150428"));
-				startActivity(browseGplus);
-				
-			break;
-			
-		case R.id.featureTileTop: //Featured App (Static for this release, will be dynamic next release)
-			Intent featuredIntent = new Intent(FireplaceActivity.this, DownloadFileActivity.class);
-			featuredIntent.putExtra("title","Superuser");
-			featuredIntent.putExtra("desc","Hook into your phone's power.\nGrant and manage Superuser rights for your phone.\n\nThis app requires that you already have root, or a custom recovery image to work.");
-			featuredIntent.putExtra("devl","ChansDD");
-			featuredIntent.putExtra("icon",BitmapFactory.decodeResource(getResources(),R.drawable.su_icon));
-			featuredIntent.putExtra("link","http://www.fireplace-market.com/apks/superuser.apk");
-			startActivity(featuredIntent);
-			
+		case R.id.webView:
+			String urlVar = featuredAppWebView.getUrl().replace(
+					FEATURED_URL + "/feat=", "");
+			Intent webFeaturedIntent = new Intent(FireplaceActivity.this,
+					DownloadFileActivity.class);
+			webFeaturedIntent.putExtra("featuredAppId", urlVar);
+			startActivity(webFeaturedIntent);
 			break;
 
 		case R.id.btnRepo: // Repository button
@@ -504,45 +554,42 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 			startActivityForResult(intentStorage, 0);
 			break;
 
-		case R.id.btnViewAll:
-			// Show all apps
-			isOnline();
-			break;
+		// case R.id.btnViewAll:
+		// // Show all apps
+		// isOnline();
+		// break;
 		}
 	}
-	
-/*------------------------------Network Checking---------------------------------------*/
 
-	public boolean isOnline() {
+	/*------------------------------Network Checking---------------------------------------*/
+
+	// public boolean isOnline() {
+	// ConnectivityManager cm = (ConnectivityManager)
+	// getSystemService(Context.CONNECTIVITY_SERVICE);
+	// NetworkInfo netInfo = cm.getActiveNetworkInfo();
+	// if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+	// Toast.makeText(FireplaceActivity.this, "Loading apps...",
+	// Toast.LENGTH_LONG).show();
+	//
+	// return true;
+	// }
+	// Toast.makeText(FireplaceActivity.this, "You need network connection!",
+	// Toast.LENGTH_LONG).show();
+	// return false;
+	// }
+
+	public boolean hasGoodNetwork() {
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo netInfo = cm.getActiveNetworkInfo();
 		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-			Toast.makeText(FireplaceActivity.this, "Loading apps...",
-					Toast.LENGTH_LONG).show();
-
-			return true;
-		}
-		Toast.makeText(FireplaceActivity.this, "You need network connection!",
-				Toast.LENGTH_LONG).show();
-		return false;
-	}
-
-	public boolean startupNetworkCheck() {
-		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo netInfo = cm.getActiveNetworkInfo();
-		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-			// Toast.makeText(FireplaceActivity.this, "Network enabled!",
-			// Toast.LENGTH_LONG).show();
 			return true;
 		}
 		Toast.makeText(FireplaceActivity.this,
 				"No network connection detected!", Toast.LENGTH_LONG).show();
-		Button btnViewAll = (Button) findViewById(R.id.btnViewAll);
-		btnViewAll.setEnabled(false);
 		return false;
 	}
-	
-/*-------------------------------Dialog Creation--------------------------------*/
+
+	/*-------------------------------Dialog Creation--------------------------------*/
 
 	protected Dialog onCreateDialog(int id) {
 		// We have only one dialog.
@@ -557,7 +604,8 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 										Intent.ACTION_VIEW,
 										Uri.parse("http://market.android.com/details?id="
 												+ getPackageName()));
-								startActivity(marketIntent);
+								if (hasGoodNetwork())
+									startActivity(marketIntent);
 							}
 						})
 				.setNegativeButton(R.string.quit_button,
@@ -572,7 +620,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		mChecker.onDestroy();
+		licenseChecker.onDestroy();
 	}
 
 	@Override
@@ -581,8 +629,8 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		viewFlow.onConfigurationChanged(newConfig);
 	}
 
-/*------------------------------installed apps methods--------------------------------*/	
-	
+	/*------------------------------installed apps methods--------------------------------*/
+
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
 
@@ -600,7 +648,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 				+ (app.getDescription() != null ? ("\n\n" + app
 						.getDescription()) : "");
 
-		Drawable icon = (iconsLoaded) ? mAdapter.getIcons().get(
+		Drawable icon = (iconsLoaded) ? installedAppsAdapter.getIcons().get(
 				app.getPackageName()) : getResources().getDrawable(
 				R.drawable.icon);
 
@@ -623,6 +671,9 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 										startActivity(i);
 									}
 								} catch (ActivityNotFoundException err) {
+									Log.e(TAG,
+											"In onItemClick for Installed Apps",
+											err);
 									Toast.makeText(FireplaceActivity.this,
 											"Error launching app",
 											Toast.LENGTH_SHORT).show();
@@ -649,25 +700,22 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	private List<App> loadInstalledApps(boolean includeSysApps) {
 		List<App> apps = new ArrayList<App>();
 
-		// the package manager contains the information about all installed apps
 		PackageManager packageManager = getPackageManager();
-
 		List<PackageInfo> packs = packageManager.getInstalledPackages(0); // PackageManager.GET_META_DATA
 
-		for (int i = 0; i < packs.size(); i++) {
-			PackageInfo p = packs.get(i);
-			ApplicationInfo a = p.applicationInfo;
+		for (PackageInfo packInfo : packs) {
 			// skip system apps if they shall not be included
 			if ((!includeSysApps)
-					&& ((a.flags & ApplicationInfo.FLAG_SYSTEM) == 1)) {
+					&& ((packInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 1)) {
 				continue;
 			}
 			App app = new App();
-			app.setTitle(p.applicationInfo.loadLabel(packageManager).toString());
-			app.setPackageName(p.packageName);
-			app.setVersionName(p.versionName);
-			app.setVersionCode(p.versionCode);
-			CharSequence description = p.applicationInfo
+			app.setTitle(packInfo.applicationInfo.loadLabel(packageManager)
+					.toString());
+			app.setPackageName(packInfo.packageName);
+			app.setVersionName(packInfo.versionName);
+			app.setVersionCode(packInfo.versionCode);
+			CharSequence description = packInfo.applicationInfo
 					.loadDescription(packageManager);
 			app.setDescription(description != null ? description.toString()
 					: "");
@@ -675,7 +723,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		}
 		return apps;
 	}
-	
+
 	/**
 	 * An asynchronous task to load the icons of the installed applications.
 	 */
@@ -697,11 +745,11 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 					}
 				} catch (NameNotFoundException e) {
 					Log.e("ERROR", "Unable to find icon for package '"
-							+ pkgName + "': " + e.getMessage());
+							+ pkgName, e);
 				}
 				icons.put(app.getPackageName(), ico);
 			}
-			mAdapter.setIcons(icons);
+			installedAppsAdapter.setIcons(icons);
 
 			return null;
 		}
@@ -709,20 +757,19 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		@Override
 		protected void onPostExecute(Void result) {
 			iconsLoaded = true;
-			mAdapter.notifyDataSetChanged();
+			installedAppsAdapter.notifyDataSetChanged();
 		}
 	}
-	
-/*---------------------------Saving View Location--------------------------*/	
-	
+
+	/*---------------------------Saving View Location--------------------------*/
+
 	@Override
-	public void onSaveInstanceState(Bundle outState)
-	{
+	public void onSaveInstanceState(Bundle outState) {
 		outState.putInt("CurrentView", viewFlow.getCurrentView());
 		super.onSaveInstanceState(outState);
 	}
-	
-/*-----------------------------Currently Unused-------------------------------------/
+
+	/*-----------------------------Currently Unused-------------------------------------/
 
 	 public boolean updateCheckNetwork() {
 	 ConnectivityManager cm = (ConnectivityManager)
@@ -818,5 +865,5 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	 return false;
 	 }
 	
-/-------------------------------------------------------------------------*/
+	 /-------------------------------------------------------------------------*/
 }
