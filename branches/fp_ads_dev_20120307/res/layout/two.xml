@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             ads:adSize="BANNER"
-            ads:adUnitId="a14f43802ef4101"
+            ads:adUnitId="a14f5a7e707cc68"
             ads:loadAdOnCreate="true" >
         </com.google.ads.AdView>
     </RelativeLayout>
