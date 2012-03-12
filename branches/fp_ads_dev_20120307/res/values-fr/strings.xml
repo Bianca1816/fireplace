@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
-    <string name="app_name">Marché Cheminée</string>
+    <string name="app_name">Fireplace Market</string>
     <string-array name="Category">
         <item>Tous</item>
         <item>Applications</item>
@@ -16,7 +16,7 @@
     <string name="version">2.3</string>
     <string name="updateTo">2.3</string>
     <string name="info_changelog">
-        Marché Cheminée 2.3
+        Fireplace Market 2.3
         \n- Nouvelle interface utilisateur
         \n- Télécharger notifications
         \n- Catégories
