@@ -9,6 +9,10 @@ public class ItemSkel {
 	private String ptype;
 	private String devel;
 	
+	public ItemSkel(){
+		
+	}
+	
 	public ItemSkel(String ID, String Label, String Path, String Description, String Ptype, String Developer) {
 		this.id = ID;
 		this.label = Label;
