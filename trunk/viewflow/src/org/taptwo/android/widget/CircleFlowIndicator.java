@@ -57,17 +57,17 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 	private static final int STYLE_STROKE = 0;
 	private static final int STYLE_FILL = 1;
 
-	private float radius = 4;
-	private int fadeOutTime = 0;
-	private final Paint mPaintInactive = new Paint(Paint.ANTI_ALIAS_FLAG);
-	private final Paint mPaintActive = new Paint(Paint.ANTI_ALIAS_FLAG);
-	private ViewFlow viewFlow;
-	private int currentScroll = 0;
-	private int flowWidth = 0;
-	private FadeTimer timer;
+	public float radius = 4;
+	public int fadeOutTime = 0;
+	public final Paint mPaintInactive = new Paint(Paint.ANTI_ALIAS_FLAG);
+	public final Paint mPaintActive = new Paint(Paint.ANTI_ALIAS_FLAG);
+	public ViewFlow viewFlow;
+	public int currentScroll = 0;
+	public int flowWidth = 0;
+	public FadeTimer timer;
 	public AnimationListener animationListener = this;
-	private Animation animation;
-	private boolean mCentered = false;
+	public Animation animation;
+	public boolean mCentered = false;
 
 	/**
 	 * Default constructor
@@ -123,7 +123,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 		initColors(activeColor, inactiveColor, activeType, inactiveType);
 	}
 
-	private void initColors(int activeColor, int inactiveColor, int activeType,
+	public void initColors(int activeColor, int inactiveColor, int activeType,
 			int inactiveType) {
 		// Select the paint type given the type attr
 		switch (inactiveType) {
@@ -240,7 +240,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 	 *            A measureSpec packed into an int
 	 * @return The width of the view, honoring constraints from measureSpec
 	 */
-	private int measureWidth(int measureSpec) {
+	public int measureWidth(int measureSpec) {
 		int result = 0;
 		int specMode = MeasureSpec.getMode(measureSpec);
 		int specSize = MeasureSpec.getSize(measureSpec);
@@ -273,7 +273,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 	 *            A measureSpec packed into an int
 	 * @return The height of the view, honoring constraints from measureSpec
 	 */
-	private int measureHeight(int measureSpec) {
+	public int measureHeight(int measureSpec) {
 		int result = 0;
 		int specMode = MeasureSpec.getMode(measureSpec);
 		int specSize = MeasureSpec.getSize(measureSpec);
@@ -319,7 +319,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 	/**
 	 * Resets the fade out timer to 0. Creating a new one if needed
 	 */
-	private void resetTimer() {
+	public void resetTimer() {
 		// Only set the timer if we have a timeout of at least 1 millisecond
 		if (fadeOutTime > 0) {
 			// Check if we need to create a new timer
@@ -338,7 +338,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 	 * Counts from 0 to the fade out time and animates the view away when
 	 * reached
 	 */
-	private class FadeTimer extends AsyncTask<Void, Void, Void> {
+	public class FadeTimer extends AsyncTask<Void, Void, Void> {
 		// The current count
 		private int timer = 0;
 		// If we are inside the timing loop

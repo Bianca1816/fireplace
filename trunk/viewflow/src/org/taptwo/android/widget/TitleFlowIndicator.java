@@ -39,31 +39,31 @@ import android.widget.TextView;
  */
 public class TitleFlowIndicator extends TextView implements FlowIndicator {
 
-	private static final float TITLE_PADDING = 10.0f;
-	private static final float CLIP_PADDING = 0.0f;
-	private static final int SELECTED_COLOR = 0xFFFFC445;
-	private static final boolean SELECTED_BOLD = false;
-	private static final int TEXT_COLOR = 0xFFAAAAAA;
-	private static final int TEXT_SIZE = 15;
-	private static final float FOOTER_LINE_HEIGHT = 4.0f;
-	private static final int FOOTER_COLOR = 0xFFFFC445;
-	private static final float FOOTER_TRIANGLE_HEIGHT = 10;
-	private ViewFlow viewFlow;
-	private int currentScroll = 0;
-	private TitleProvider titleProvider = null;
-	private int currentPosition = 0;
-	private Paint paintText;
-	private Paint paintSelected;
-	private Path path;
-	private Paint paintFooterLine;
-	private Paint paintFooterTriangle;
-	private float footerTriangleHeight;
-	private float titlePadding;
+	public static final float TITLE_PADDING = 10.0f;
+	public static final float CLIP_PADDING = 0.0f;
+	public static final int SELECTED_COLOR = 0xFFFFC445;
+	public static final boolean SELECTED_BOLD = false;
+	public static final int TEXT_COLOR = 0xFFAAAAAA;
+	public static final int TEXT_SIZE = 15;
+	public static final float FOOTER_LINE_HEIGHT = 4.0f;
+	public static final int FOOTER_COLOR = 0xFFFFC445;
+	public static final float FOOTER_TRIANGLE_HEIGHT = 10;
+	public ViewFlow viewFlow;
+	public int currentScroll = 0;
+	public TitleProvider titleProvider = null;
+	public int currentPosition = 0;
+	public Paint paintText;
+	public Paint paintSelected;
+	public Path path;
+	public Paint paintFooterLine;
+	public Paint paintFooterTriangle;
+	public float footerTriangleHeight;
+	public float titlePadding;
 	/**
 	 * Left and right side padding for not active view titles.
 	 */
-	private float clipPadding;
-	private float footerLineHeight;
+	public float clipPadding;
+	public float footerLineHeight;
 
 	/* These are hardcoded just like in TextView */
 	private static final int SANS = 1;
@@ -119,7 +119,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	/**
 	 * Initialize draw objects
 	 */
-	private void initDraw(int textColor, float textSize, int selectedColor, boolean selectedBold, float selectedSize, float footerLineHeight, int footerColor) {
+	public void initDraw(int textColor, float textSize, int selectedColor, boolean selectedBold, float selectedSize, float footerLineHeight, int footerColor) {
 		paintText = new Paint();
 		paintText.setColor(textColor);
 		paintText.setTextSize(textSize);
@@ -250,7 +250,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	 * @param curViewWidth
 	 *            width of the view.
 	 */
-	private void clipViewOnTheRight(Rect curViewBound, int curViewWidth) {
+	public void clipViewOnTheRight(Rect curViewBound, int curViewWidth) {
 		curViewBound.right = getLeft() + getWidth() - (int) clipPadding;
 		curViewBound.left = curViewBound.right - curViewWidth;
 	}
@@ -267,7 +267,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	 * @param curViewWidth
 	 *            width of the view.
 	 */
-	private void clipViewOnTheLeft(Rect curViewBound, int curViewWidth) {
+	public void clipViewOnTheLeft(Rect curViewBound, int curViewWidth) {
 		curViewBound.left = 0 + (int) clipPadding;
 		curViewBound.right = curViewWidth;
 	}
@@ -279,7 +279,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	 * @param currentIndex
 	 * @return
 	 */
-	private ArrayList<Rect> calculateAllBounds(Paint paint) {
+	public ArrayList<Rect> calculateAllBounds(Paint paint) {
 		ArrayList<Rect> list = new ArrayList<Rect>();
 		// For each views (If no values then add a fake one)
 		int count = (viewFlow != null && viewFlow.getAdapter() != null) ? viewFlow.getAdapter().getCount() : 1;
@@ -304,7 +304,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	 * @param paint
 	 * @return
 	 */
-	private Rect calcBounds(int index, Paint paint) {
+	public Rect calcBounds(int index, Paint paint) {
 		// Get the title
 		String title = getTitle(index);
 		// Calculate the text bounds
@@ -320,7 +320,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	 * @param pos
 	 * @return
 	 */
-	private String getTitle(int pos) {
+	public String getTitle(int pos) {
 		// Set the default title
 		String title = "title " + pos;
 		// If the TitleProvider exist
@@ -395,7 +395,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	 *            A measureSpec packed into an int
 	 * @return The width of the view, honoring constraints from measureSpec
 	 */
-	private int measureWidth(int measureSpec) {
+	public int measureWidth(int measureSpec) {
 		int result = 0;
 		int specMode = MeasureSpec.getMode(measureSpec);
 		int specSize = MeasureSpec.getSize(measureSpec);
@@ -414,7 +414,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	 *            A measureSpec packed into an int
 	 * @return The height of the view, honoring constraints from measureSpec
 	 */
-	private int measureHeight(int measureSpec) {
+	public int measureHeight(int measureSpec) {
 		int result = 0;
 		int specMode = MeasureSpec.getMode(measureSpec);
 		int specSize = MeasureSpec.getSize(measureSpec);
@@ -434,7 +434,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 		return result;
 	}
 
-	private Typeface getTypefaceByIndex(int typefaceIndex) {
+	public Typeface getTypefaceByIndex(int typefaceIndex) {
 		switch (typefaceIndex) {
 		case SANS:
 			return Typeface.SANS_SERIF;
