@@ -119,7 +119,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 		init();
 	}
 
-	private void init() {
+	public void init() {
 		mLoadedViews = new LinkedList<View>();
 		mScroller = new Scroller(getContext());
 		final ViewConfiguration configuration = ViewConfiguration
@@ -394,7 +394,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 		}
 	}
 
-	private void snapToDestination() {
+	public void snapToDestination() {
 		final int screenWidth = getWidth();
 		final int whichScreen = (getScrollX() + (screenWidth / 2))
 				/ screenWidth;
@@ -402,7 +402,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 		snapToScreen(whichScreen);
 	}
 
-	private void snapToScreen(int whichScreen) {
+	public void snapToScreen(int whichScreen) {
 		mLastScrollDirection = whichScreen - mCurrentScreen;
 		if (!mScroller.isFinished())
 			return;
@@ -436,7 +436,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 	 * @param indexInBuffer
 	 *            Index of the view in the view buffer.
 	 */
-	private void setVisibleView(int indexInBuffer, boolean uiThread) {
+	public void setVisibleView(int indexInBuffer, boolean uiThread) {
 		mCurrentScreen = Math.max(0,
 				Math.min(indexInBuffer, getChildCount() - 1));
 		int dx = (mCurrentScreen * getWidth()) - mScroller.getCurrX();
@@ -561,7 +561,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 		}
 	}
 
-	private void resetFocus() {
+	public void resetFocus() {
 		logBuffer();
 		mLoadedViews.clear();
 		removeAllViewsInLayout();
@@ -577,7 +577,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 		requestLayout();
 	}
 
-	private void postViewSwitched(int direction) {
+	public void postViewSwitched(int direction) {
 		if (direction == 0)
 			return;
 
@@ -636,7 +636,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 		logBuffer();
 	}
 
-	private View setupChild(View child, boolean addToEnd, boolean recycle) {
+	public View setupChild(View child, boolean addToEnd, boolean recycle) {
 		ViewGroup.LayoutParams p = (ViewGroup.LayoutParams) child
 				.getLayoutParams();
 		if (p == null) {
@@ -651,7 +651,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 		return child;
 	}
 
-	private View makeAndAddView(int position, boolean addToEnd, View convertView) {
+	public View makeAndAddView(int position, boolean addToEnd, View convertView) {
 		View view = mAdapter.getView(position, convertView, this);
 		return setupChild(view, addToEnd, convertView != null);
 	}
@@ -679,7 +679,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 	}
 
-	private void logBuffer() {
+	public void logBuffer() {
 
 		Log.d("viewflow", "Size of mLoadedViews: " + mLoadedViews.size() +
 				"X: " + mScroller.getCurrX() + ", Y: " + mScroller.getCurrY());
