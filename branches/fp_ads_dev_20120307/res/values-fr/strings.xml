@@ -67,7 +67,7 @@
     <string name="storage_full_cl">Journal pleine mutation</string>
     <string name="featured_app_promo_desc">Titre de l\'application vedette</string>
     <string name="menu_donate_button_text">Donner</string>
-    <string name="menu_about_button_text">Sur</string>
-    <string name="menu_update_button_text">Réviser</string>
+    <string name="menu_about_button_text">à propos</string>
+    <string name="menu_update_button_text">mise à jour</string>
     <string name="menu_repo_button_text">Repo</string>
 </resources>
