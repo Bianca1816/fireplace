@@ -13,14 +13,11 @@
     </string-array>
     <string name="up_one_level">..</string>
     <string name="current_dir">.</string>
-    <string name="version">2.3</string>
-    <string name="updateTo">2.3</string>
+    <string name="version">2.3.1</string>
+    <string name="updateTo">2.3.1</string>
     <string name="info_changelog">
-        Fireplace Market 2.3
-        \n- New UI (ICS-like)
-        \n- Download notifications
-        \n- Categories
-        \n- Featured Application
+        Fireplace Market 2.3.1
+        \n- Speed Improvement
         \n- Bug Fixes</string>
     <string name="app_icon">Application Icon</string>
     <string name="category_label">Category: </string>
