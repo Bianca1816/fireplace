@@ -2,13 +2,13 @@ package com.fireplace.adapter;
 
 import org.taptwo.android.widget.TitleProvider;
 
-import com.fireplace.software.R;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
+import com.fireplace.software.R;
 
 public class MainViewAdapter extends BaseAdapter implements TitleProvider {
 	
