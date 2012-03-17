@@ -17,7 +17,8 @@
              
         <activity
             android:name="com.fireplace.activity.FireplaceActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:alwaysRetainTaskState="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -35,8 +35,6 @@ import android.widget.Toast;
 
 import com.fireplace.adsup.R;
 import com.fireplace.software.ItemSkel;
-import com.google.ads.AdRequest;
-import com.google.ads.AdView;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -45,9 +43,9 @@ public class GetContentFromDBActivity extends ListActivity {
 	private final static String TAG = "GetContentFromDBActivty";
 	private final static String DATA_URL = "http://www.fireplace-market.com/getdata.php";
 	
-	private ArrayList<String> appNameArrayList;
-	private ArrayList<String> iconLocationArrayList;
-	private ArrayList<Bitmap> iconArrayList;
+	private ArrayList<String> appNameArrayList = new ArrayList<String>();
+	private ArrayList<String> iconLocationArrayList = new ArrayList<String>();
+	private ArrayList<Bitmap> iconArrayList = new ArrayList<Bitmap>();
 	
 	private ArrayList<ItemSkel> itemSkelArrayList;
 	
@@ -56,9 +54,7 @@ public class GetContentFromDBActivity extends ListActivity {
 	private boolean iconsReceived, listReceived = false;
 	private ListView appListView;
 	private ImageView iconImageView;
-	
-	private AdView adView4;
-	
+		
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
@@ -67,18 +63,12 @@ public class GetContentFromDBActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.listofappswithicons);
 		appListView = (ListView) findViewById(android.R.id.list);
-		adView4 = (AdView) findViewById(R.id.adView4);
 		
 		iconAdapter = new IconicAdapter();
 		Bundle extras = getIntent().getExtras();
 
 		itemSkelArrayList = new ArrayList<ItemSkel>();
-		appNameArrayList = new ArrayList<String>();
-		iconLocationArrayList = new ArrayList<String>();
-		iconArrayList = new ArrayList<Bitmap>();
-		
-        adView4.loadAd(new AdRequest());
-		
+				
 		ptype = extras.getInt("position");
 		
 		new GetListTask().execute();
@@ -143,7 +133,7 @@ public class GetContentFromDBActivity extends ListActivity {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				Log.e(TAG, "LoadData", e);
+				Log.e(TAG, "Sleep in LoadData", e);
 			}
 		}
 		
@@ -162,7 +152,7 @@ public class GetContentFromDBActivity extends ListActivity {
 				try {
 					new IconDownloadTask().execute(iconLocationArrayList);
 				} catch (Exception e) {
-					Log.e(TAG, "LoadData", e);
+					Log.e(TAG, "IconDL Task execution in LoadData", e);
 				}
 				
 				appListView.setAdapter(iconAdapter);
@@ -249,7 +239,7 @@ public class GetContentFromDBActivity extends ListActivity {
 					bitmapArrayList.add(BitmapFactory.decodeStream(bis));
 					bis.close();
 				} catch (Exception e) {
-					Log.e(TAG, "IconDownloadTask", e);
+					Log.w(TAG, "IconDownloadTask", e);
 
 					Bitmap bm;
 					bm = ((BitmapDrawable) getResources().getDrawable(
@@ -273,11 +263,4 @@ public class GetContentFromDBActivity extends ListActivity {
 			}
 		}
 	}
-	
-	@Override
-	  public void onDestroy() {
-	    adView4.destroy();
-	    super.onDestroy();
-	  }
-
 }
