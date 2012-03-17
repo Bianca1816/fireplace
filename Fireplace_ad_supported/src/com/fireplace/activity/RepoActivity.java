@@ -37,9 +37,7 @@ public class RepoActivity extends ListActivity implements OnClickListener{
         Button btnAddRepo = (Button) findViewById(R.id.addBtn);
         btnAddRepo.setOnClickListener(this);
         listItems.add("http://fireplace-market.com/repo/");
-        
-        
-        
+
     }
     
     public void onClick(View v) {

@@ -20,7 +20,8 @@
         ads:adSize="BANNER"
         ads:adUnitId="a14f43802ef4101"
         ads:loadAdOnCreate="true"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
     </com.google.ads.AdView>
 
 </RelativeLayout>
