@@ -125,8 +125,8 @@ public class DownloadFileActivity extends Activity implements
 			TextView txtDevlName = (TextView) findViewById(R.id.lbDevlName);
 			txtDevlName.setText(extras.getString("devl"));
 			Linkify.addLinks(txtDevlName, Linkify.ALL);
-//			TextView txtCategory = (TextView) findViewById(R.id.lbCategory);
-//			txtCategory.setVisibility(View.GONE);
+			TextView txtCategory = (TextView) findViewById(R.id.lbCategory);
+			txtCategory.setVisibility(View.GONE);
 //			txtCategory.setText("Category: " + extras.getString("ptype"));
 			ImageView imgView = (ImageView) findViewById(R.id.imageView1);
 			Bitmap bm = (Bitmap) extras.get("icon");

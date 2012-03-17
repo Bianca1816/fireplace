@@ -178,40 +178,40 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		installedAppsAdapter.setListItems(installedAppsList);
 		installedAppsListView.setAdapter(installedAppsAdapter);
 
-		// -----------Decide to show static or dynamic content--------------
-		if (goodNetwork) {
-			featuredAppImageView.setVisibility(View.GONE);
-			googlePlusImageView.setVisibility(View.GONE);
-			twitterImageView.setVisibility(View.GONE);
-			facebookImageView.setVisibility(View.GONE);
-
-			featuredAppWebView.getSettings().setJavaScriptEnabled(true);
-			featuredAppWebView.setWebChromeClient(new WebChromeClient() {
-				public void onProgressChanged(WebView view, int progress) {
-					FireplaceActivity.this.setTitle("Loading...");
-					FireplaceActivity.this.setProgress(progress * 100);
-
-					if (progress == 100)
-						FireplaceActivity.this.setTitle(R.string.app_name);
-				}
-			});
-
-			featuredAppWebView.setWebViewClient(new WebViewClient() {
-				@Override
-				public void onReceivedError(WebView view, int errorCode,
-						String description, String failingUrl) {
-					// Handle the error
-				}
-
-				@Override
-				public boolean shouldOverrideUrlLoading(WebView view, String url) {
-					view.loadUrl(url);
-					return true;
-				}
-			});
-			featuredAppWebView.loadUrl(FEATURED_URL);
-			featuredAppWebView.setOnClickListener(this);
-		} else {
+//		// -----------Decide to show static or dynamic content--------------
+//		if (goodNetwork) {
+//			featuredAppImageView.setVisibility(View.GONE);
+//			googlePlusImageView.setVisibility(View.GONE);
+//			twitterImageView.setVisibility(View.GONE);
+//			facebookImageView.setVisibility(View.GONE);
+//
+//			featuredAppWebView.getSettings().setJavaScriptEnabled(true);
+//			featuredAppWebView.setWebChromeClient(new WebChromeClient() {
+//				public void onProgressChanged(WebView view, int progress) {
+//					FireplaceActivity.this.setTitle("Loading...");
+//					FireplaceActivity.this.setProgress(progress * 100);
+//
+//					if (progress == 100)
+//						FireplaceActivity.this.setTitle(R.string.app_name);
+//				}
+//			});
+//
+//			featuredAppWebView.setWebViewClient(new WebViewClient() {
+//				@Override
+//				public void onReceivedError(WebView view, int errorCode,
+//						String description, String failingUrl) {
+//					// Handle the error
+//				}
+//
+//				@Override
+//				public boolean shouldOverrideUrlLoading(WebView view, String url) {
+//					view.loadUrl(url);
+//					return true;
+//				}
+//			});
+//			featuredAppWebView.loadUrl(FEATURED_URL);
+//			featuredAppWebView.setOnClickListener(this);
+//		} else {
 			featuredAppWebView.setVisibility(View.GONE);
 			googlePlusImageView.setImageResource(R.drawable.googleplus);
 			twitterImageView.setImageResource(R.drawable.twitter);
@@ -222,7 +222,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 			twitterImageView.setOnClickListener(this);
 			facebookImageView.setOnClickListener(this);
 			featuredAppImageView.setOnClickListener(this);
-		}
+//		}
 
 		// -----------------------------------------------------------------------
 
@@ -325,6 +325,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		}
 
 		public void applicationError(ApplicationErrorCode errorCode) {
+			dontAllow();
 		}
 	}
 

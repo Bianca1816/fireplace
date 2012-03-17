@@ -43,9 +43,9 @@ public class GetContentFromDBActivity extends ListActivity {
 	private final static String TAG = "GetContentFromDBActivty";
 	private final static String DATA_URL = "http://www.fireplace-market.com/getdata.php";
 	
-	private ArrayList<String> appNameArrayList;
-	private ArrayList<String> iconLocationArrayList;
-	private ArrayList<Bitmap> iconArrayList;
+	private ArrayList<String> appNameArrayList = new ArrayList<String>();
+	private ArrayList<String> iconLocationArrayList = new ArrayList<String>();
+	private ArrayList<Bitmap> iconArrayList = new ArrayList<Bitmap>();
 	
 	private ArrayList<ItemSkel> itemSkelArrayList;
 	
@@ -68,9 +68,6 @@ public class GetContentFromDBActivity extends ListActivity {
 		Bundle extras = getIntent().getExtras();
 
 		itemSkelArrayList = new ArrayList<ItemSkel>();
-		appNameArrayList = new ArrayList<String>();
-		iconLocationArrayList = new ArrayList<String>();
-		iconArrayList = new ArrayList<Bitmap>();
 				
 		ptype = extras.getInt("position");
 		
@@ -136,7 +133,7 @@ public class GetContentFromDBActivity extends ListActivity {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				Log.e(TAG, "LoadData", e);
+				Log.e(TAG, "Sleep in LoadData", e);
 			}
 		}
 		
@@ -155,7 +152,7 @@ public class GetContentFromDBActivity extends ListActivity {
 				try {
 					new IconDownloadTask().execute(iconLocationArrayList);
 				} catch (Exception e) {
-					Log.e(TAG, "LoadData", e);
+					Log.e(TAG, "IconDL Task execution in LoadData", e);
 				}
 				
 				appListView.setAdapter(iconAdapter);
@@ -242,7 +239,7 @@ public class GetContentFromDBActivity extends ListActivity {
 					bitmapArrayList.add(BitmapFactory.decodeStream(bis));
 					bis.close();
 				} catch (Exception e) {
-					Log.e(TAG, "IconDownloadTask", e);
+					Log.w(TAG, "IconDownloadTask", e);
 
 					Bitmap bm;
 					bm = ((BitmapDrawable) getResources().getDrawable(
