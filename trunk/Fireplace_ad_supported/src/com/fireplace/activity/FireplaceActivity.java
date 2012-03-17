@@ -1,22 +1,12 @@
 package com.fireplace.activity;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 import org.taptwo.android.widget.TitleFlowIndicator;
 import org.taptwo.android.widget.ViewFlow;
 
@@ -45,13 +35,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-//import android.webkit.WebChromeClient;
-//import android.webkit.WebView;
-//import android.webkit.WebViewClient;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -61,40 +50,32 @@ import com.fireplace.adapter.MainViewAdapter;
 import com.fireplace.adsup.R;
 import com.fireplace.software.App;
 import com.fireplace.software.ChangeLog;
-import com.fireplace.software.ItemSkel;
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 
 public class FireplaceActivity extends Activity implements OnItemClickListener,
 		OnClickListener {
 
-	// LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
-	private ArrayList<String> listItems = new ArrayList<String>();
-
-	// DEFINING STRING ADAPTER WHICH WILL HANDLE DATA OF LISTVIEW
-	private ArrayAdapter<String> adapter;
-	private ImageView gPlusView, twitView, fbView, featuredAppImageView;
-	private ListView categoryView, mAppsList;
-
 	private ViewFlow viewFlow;
 
-	private MainViewAdapter mvAdapter;
+	private AdView adView1, adView2, adView3;
+	private ImageView googlePlusImageView, twitterImageView, facebookImageView,
+			featuredAppImageView;
+	private ListView categoryListView, installedAppsListView;
+	private WebView featuredAppWebView;
+
+	private List<App> installedAppsList;
+	private ArrayList<String> categoryListItems = new ArrayList<String>();
+
+	private ArrayAdapter<String> categoryAdapter;
+	private AppListAdapter installedAppsAdapter;
+	private MainViewAdapter mainViewAdapter;
 
 	private static final boolean INCLUDE_SYSTEM_APPS = false;
+	private final static String TAG = "FireplaceActivity";
+	private final static String FEATURED_URL = "http://www.google.com";
 
-	private AppListAdapter mAdapter;
-	private List<App> mApps;
-	private boolean iconsLoaded = false;
-	private ArrayList<ItemSkel> list;
-
-	AdView adView1, adView2, adView3;
-	final static String TAG = "FireplaceActivity";
-	boolean listReceived = false;
-
-	final Activity activity = this;
+	private boolean iconsLoaded, goodNetwork = false;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -108,39 +89,24 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 			cl.getLogDialog().show();
 
 		viewFlow = (ViewFlow) findViewById(R.id.viewflow);
-		mvAdapter = new MainViewAdapter(this);
+		mainViewAdapter = new MainViewAdapter(this);
 
 		if (savedInstanceState == null) {
-			viewFlow.setAdapter(mvAdapter, 1);
+			viewFlow.setAdapter(mainViewAdapter, 1);
 		} else {
-			viewFlow.setAdapter(mvAdapter,
+			viewFlow.setAdapter(mainViewAdapter,
 					savedInstanceState.getInt("CurrentView"));
 		}
 
 		TitleFlowIndicator indicator = (TitleFlowIndicator) findViewById(R.id.viewflowindic);
-		indicator.setTitleProvider(mvAdapter);
+		indicator.setTitleProvider(mainViewAdapter);
 		viewFlow.setFlowIndicator(indicator);
 
-		list = new ArrayList<ItemSkel>();
-		// new getFeaturedApp().execute();
-
-		// Defines icons in startup screen - G+, Facebook and Twitter
-
-		gPlusView = (ImageView) findViewById(R.id.googleCon);
-		twitView = (ImageView) findViewById(R.id.twiiterCon);
-		fbView = (ImageView) findViewById(R.id.fbCon);
-
+		googlePlusImageView = (ImageView) findViewById(R.id.googleCon);
+		twitterImageView = (ImageView) findViewById(R.id.twiiterCon);
+		facebookImageView = (ImageView) findViewById(R.id.fbCon);
 		featuredAppImageView = (ImageView) findViewById(R.id.featureTileTop);
-
-		gPlusView.setImageResource(R.drawable.googleplus);
-		twitView.setImageResource(R.drawable.twitter);
-		fbView.setImageResource(R.drawable.fb);
-		featuredAppImageView.setImageResource(R.drawable.su_ic_logo);
-
-		gPlusView.setOnClickListener(this);
-		twitView.setOnClickListener(this);
-		fbView.setOnClickListener(this);
-		featuredAppImageView.setOnClickListener(this);
+		featuredAppWebView = (WebView) findViewById(R.id.webView);
 
 		adView1 = (AdView) findViewById(R.id.adView1);
 		adView2 = (AdView) findViewById(R.id.adView2);
@@ -152,23 +118,22 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		adView3.loadAd(new AdRequest());
 
 		/*----------------category view-----------------------*/
-		categoryView = (ListView) findViewById(R.id.tabThreeListView);
-
-		adapter = new ArrayAdapter<String>(this, R.layout.category_list_item,
-				listItems);
-
-		categoryView.setAdapter(adapter);
+		categoryListView = (ListView) findViewById(R.id.tabThreeListView);
+		categoryAdapter = new ArrayAdapter<String>(this,
+				R.layout.category_list_item, categoryListItems);
+		categoryListView.setAdapter(categoryAdapter);
 		for (String categoryName : getResources().getStringArray(
 				R.array.Category))
-			listItems.add(categoryName);
+			categoryListItems.add(categoryName);
 
-		categoryView.setOnItemClickListener(new OnItemClickListener() {
+		categoryListView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Intent getAppListIntent = new Intent(FireplaceActivity.this,
 						GetContentFromDBActivity.class);
 				getAppListIntent.putExtra("position", position);
-				startActivity(getAppListIntent);
+				if (hasGoodNetwork())
+					startActivity(getAppListIntent);
 			}
 		});
 
@@ -182,59 +147,69 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 			try {
 				runtime.exec(deleteCmd);
 			} catch (IOException e) {
+				Log.e(TAG, "In /sdcard/Fireplace/ folder removal", e);
 			}
 		}
 
-		startupNetworkCheck();
+		goodNetwork = hasGoodNetwork();
 
 		File fireplaceDir = new File("/sdcard/Fireplace/");
 		fireplaceDir.mkdirs();
 
-		mAppsList = (ListView) findViewById(R.id.listView1);
-		mAppsList.setOnItemClickListener(this);
+		installedAppsListView = (ListView) findViewById(R.id.listView1);
+		installedAppsListView.setOnItemClickListener(this);
+		installedAppsList = loadInstalledApps(INCLUDE_SYSTEM_APPS);
+		installedAppsAdapter = new AppListAdapter(getApplicationContext());
+		installedAppsAdapter.setListItems(installedAppsList);
+		installedAppsListView.setAdapter(installedAppsAdapter);
 
-		mApps = loadInstalledApps(INCLUDE_SYSTEM_APPS);
+		// -----------Decide to show static or dynamic content--------------
+//		if (goodNetwork) {
+//			featuredAppImageView.setVisibility(View.GONE);
+//			googlePlusImageView.setVisibility(View.GONE);
+//			twitterImageView.setVisibility(View.GONE);
+//			facebookImageView.setVisibility(View.GONE);
+//
+//			featuredAppWebView.getSettings().setJavaScriptEnabled(true);
+//			featuredAppWebView.setWebChromeClient(new WebChromeClient() {
+//				public void onProgressChanged(WebView view, int progress) {
+//					FireplaceActivity.this.setTitle("Loading...");
+//					FireplaceActivity.this.setProgress(progress * 100);
+//
+//					if (progress == 100)
+//						FireplaceActivity.this.setTitle(R.string.app_name);
+//				}
+//			});
+//
+//			featuredAppWebView.setWebViewClient(new WebViewClient() {
+//				@Override
+//				public void onReceivedError(WebView view, int errorCode,
+//						String description, String failingUrl) {
+//					// Handle the error
+//				}
+//
+//				@Override
+//				public boolean shouldOverrideUrlLoading(WebView view, String url) {
+//					view.loadUrl(url);
+//					return true;
+//				}
+//			});
+//			featuredAppWebView.loadUrl(FEATURED_URL);
+//			featuredAppWebView.setOnClickListener(this);
+//		} else {
+			featuredAppWebView.setVisibility(View.GONE);
+			googlePlusImageView.setImageResource(R.drawable.googleplus);
+			twitterImageView.setImageResource(R.drawable.twitter);
+			facebookImageView.setImageResource(R.drawable.fb);
+			featuredAppImageView.setImageResource(R.drawable.su_ic_logo);
 
-		mAdapter = new AppListAdapter(getApplicationContext());
+			googlePlusImageView.setOnClickListener(this);
+			twitterImageView.setOnClickListener(this);
+			facebookImageView.setOnClickListener(this);
+			featuredAppImageView.setOnClickListener(this);
+//		}
 
-		mAdapter.setListItems(mApps);
-		mAppsList.setAdapter(mAdapter);
-
-		new LoadIconsTask().execute(mApps.toArray(new App[] {}));
-
-		// Loads Featued page in webview with a progressbar
-
-		// WebView webView = (WebView) findViewById(R.id.webView);
-		// webView.getSettings().setJavaScriptEnabled(true);
-		//
-		// webView.setWebChromeClient(new WebChromeClient() {
-		// public void onProgressChanged(WebView view, int progress)
-		// {
-		// activity.setTitle("Loading...");
-		// activity.setProgress(progress * 100);
-		//
-		// if(progress == 100)
-		// activity.setTitle(R.string.app_name);
-		// }
-		// });
-		//
-		// webView.setWebViewClient(new WebViewClient() {
-		// @Override
-		// public void onReceivedError(WebView view, int errorCode, String
-		// description, String failingUrl)
-		// {
-		// // Handle the error
-		// }
-		//
-		// @Override
-		// public boolean shouldOverrideUrlLoading(WebView view, String url)
-		// {
-		// view.loadUrl(url);
-		// return true;
-		// }
-		// });
-		//
-		// webView.loadUrl("");
+		// -----------------------------------------------------------------------
 
 		/*-----------------------Unused-----------------------------------------/
 		 TabHost th = (TabHost) findViewById(R.id.tabhost);
@@ -297,6 +272,12 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		 /------------------------------------------------------------------------------*/
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		new LoadIconsTask().execute(installedAppsList.toArray(new App[] {}));
+	}
+
 	/*--------------------------------Menu Options-----------------------------------*/
 
 	@Override
@@ -312,8 +293,9 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		case R.id.menuDonate:
 			Intent browse = new Intent(
 					Intent.ACTION_VIEW,
-					Uri.parse("https://www.paypal.com/us/cgi-bin/webscr?cmd=_flow&SESSION=Ix6KJPWgQAW6v-JBj3RnVjrNdIZAvQgsh3Yi01blXbL5tDo4PKyPeMVYDFy&dispatch=5885d80a13c0db1f8e263663d3faee8d4026841ac68a446f69dad17fb2afeca3"));
-			startActivity(browse);
+					Uri.parse("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CVT4SNRTBSJCU"));
+			if (hasGoodNetwork())
+				startActivity(browse);
 			break;
 
 		case R.id.menuAbout:
@@ -431,11 +413,11 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 
 	}
 
-	public void updateProgress(int currentSize, int totalSize) {
-		// Toast.makeText(this, "Packages: " +
-		// Long.toString((currentSize/totalSize)*100)+"% Complete",
-		// Toast.LENGTH_SHORT).show();
-	}
+	// public void updateProgress(int currentSize, int totalSize) {
+	// Toast.makeText(this, "Packages: " +
+	// Long.toString((currentSize/totalSize)*100)+"% Complete",
+	// Toast.LENGTH_SHORT).show();
+	// }
 
 	/*-----------------------------Various Other Click controls---------------------------*/
 
@@ -445,34 +427,54 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		case R.id.twiiterCon: // Twitter Button
 			Intent browsetwitter = new Intent(Intent.ACTION_VIEW,
 					Uri.parse("http://twitter.com/#!/FireplaceMarket"));
-			startActivity(browsetwitter);
+			if (hasGoodNetwork())
+				startActivity(browsetwitter);
 			break;
 
 		case R.id.fbCon: // Facebook Button
 			Intent browseFacebook = new Intent(
 					Intent.ACTION_VIEW,
 					Uri.parse("http://www.facebook.com/pages/Fireplace-Market/379268035417930"));
-			startActivity(browseFacebook);
+			if (hasGoodNetwork())
+				startActivity(browseFacebook);
 
 			break;
 
 		case R.id.googleCon: // Google+ Button
 			Intent browseGplus = new Intent(Intent.ACTION_VIEW,
 					Uri.parse("https://plus.google.com/106118854945132150428"));
-			startActivity(browseGplus);
+			if (hasGoodNetwork())
+				startActivity(browseGplus);
 
 			break;
-			
-		case R.id.featureTileTop: //Featured App (Static for this release, will be dynamic next release)
-            Intent featuredIntent = new Intent(FireplaceActivity.this, DownloadFileActivity.class);
-            featuredIntent.putExtra("title","Superuser");
-            featuredIntent.putExtra("desc","Hook into your phone's power.\nGrant and manage Superuser rights for your phone.\n\nThis app requires that you already have root, or a custom recovery image to work.");
-            featuredIntent.putExtra("devl","ChansDD");
-            featuredIntent.putExtra("icon",BitmapFactory.decodeResource(getResources(),R.drawable.su_icon));
-            featuredIntent.putExtra("link","http://www.fireplace-market.com/apks/superuser.apk");
-            startActivity(featuredIntent);
-            
-            break;
+
+		case R.id.featureTileTop: // Featured App (Static for this release, will
+									// be dynamic next release)
+			Intent featuredIntent = new Intent(FireplaceActivity.this,
+					DownloadFileActivity.class);
+			featuredIntent.putExtra("title", "Superuser");
+			featuredIntent
+					.putExtra(
+							"desc",
+							"Hook into your phone's power.\nGrant and manage Superuser rights for your phone.\n\nThis app requires that you already have root, or a custom recovery image to work.");
+			featuredIntent.putExtra("devl", "ChansDD");
+			featuredIntent.putExtra("icon", BitmapFactory.decodeResource(
+					getResources(), R.drawable.su_icon));
+			featuredIntent.putExtra("link",
+					"http://www.fireplace-market.com/apks/superuser.apk");
+			if (hasGoodNetwork())
+				startActivity(featuredIntent);
+
+			break;
+
+		case R.id.webView:
+			String urlVar = featuredAppWebView.getUrl().replace(
+					FEATURED_URL + "/feat=", "");
+			Intent webFeaturedIntent = new Intent(FireplaceActivity.this,
+					DownloadFileActivity.class);
+			webFeaturedIntent.putExtra("featuredAppId", urlVar);
+			startActivity(webFeaturedIntent);
+			break;
 
 		case R.id.btnRepo: // Repository button
 			// Show repo's
@@ -500,41 +502,37 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 			startActivityForResult(intentStorage, 0);
 			break;
 
-		case R.id.btnViewAll:
-			// Show all apps
-			isOnline();
-			break;
+		// case R.id.btnViewAll:
+		// // Show all apps
+		// isOnline();
+		// break;
 		}
 	}
 
 	/*------------------------------Network Checking---------------------------------------*/
+	//
+	// public boolean isOnline() {
+	// ConnectivityManager cm = (ConnectivityManager)
+	// getSystemService(Context.CONNECTIVITY_SERVICE);
+	// NetworkInfo netInfo = cm.getActiveNetworkInfo();
+	// if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+	// Toast.makeText(FireplaceActivity.this, "Loading apps...",
+	// Toast.LENGTH_LONG).show();
+	// return true;
+	// }
+	// Toast.makeText(FireplaceActivity.this, "You need network connection!",
+	// Toast.LENGTH_LONG).show();
+	// return false;
+	// }
 
-	public boolean isOnline() {
+	public boolean hasGoodNetwork() {
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo netInfo = cm.getActiveNetworkInfo();
 		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-			Toast.makeText(FireplaceActivity.this, "Loading apps...",
-					Toast.LENGTH_LONG).show();
-
-			return true;
-		}
-		Toast.makeText(FireplaceActivity.this, "You need network connection!",
-				Toast.LENGTH_LONG).show();
-		return false;
-	}
-
-	public boolean startupNetworkCheck() {
-		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo netInfo = cm.getActiveNetworkInfo();
-		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-			// Toast.makeText(FireplaceActivity.this, "Network enabled!",
-			// Toast.LENGTH_LONG).show();
 			return true;
 		}
 		Toast.makeText(FireplaceActivity.this,
 				"No network connection detected!", Toast.LENGTH_LONG).show();
-		Button btnViewAll = (Button) findViewById(R.id.btnViewAll);
-		btnViewAll.setEnabled(false);
 		return false;
 	}
 
@@ -571,7 +569,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 				+ (app.getDescription() != null ? ("\n\n" + app
 						.getDescription()) : "");
 
-		Drawable icon = (iconsLoaded) ? mAdapter.getIcons().get(
+		Drawable icon = (iconsLoaded) ? installedAppsAdapter.getIcons().get(
 				app.getPackageName()) : getResources().getDrawable(
 				R.drawable.icon);
 
@@ -594,6 +592,9 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 										startActivity(i);
 									}
 								} catch (ActivityNotFoundException err) {
+									Log.e(TAG,
+											"In onItemClick for Installed Apps",
+											err);
 									Toast.makeText(FireplaceActivity.this,
 											"Error launching app",
 											Toast.LENGTH_SHORT).show();
@@ -620,76 +621,28 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	private List<App> loadInstalledApps(boolean includeSysApps) {
 		List<App> apps = new ArrayList<App>();
 
-		// the package manager contains the information about all installed apps
 		PackageManager packageManager = getPackageManager();
-
 		List<PackageInfo> packs = packageManager.getInstalledPackages(0); // PackageManager.GET_META_DATA
 
-		for (int i = 0; i < packs.size(); i++) {
-			PackageInfo p = packs.get(i);
-			ApplicationInfo a = p.applicationInfo;
+		for (PackageInfo packInfo : packs) {
 			// skip system apps if they shall not be included
 			if ((!includeSysApps)
-					&& ((a.flags & ApplicationInfo.FLAG_SYSTEM) == 1)) {
+					&& ((packInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 1)) {
 				continue;
 			}
 			App app = new App();
-			app.setTitle(p.applicationInfo.loadLabel(packageManager).toString());
-			app.setPackageName(p.packageName);
-			app.setVersionName(p.versionName);
-			app.setVersionCode(p.versionCode);
-			CharSequence description = p.applicationInfo
+			app.setTitle(packInfo.applicationInfo.loadLabel(packageManager)
+					.toString());
+			app.setPackageName(packInfo.packageName);
+			app.setVersionName(packInfo.versionName);
+			app.setVersionCode(packInfo.versionCode);
+			CharSequence description = packInfo.applicationInfo
 					.loadDescription(packageManager);
 			app.setDescription(description != null ? description.toString()
 					: "");
 			apps.add(app);
 		}
 		return apps;
-	}
-
-	private class getFeaturedApp extends
-			AsyncTask<Void, Integer, ArrayList<ItemSkel>> {
-
-		@Override
-		protected ArrayList<ItemSkel> doInBackground(Void... params) {
-			try {
-				HttpClient httpClient = new DefaultHttpClient();
-				HttpContext localContext = new BasicHttpContext();
-				HttpGet httpGet = new HttpGet(
-						"http://www.fireplace-market.com/getdata.php?feat=true");
-				HttpResponse response = httpClient.execute(httpGet,
-						localContext);
-				String result = "";
-
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(response.getEntity().getContent()));
-
-				String line = null;
-				while ((line = reader.readLine()) != null)
-					result += line;
-
-				if (!list.isEmpty())
-					list.clear();
-
-				Type type = new TypeToken<ArrayList<ItemSkel>>() {
-				}.getType();
-				Gson g = new Gson();
-				list = g.fromJson(result, type);
-
-				listReceived = true;
-				return list;
-			} catch (JsonSyntaxException e) {
-				Log.e(TAG, e.getMessage());
-			} catch (ClientProtocolException e) {
-				Log.e(TAG, e.getMessage());
-			} catch (IllegalStateException e) {
-				Log.e(TAG, e.getMessage());
-			} catch (IOException e) {
-				Log.e(TAG, e.getMessage());
-			}
-			return null;
-		}
-
 	}
 
 	/**
@@ -713,11 +666,11 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 					}
 				} catch (NameNotFoundException e) {
 					Log.e("ERROR", "Unable to find icon for package '"
-							+ pkgName + "': " + e.getMessage());
+							+ pkgName, e);
 				}
 				icons.put(app.getPackageName(), ico);
 			}
-			mAdapter.setIcons(icons);
+			installedAppsAdapter.setIcons(icons);
 
 			return null;
 		}
@@ -725,7 +678,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		@Override
 		protected void onPostExecute(Void result) {
 			iconsLoaded = true;
-			mAdapter.notifyDataSetChanged();
+			installedAppsAdapter.notifyDataSetChanged();
 		}
 	}
 

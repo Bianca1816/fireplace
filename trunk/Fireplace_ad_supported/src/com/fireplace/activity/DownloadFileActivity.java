@@ -26,6 +26,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -38,22 +39,19 @@ import com.fireplace.adsup.R;
 public class DownloadFileActivity extends Activity implements
 		android.view.View.OnClickListener {
 
-	public static final String LOG_TAG = "DownloadFileActivity";
-	private DownloadFileAsync myAsyncDownloadTask = null;
-	
-	//Length to be set from Async task after any configuration change, if task is running.
-	private int carryOverFileLength = 0;
-	
-	// initialize our progress dialog/bar
-	private ProgressDialog mProgressDialog = null;
+	private static final String TAG = "DownloadFileActivity";
 	private static final int DIALOG_DOWNLOAD_PROGRESS = 1;
+	
+	private DownloadFileAsync myAsyncDownloadTask;
+	private ProgressDialog mProgressDialog;
+	
+	private int carryOverFileLength = 0;
 
-	// initialize root directory
-	File rootDir = Environment.getExternalStorageDirectory();
+	private File rootDir = Environment.getExternalStorageDirectory();
 
-	public String fileURL;
-	public String title;
-	boolean goodConnection;
+	private String fileURL;
+	private String title;
+	private boolean goodConnection;
 
 	/* (non-Javadoc)
 	 * 
@@ -124,7 +122,7 @@ public class DownloadFileActivity extends Activity implements
 			Linkify.addLinks(txtDevlName, Linkify.ALL);
 			TextView txtCategory = (TextView) findViewById(R.id.lbCategory);
 			txtCategory.setVisibility(View.GONE);
-			txtCategory.setText("Category: " + extras.getString("ptype"));
+//			txtCategory.setText("Category: " + extras.getString("ptype"));
 			ImageView imgView = (ImageView) findViewById(R.id.imageView1);
 			Bitmap bm = (Bitmap) extras.get("icon");
 			imgView.setImageBitmap(bm);
@@ -306,7 +304,7 @@ public class DownloadFileActivity extends Activity implements
 							Toast.LENGTH_LONG).show();
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.e(TAG, "DownloadFileAsync", e);
 				Message thisMessage = handlerOfCaller.obtainMessage();
 				thisMessage.what = DOWNLOAD_ERROR;
 				handlerOfCaller.sendMessage(thisMessage);

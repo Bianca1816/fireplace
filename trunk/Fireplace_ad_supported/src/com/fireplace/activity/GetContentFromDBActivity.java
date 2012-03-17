@@ -5,18 +5,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -35,31 +33,28 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.fireplace.software.ItemSkel;
 import com.fireplace.adsup.R;
-import com.google.ads.AdRequest;
-import com.google.ads.AdView;
+import com.fireplace.software.ItemSkel;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 public class GetContentFromDBActivity extends ListActivity {
-	final static String TAG = "GetContentFromDBActivty";
-	ArrayList<String> stringArray = new ArrayList<String>();
-	ArrayList<String> iconLocArray = new ArrayList<String>();
-	ArrayList<Bitmap> iconArrayList = new ArrayList<Bitmap>();
-	ArrayList<ItemSkel> list;
-	ArrayList<ItemSkel> needsFilteredList;
+	private final static String TAG = "GetContentFromDBActivty";
+	private final static String DATA_URL = "http://www.fireplace-market.com/getdata.php";
 	
-	Integer ptype;
-	IconicAdapter modeAdapter;
-	boolean iconsReceived = false;
-	boolean listReceived = false;
-	ListView lv;
-	ImageView icon;
-
-	AdView adView4;
+	private ArrayList<String> appNameArrayList = new ArrayList<String>();
+	private ArrayList<String> iconLocationArrayList = new ArrayList<String>();
+	private ArrayList<Bitmap> iconArrayList = new ArrayList<Bitmap>();
 	
+	private ArrayList<ItemSkel> itemSkelArrayList;
+	
+	private Integer ptype;
+	private IconicAdapter iconAdapter;
+	private boolean iconsReceived, listReceived = false;
+	private ListView appListView;
+	private ImageView iconImageView;
+		
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
@@ -67,18 +62,16 @@ public class GetContentFromDBActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.listofappswithicons);
-		lv = (ListView) findViewById(android.R.id.list);
-		modeAdapter = new IconicAdapter();
+		appListView = (ListView) findViewById(android.R.id.list);
+		
+		iconAdapter = new IconicAdapter();
 		Bundle extras = getIntent().getExtras();
-		
-		adView4 = (AdView) findViewById(R.id.adView4);
-        
-        // Initiate a generic request to load it with an ad
-        adView4.loadAd(new AdRequest());
-		
+
+		itemSkelArrayList = new ArrayList<ItemSkel>();
+				
 		ptype = extras.getInt("position");
-		list = new ArrayList<ItemSkel>();
-		new getListTask().execute();
+		
+		new GetListTask().execute();
 		LoadData();
 	}
 
@@ -86,18 +79,15 @@ public class GetContentFromDBActivity extends ListActivity {
 	 * This Asynchronous task handles retrieving the list items from the server.
 	 *
 	 */
-	private class getListTask extends
+	private class GetListTask extends
 			AsyncTask<String, Integer, ArrayList<ItemSkel>> {
 
 		@Override
 		protected ArrayList<ItemSkel> doInBackground(String... params) {
 			try {
-				HttpClient httpClient = new DefaultHttpClient();
-				HttpContext localContext = new BasicHttpContext();
-				HttpGet httpGet = new HttpGet(
-						"http://www.fireplace-market.com/getdata.php");
-				HttpResponse response = httpClient.execute(httpGet,
-						localContext);
+
+				HttpResponse response = new DefaultHttpClient().execute(new HttpGet(DATA_URL),
+						new BasicHttpContext());
 				String result = "";
 
 				BufferedReader reader = new BufferedReader(
@@ -107,28 +97,25 @@ public class GetContentFromDBActivity extends ListActivity {
 				while ((line = reader.readLine()) != null)
 					result += line;
 
-				Type type = new TypeToken<ArrayList<ItemSkel>>() {
-				}.getType();
-				Gson g = new Gson();
-				needsFilteredList = g.fromJson(result, type);
-				
-				if (!list.isEmpty())
-					list.clear();
-				
-				for(ItemSkel item: needsFilteredList) {
-					if (item.getPtype().equals(ptype.toString()) || ptype == 0) list.add(item);
+				itemSkelArrayList = new Gson().fromJson(result, new TypeToken<ArrayList<ItemSkel>>() {}.getType());
+
+				if (ptype != 0){
+					for(Iterator<?> it = itemSkelArrayList.iterator(); it.hasNext();){
+						if (!((ItemSkel)it.next()).getPtype().equalsIgnoreCase(ptype.toString())){
+							it.remove();
+						}
+					}
 				}
-				
 				listReceived = true;				
-				return list;
+				return itemSkelArrayList;
 			} catch (JsonSyntaxException e) {
-				Log.e(TAG, e.getMessage());
+				Log.e(TAG, "getListTask", e);
 			} catch (ClientProtocolException e) {
-				Log.e(TAG, e.getMessage());
+				Log.e(TAG, "getListTask", e);
 			} catch (IllegalStateException e) {
-				Log.e(TAG, e.getMessage());
+				Log.e(TAG, "getListTask", e);
 			} catch (IOException e) {
-				Log.e(TAG, e.getMessage());
+				Log.e(TAG, "getListTask", e);
 			}
 			return null;
 		}
@@ -136,43 +123,43 @@ public class GetContentFromDBActivity extends ListActivity {
 	}
 
 	/**
-	 * This loads data for the lsit items...
+	 * This loads data for the list items...
 	 */
 	@SuppressWarnings("unchecked")
-	void LoadData() {
+	private void LoadData() {
 		
 		//This waits for 1/100 of a second periods until the list is received.
 		while(listReceived == false){
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				Log.e(TAG, e.getMessage());
+				Log.e(TAG, "Sleep in LoadData", e);
 			}
 		}
 		
-		if (!list.isEmpty()) {
+		if (!itemSkelArrayList.isEmpty()) {
 			try {
 
-				if (!stringArray.isEmpty())
-					stringArray.clear();
-				if (!iconLocArray.isEmpty())
-					iconLocArray.clear();
-				for (ItemSkel item : list) {
-					stringArray.add(item.getLabel());
-					iconLocArray.add(item.getIcon());
+				if (!appNameArrayList.isEmpty())
+					appNameArrayList.clear();
+				if (!iconLocationArrayList.isEmpty())
+					iconLocationArrayList.clear();
+				for (int i = 0; i < itemSkelArrayList.size(); i++) {
+					appNameArrayList.add(itemSkelArrayList.get(i).getLabel());
+					iconLocationArrayList.add(itemSkelArrayList.get(i).getIcon());
 				}
 
 				try {
-					new IconDownloadTask().execute(iconLocArray);
+					new IconDownloadTask().execute(iconLocationArrayList);
 				} catch (Exception e) {
-					e.printStackTrace();
+					Log.e(TAG, "IconDL Task execution in LoadData", e);
 				}
 				
-				lv.setAdapter(modeAdapter);
-				lv.setOnItemClickListener(new OnItemClickListener() {
+				appListView.setAdapter(iconAdapter);
+				appListView.setOnItemClickListener(new OnItemClickListener() {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
-						ItemSkel currentItem = list.get(position);
+						ItemSkel currentItem = itemSkelArrayList.get(position);
 						Intent i = new Intent(getApplicationContext(),
 								DownloadFileActivity.class);
 						i.putExtra("title", currentItem.getLabel());
@@ -191,7 +178,7 @@ public class GetContentFromDBActivity extends ListActivity {
 				});
 
 			} catch (Exception ex) {
-				Log.e(TAG, ex.getMessage());
+				Log.e(TAG, "LoadData", ex);
 
 			}
 		} else {
@@ -207,7 +194,7 @@ public class GetContentFromDBActivity extends ListActivity {
 	private class IconicAdapter extends ArrayAdapter<String> {
 		IconicAdapter() {
 			super(GetContentFromDBActivity.this, R.layout.approw_row,
-					R.id.label, stringArray);
+					R.id.label, appNameArrayList);
 		}
 
 		/* (non-Javadoc)
@@ -218,15 +205,14 @@ public class GetContentFromDBActivity extends ListActivity {
 		 */
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View row = super.getView(position, convertView, parent);
-			icon = (ImageView) row.findViewById(R.id.icon);
+			iconImageView = (ImageView) row.findViewById(R.id.icon);
 			if (iconArrayList.size() > 0) {
-				icon.setImageBitmap(iconArrayList.get(position));
+				iconImageView.setImageBitmap(iconArrayList.get(position));
 			} else {
-				icon.setImageResource(R.drawable.icon);
+				iconImageView.setImageResource(R.drawable.icon);
 			}
 			return (row);
 		}
-
 	}
 
 	/**
@@ -242,10 +228,10 @@ public class GetContentFromDBActivity extends ListActivity {
 			ArrayList<String> iconURLs = params[0];
 
 			ArrayList<Bitmap> bitmapArrayList = new ArrayList<Bitmap>();
-			for (String url_string : iconURLs) {
+			for (int i = 0; i < iconURLs.size(); i++) {
 
 				try {
-					URL url = new URL(url_string);
+					URL url = new URL(iconURLs.get(i));
 					URLConnection connection = url.openConnection();
 					connection.connect();
 					InputStream is = connection.getInputStream();
@@ -253,7 +239,7 @@ public class GetContentFromDBActivity extends ListActivity {
 					bitmapArrayList.add(BitmapFactory.decodeStream(bis));
 					bis.close();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Log.w(TAG, "IconDownloadTask", e);
 
 					Bitmap bm;
 					bm = ((BitmapDrawable) getResources().getDrawable(
@@ -270,19 +256,11 @@ public class GetContentFromDBActivity extends ListActivity {
 		protected void onPostExecute(ArrayList<Bitmap> bitmapArrayList) {
 			if (bitmapArrayList != null) {
 				iconsReceived = true;
-				//Notify custom adapter that the data has changed.
-				modeAdapter.notifyDataSetChanged();
+				iconAdapter.notifyDataSetChanged();
 			} else {
 				Toast.makeText(getApplicationContext(),
 						"Failed to Download Images", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
-	
-	@Override
-	  public void onDestroy() {
-	    adView4.destroy();
-	    super.onDestroy();
-	  }
-
 }
