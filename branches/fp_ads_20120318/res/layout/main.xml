@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:baselineAligned="false" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="0dip"
+        android:layout_height="fill_parent"
+        android:layout_weight="1.05"
+        android:background="@drawable/background_holo_dark"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/txtDeviceInfo"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/device_info_text" />
+
+        <uk.co.jasonfry.android.tools.ui.SwipeView
+            android:id="@+id/swipe_view"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <LinearLayout
+                android:id="@+id/tab1"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:id="@+id/relativeLayout2"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" >
+
+                    <Button
+                        android:id="@+id/btnTwitter"
+                        style="@style/button_holo_dark_button"
+                        android:layout_width="fill_parent"
+                        android:layout_height="80.0dip"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:drawableLeft="@drawable/twitter_icon"
+                        android:text="@string/twit_button_text"
+                        android:textColor="@color/white" />
+
+                    <ListView
+                        android:id="@+id/lvAppContainer"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:cacheColorHint="#00000000" >
+                    </ListView>
+
+                    <Button
+                        android:id="@+id/btnFacebook"
+                        style="@style/button_holo_dark_button"
+                        android:layout_width="fill_parent"
+                        android:layout_height="80.0dip"
+                        android:layout_alignParentLeft="true"
+                        android:layout_below="@+id/btnTwitter"
+                        android:drawableLeft="@drawable/facebook_icon"
+                        android:text="@string/facebook_button_text"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/txtLoading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="73dp"
+                        android:text="@string/under_dev_text" />
+
+                    <ProgressBar
+                        android:id="@+id/progressBar1"
+                        style="?android:attr/progressBarStyleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/btnFacebook"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="22dp" />
+
+                    <com.google.ads.AdView
+                        android:id="@+id/adView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        ads:adSize="BANNER"
+                        ads:adUnitId="a14f43802ef4101"
+                        ads:loadAdOnCreate="true"
+                        android:layout_alignParentBottom="true" >
+                    </com.google.ads.AdView>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/relativeLayout3"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <LinearLayout
+                    android:id="@+id/tab3"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical" >
+
+                    <Button
+                        android:id="@+id/btnViewAll"
+                        style="@style/button_holo_dark_button"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/view_all_button_text"
+                        android:textColor="@color/white" />
+
+                    <ListView
+                        android:id="@android:id/list"
+                        android:layout_width="fill_parent"
+                        android:layout_height="132dp"
+                        android:cacheColorHint="#00000000" >
+                    </ListView>
+                </LinearLayout>
+                    <com.google.ads.AdView
+                        android:id="@+id/adView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        ads:adSize="BANNER"
+                        ads:adUnitId="a14f43802ef4101"
+                        ads:loadAdOnCreate="true"
+                        android:layout_alignParentBottom="true" >
+                    </com.google.ads.AdView>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/tab2"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" >
+
+                <RelativeLayout
+                    android:id="@+id/relativeLayout1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" >
+
+                    <Button
+                        android:id="@+id/btnRepo"
+                        style="@style/button_holo_dark_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:drawableLeft="@drawable/repo_icon"
+                        android:text="@string/repo_button_text"
+                        android:textColor="@color/white" />
+
+                    <Button
+                        android:id="@+id/btnPack"
+                        style="@style/button_holo_dark_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_below="@+id/btnRepo"
+                        android:drawableLeft="@drawable/storage_icon"
+                        android:scaleType="center"
+                        android:text="@string/packages_button_text"
+                        android:textColor="@color/white" />
+
+                    <Button
+                        android:id="@+id/btnStorage"
+                        style="@style/button_holo_dark_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_below="@+id/btnPack"
+                        android:drawableLeft="@drawable/packages_icon"
+                        android:text="@string/storage_button_text"
+                        android:textColor="@color/white" />
+
+                    <com.google.ads.AdView
+                        android:id="@+id/adView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        ads:adSize="BANNER"
+                        ads:adUnitId="a14f43802ef4101"
+                        ads:loadAdOnCreate="true"
+                        android:layout_alignParentBottom="true" >
+                    </com.google.ads.AdView>
+                </RelativeLayout>
+            </LinearLayout>
+        </uk.co.jasonfry.android.tools.ui.SwipeView>
+    </LinearLayout>
+
+</LinearLayout>

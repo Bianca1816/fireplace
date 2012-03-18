@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="app_name">Fireplace Market</string>
+    <string-array name="Category">
+        <item>All</item>
+        <item>Applications</item>
+        <item>Network Tools</item>
+        <item>Root Utilities</item>
+        <item>System Tools</item>
+        <item>Security</item>
+        <item>Tweaks</item>
+        <item>Themes</item>
+    </string-array>
+    <string name="up_one_level">..</string>
+    <string name="current_dir">.</string>
+    <string name="version">2.3</string>
+    <string name="updateTo">2.3</string>
+    <string name="info_changelog">
+        Fireplace Market 2.3
+        \n- New UI (ICS-like)
+        \n- Download notifications
+        \n- Categories
+        \n- Featured Application
+        \n- Bug Fixes</string>
+    <string name="app_icon">Application Icon</string>
+    <string name="category_label">Category: </string>
+    <string name="developer_label">Developer</string>
+    <string name="download_label">Download</string>
+    <string name="prev_activity_label">Info from prev activity</string>
+    <string name="info_label">INFORMATION</string>
+    <string name="app_title_label">App Title</string>
+    <string name="changelog_ok_button">Okay</string>
+    <string name="changelog_full_title">Changelog</string>
+    <string name="changelog_title">Whats New!</string>
+    <string name="share_label">Share</string>
+    <string name="btnSearchLabel">Search</string>
+    <string name="strSetUpComp">Setting up components</string>
+    <string name="etSearchHint">What are you looking for?</string>
+    <string-array name="ViewTitles">
+        <item>Installed</item>
+        <item>Featured</item>
+        <item>Category</item>
+    </string-array>
+    <string name="empty_list_placeholder">No data</string>
+    <string name="device_info_text">Model - OS</string>
+    <string name="twit_button_text">Twitter</string>
+    <string name="facebook_button_text">Facebook</string>
+    <string name="under_dev_text">Under development</string>
+    <string name="view_all_button_text">All Applications</string>
+    <string name="repo_button_text">Repository</string>
+    <string name="packages_button_text">Packages</string>
+    <string name="storage_button_text">Storage</string>
+    <string name="pkgs_textview_two">TextView Two</string>
+    <string name="pkgs_textview_one">TextView One</string>
+    <string name="pkgs_button_one">Button One</string>
+    <string name="repo_add_button_text">Add</string>
+    <string name="repo_name_hint">Repo Name</string>
+    <string name="google_icon">Google Icon</string>
+    <string name="twitter_icon">Twitter Icon</string>
+    <string name="facebook_icon">Facebook Icon</string>
+    <string name="storage_text">Storage: </string>
+    <string name="storage_android_text">Android: </string>
+    <string name="storage_device_text">Device: </string>
+    <string name="storage_model_text">Model: </string>
+    <string name="storage_large_text">Large Text</string>
+    <string name="storage_fp_market">Fireplace Market: </string>
+    <string name="storage_full_cl">Full Changelog</string>
+    <string name="featured_app_promo_desc">Featured Application Tile</string>
+    <string name="menu_donate_button_text">Donate</string>
+    <string name="menu_about_button_text">About</string>
+    <string name="menu_update_button_text">Update</string>
+    <string name="menu_repo_button_text">Repo</string>
+</resources>
