@@ -30,6 +30,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings.Secure;
 import android.util.Log;
 import android.view.Menu;
@@ -38,14 +39,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.vending.licensing.AESObfuscator;
@@ -67,6 +67,9 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 			featuredAppImageView;
 	private ListView categoryListView, installedAppsListView;
 	private WebView featuredAppWebView;
+	
+	private Handler mHandler;
+	private ProgressBar pBar;
 
 	private List<App> installedAppsList;
 	private ArrayList<String> categoryListItems = new ArrayList<String>();
@@ -88,7 +91,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	private LicenseChecker licenseChecker;
 	private Handler handler;
 
-	private boolean iconsLoaded, goodNetwork = false;
+	private boolean iconsLoaded = false;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -166,20 +169,27 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 			}
 		}
 
-		goodNetwork = hasGoodNetwork();
-
 		File fireplaceDir = new File("/sdcard/Fireplace/");
 		fireplaceDir.mkdirs();
+		
+		mHandler = new Handler(){
+			public void handleMessage(Message msg) { 
+				pBar.setVisibility(View.GONE);
+				installedAppsListView.setAdapter(installedAppsAdapter);
+		    }			
+		};
+
+		pBar = (ProgressBar) findViewById(R.id.loadingProgressBar);
+		pBar.setIndeterminate(true);
 
 		installedAppsListView = (ListView) findViewById(R.id.listView1);
 		installedAppsListView.setOnItemClickListener(this);
-		installedAppsList = loadInstalledApps(INCLUDE_SYSTEM_APPS);
 		installedAppsAdapter = new AppListAdapter(getApplicationContext());
-		installedAppsAdapter.setListItems(installedAppsList);
-		installedAppsListView.setAdapter(installedAppsAdapter);
+
+		new LoadIconsTask().execute(new App[] {});
 
 //		// -----------Decide to show static or dynamic content--------------
-//		if (goodNetwork) {
+//		if (hasGoodNetwork()) {
 //			featuredAppImageView.setVisibility(View.GONE);
 //			googlePlusImageView.setVisibility(View.GONE);
 //			twitterImageView.setVisibility(View.GONE);
@@ -285,12 +295,6 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		 pBar.setVisibility(View.GONE);
 
 		 /------------------------------------------------------------------------------*/
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		new LoadIconsTask().execute(installedAppsList.toArray(new App[] {}));
 	}
 
 	/*-------------------------------Licensing Area--------------------------------*/
@@ -732,11 +736,14 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		@Override
 		protected Void doInBackground(App... apps) {
 
+			installedAppsList = loadInstalledApps(INCLUDE_SYSTEM_APPS);
+			installedAppsAdapter.setListItems(installedAppsList);
+			
 			Map<String, Drawable> icons = new HashMap<String, Drawable>();
 			PackageManager manager = getApplicationContext()
 					.getPackageManager();
 
-			for (App app : apps) {
+			for (App app : installedAppsList) {
 				String pkgName = app.getPackageName();
 				Drawable ico = null;
 				try {
@@ -751,14 +758,13 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 				icons.put(app.getPackageName(), ico);
 			}
 			installedAppsAdapter.setIcons(icons);
-
+			mHandler.sendEmptyMessage(0);
 			return null;
 		}
 
 		@Override
 		protected void onPostExecute(Void result) {
 			iconsLoaded = true;
-			installedAppsAdapter.notifyDataSetChanged();
 		}
 	}
 
