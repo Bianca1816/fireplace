@@ -79,7 +79,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	private final static String TAG = "FireplaceActivity";
 	private final static String FEATURED_URL = "http://www.google.com";
 
-	private boolean iconsLoaded = false;
+	private boolean iconsLoaded;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -88,6 +88,8 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.newviewflow);
 
+		iconsLoaded = false;
+		
 		ChangeLog cl = new ChangeLog(this);
 		if (cl.firstRun())
 			cl.getLogDialog().show();
@@ -161,7 +163,12 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		mHandler = new Handler(){
 			public void handleMessage(Message msg) { 
 				pBar.setVisibility(View.GONE);
-				installedAppsListView.setAdapter(installedAppsAdapter);
+				if (!iconsLoaded) {
+					installedAppsListView.setAdapter(installedAppsAdapter);
+				} else {
+					installedAppsAdapter.notifyDataSetChanged();
+				}
+				
 		    }			
 		};
 
@@ -659,6 +666,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 
 			installedAppsList = loadInstalledApps(INCLUDE_SYSTEM_APPS);
 			installedAppsAdapter.setListItems(installedAppsList);
+			mHandler.sendEmptyMessage(0);
 			
 			Map<String, Drawable> icons = new HashMap<String, Drawable>();
 			PackageManager manager = getApplicationContext()
@@ -679,13 +687,13 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 				icons.put(app.getPackageName(), ico);
 			}
 			installedAppsAdapter.setIcons(icons);
-			mHandler.sendEmptyMessage(0);
 			return null;
 		}
 
 		@Override
 		protected void onPostExecute(Void result) {
 			iconsLoaded = true;
+			mHandler.sendEmptyMessage(0);
 		}
 	}
 
