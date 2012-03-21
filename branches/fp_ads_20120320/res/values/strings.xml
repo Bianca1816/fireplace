@@ -70,4 +70,15 @@
     <string name="menu_about_button_text">About</string>
     <string name="menu_update_button_text">Update</string>
     <string name="menu_repo_button_text">Repo</string>
+    <string name="SettingsLabel">Settings</string>
+    <string name="repo_pref_title">Repositories</string>
+    <string name="repo_pref_summary">Click to add a repo.</string>
+    <string name="update_pref_title">Update</string>
+    <string name="update_pref_summary">Check for update.</string>
+    <string name="cache_pref_title">Clear Cache</string>
+    <string name="cache_pref_summary">Delete contents of download directory.</string>
+    <string name="donate_pref_title">Donate</string>
+    <string name="donate_pref_summary">Click to Donate.</string>
+    <string name="about_pref_title">About</string>
+    <string name="about_pref_summary">A little information about us.</string>
 </resources>
