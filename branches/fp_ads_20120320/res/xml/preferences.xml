@@ -14,6 +14,10 @@
 			android:title="@string/cache_pref_title"
 			android:summary="@string/cache_pref_summary"
 		    android:key="cachePref"/>
+		<Preference
+			android:title="@string/sync_pref_title"
+			android:summary="@string/sync_pref_summary"
+		    android:key="syncPref"/>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="Info Settings">
 	    <Preference

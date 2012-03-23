@@ -58,7 +58,8 @@
             android:label="@string/app_name"
             android:name="com.fireplace.activity.ViewInfoActivity" >
         </activity>
-        
+        <service android:name="com.fireplace.service.DatabaseSyncService" android:enabled="true"></service>
+        <receiver android:name="com.fireplace.receiver.AlarmReceiver"></receiver>
     </application>
 
 </manifest>

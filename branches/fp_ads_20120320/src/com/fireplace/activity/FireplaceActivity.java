@@ -218,7 +218,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 //		}
 
 	}
-
+	
 	/*--------------------------------Menu Options-----------------------------------*/
 
 	@Override
