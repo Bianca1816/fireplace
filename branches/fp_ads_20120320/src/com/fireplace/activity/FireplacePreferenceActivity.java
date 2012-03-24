@@ -2,12 +2,8 @@ package com.fireplace.activity;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.TimeZone;
 
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,7 +18,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.fireplace.adsup.R;
-import com.fireplace.receiver.AlarmReceiver;
+import com.fireplace.service.DatabaseSyncService;
 
 public class FireplacePreferenceActivity extends PreferenceActivity {
 	
@@ -189,8 +185,7 @@ public class FireplacePreferenceActivity extends PreferenceActivity {
 		Preference syncPref = (Preference) findPreference("syncPref");
 		syncPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			public boolean onPreferenceClick(Preference preference) {
-				startService(getIntent().setClassName("com.fireplace.service", "DatabaseSyncService"));
-//				setRecurringAlarm(getApplicationContext());
+				startService(new Intent(FireplacePreferenceActivity.this, DatabaseSyncService.class));
 				return true;
 			}
 		});
@@ -206,22 +201,6 @@ public class FireplacePreferenceActivity extends PreferenceActivity {
 		Toast.makeText(FireplacePreferenceActivity.this,
 				"No network connection detected!", Toast.LENGTH_LONG).show();
 		return false;
-	}
-	
-	private void setRecurringAlarm(Context context) {
-
-	    Calendar updateTime = Calendar.getInstance();
-	    updateTime.setTimeZone(TimeZone.getDefault());
-	    updateTime.set(Calendar.HOUR_OF_DAY, 10);
-	    updateTime.set(Calendar.MINUTE, 30);
-	 
-	    Intent sync = new Intent(context, AlarmReceiver.class);
-	    PendingIntent recurringSync = PendingIntent.getBroadcast(context,
-	            0, sync, PendingIntent.FLAG_CANCEL_CURRENT);
-	    AlarmManager alarms = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-	    alarms.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-	            updateTime.getTimeInMillis(),
-	            AlarmManager.INTERVAL_DAY, recurringSync);
 	}
 
 }

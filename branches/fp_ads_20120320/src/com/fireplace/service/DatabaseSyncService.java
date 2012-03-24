@@ -25,21 +25,6 @@ public class DatabaseSyncService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		
-//		int counter = 0;
-//		
-//		while (!hasGoodNetwork() && counter != 3){
-//			Log.i(TAG, "Network unavailable, sleeping for 5 minutes.");
-//			try {
-//				Thread.sleep(300000);
-//			} catch (Exception e) {
-//				Log.w(TAG, "Error in Thread Sleep", e);
-//			}
-//			counter++;
-//			
-//		}
-		
-		syncProcess();
-		
 	}
 	
 	@Override
@@ -58,6 +43,8 @@ public class DatabaseSyncService extends Service {
 	
 	public void syncProcess(){
 		if (hasGoodNetwork()) {
+			
+			Log.i(TAG, "Starting Sync");
 			//fetch records from fireplace market server.
 			itemSkelArrayList = new DataFetch().getFromFirePlace();
 			
@@ -78,10 +65,23 @@ public class DatabaseSyncService extends Service {
 							Integer.parseInt(s.getStatus()));
 				}
 				
-				fireDB.commit();
+//				fireDB.commit();
 				fireDB.close();
 			}
 		}
+	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		
+		new Thread() {
+		    @Override public void run() {
+		    	syncProcess();
+		    }
+		  }.start();
+		
+		
+		return super.onStartCommand(intent, flags, startId);
 	}
 	
 }
