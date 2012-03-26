@@ -50,6 +50,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.fireplace.adapter.AdChecker;
 import com.fireplace.adapter.AppListAdapter;
 import com.fireplace.adapter.MainViewAdapter;
 import com.fireplace.adsup.R;
@@ -127,6 +128,17 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		adView1.loadAd(new AdRequest());
 		adView2.loadAd(new AdRequest());
 		adView3.loadAd(new AdRequest());
+		
+		//If /etc/hosts file has admob it does
+		if(AdChecker.isAdsDisabled())
+  		{
+			//Falied Attempt of Static Ad 
+			//Need a better pic and add onclick download link
+			findViewById(R.id.adView1).setBackgroundResource(R.drawable.staticad);
+			findViewById(R.id.adView2).setBackgroundResource(R.drawable.staticad);
+			findViewById(R.id.adView3).setBackgroundResource(R.drawable.staticad);
+  		}  	
+		
 
 		/*----------------category view-----------------------*/
 		categoryListView = (ListView) findViewById(R.id.tabThreeListView);
