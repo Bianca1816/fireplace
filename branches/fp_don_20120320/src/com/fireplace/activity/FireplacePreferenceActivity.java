@@ -17,6 +17,7 @@ import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.fireplace.service.DatabaseSyncService;
 import com.fireplace.software.R;
 
 public class FireplacePreferenceActivity extends PreferenceActivity {
@@ -181,8 +182,15 @@ public class FireplacePreferenceActivity extends PreferenceActivity {
 			}
 		});
 		
+		Preference syncPref = (Preference) findPreference("syncPref");
+		syncPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			public boolean onPreferenceClick(Preference preference) {
+				startService(new Intent(FireplacePreferenceActivity.this, DatabaseSyncService.class));
+				return true;
+			}
+		});
 	}
-	
+
 	public boolean hasGoodNetwork() {
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo netInfo = cm.getActiveNetworkInfo();

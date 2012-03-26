@@ -2,16 +2,21 @@ package com.fireplace.activity;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.TimeZone;
 
 import org.taptwo.android.widget.TitleFlowIndicator;
 import org.taptwo.android.widget.ViewFlow;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -53,6 +58,7 @@ import com.android.vending.licensing.LicenseCheckerCallback;
 import com.android.vending.licensing.ServerManagedPolicy;
 import com.fireplace.adapter.AppListAdapter;
 import com.fireplace.adapter.MainViewAdapter;
+import com.fireplace.receiver.AlarmReceiver;
 import com.fireplace.software.App;
 import com.fireplace.software.ChangeLog;
 import com.fireplace.software.R;
@@ -150,7 +156,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Intent getAppListIntent = new Intent(FireplaceActivity.this,
-						GetContentFromDBActivity.class);
+						GetContentLocalActivity.class);
 				getAppListIntent.putExtra("position", position);
 				if (hasGoodNetwork())
 					startActivity(getAppListIntent);
@@ -270,6 +276,30 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		}
 	}
 
+	@Override
+	protected void onResume() {
+		setRecurringAlarm(getApplicationContext());
+		super.onResume();
+	}
+	
+	/*--------------------Recurring Alarm for DB refresh-----------------------------*/
+	
+	private void setRecurringAlarm(Context context) {
+
+	    Calendar updateTime = Calendar.getInstance();
+	    updateTime.setTimeZone(TimeZone.getDefault());
+	    updateTime.set(Calendar.HOUR_OF_DAY, new Random().nextInt(24));
+	    updateTime.set(Calendar.MINUTE, new Random().nextInt(60));
+	 
+	    Intent sync = new Intent(context, AlarmReceiver.class);
+	    PendingIntent recurringSync = PendingIntent.getBroadcast(context,
+	            0, sync, PendingIntent.FLAG_CANCEL_CURRENT);
+	    AlarmManager alarms = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+	    alarms.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+	            updateTime.getTimeInMillis(),
+	            AlarmManager.INTERVAL_DAY, recurringSync);
+	}
+	
 	/*--------------------------------Menu Options-----------------------------------*/
 
 	@Override
