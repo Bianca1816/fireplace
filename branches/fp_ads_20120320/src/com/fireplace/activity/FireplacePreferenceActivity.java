@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.view.Window;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fireplace.adsup.R;
@@ -162,23 +164,38 @@ public class FireplacePreferenceActivity extends PreferenceActivity {
 		Preference aboutPref = (Preference) findPreference("aboutPref");
 		aboutPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			public boolean onPreferenceClick(Preference preference) {
-				AlertDialog.Builder alertbox = new AlertDialog.Builder(FireplacePreferenceActivity.this);
-				alertbox.setTitle("About Fireplace Market");
-				alertbox.setMessage("Fireplace Market is a 3rd party app store which contain apps and tweaks which didn't get into Android Market"
+				//AlertDialog.Builder alertbox = new AlertDialog.Builder(FireplacePreferenceActivity.this);
+				//alertbox.setTitle("About Fireplace Market");
+				//alertbox.setMessage("Fireplace Market is a 3rd party app store which contain apps and tweaks which didn't get into Android Market"
+				//		+ "\n\nThis software comes without any kind of warranty!"
+				//		+ "\n\nProject started by Spxc"
+				//		+ "\n\nCopyright 2012"
+				//		+ "\nRooted Dev Team"
+				//		+ "\nStian Insteb�, Sachira Chinthana Jayasanka,"
+				//		+ "\nSimon Ponder & Zachary Spong");
+				//alertbox.setNeutralButton("Close",
+				//		new DialogInterface.OnClickListener() {
+				//			public void onClick(DialogInterface arg0, int arg1) {
+				//			}
+				//		});
+				//
+				// show it
+				//alertbox.show();
+				
+				Dialog dialog = new Dialog(FireplacePreferenceActivity.this,R.style.DialogDark);
+				dialog.setContentView(R.layout.about_holodark);
+				TextView text = (TextView) dialog.findViewById(R.id.about_version);
+				text.setText("V. 2.4 (4)");
+				TextView text1 = (TextView) dialog.findViewById(R.id.about_text);
+				text1.setText("Fireplace Market is a 3rd party app store which contain apps and tweaks which didn't get into Android Market"
 						+ "\n\nThis software comes without any kind of warranty!"
 						+ "\n\nProject started by Spxc"
 						+ "\n\nCopyright 2012"
 						+ "\nRooted Dev Team"
 						+ "\nStian Insteb�, Sachira Chinthana Jayasanka,"
 						+ "\nSimon Ponder & Zachary Spong");
-				alertbox.setNeutralButton("Close",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface arg0, int arg1) {
-							}
-						});
-	
-				// show it
-				alertbox.show();
+				dialog.show();
+				
 				return true;
 			}
 		});
