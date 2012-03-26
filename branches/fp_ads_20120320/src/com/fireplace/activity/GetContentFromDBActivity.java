@@ -33,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.fireplace.adapter.AdChecker;
 import com.fireplace.adsup.R;
 import com.fireplace.software.ItemSkel;
 import com.google.gson.Gson;
@@ -62,6 +63,14 @@ public class GetContentFromDBActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.listofappswithicons);
+		
+		if(AdChecker.isAdsDisabled())
+  		{
+			//Falied Attempt of Static Ad 
+			//Need a better pic and add onclick download link
+			findViewById(R.id.adView4).setBackgroundResource(R.drawable.staticad);
+  		}  
+		
 		appListView = (ListView) findViewById(android.R.id.list);
 		
 		iconAdapter = new IconicAdapter();
