@@ -11,7 +11,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:paddingBottom="50dip"/>
+        android:paddingBottom="50dip"
+        android:cacheColorHint="#00000000"/>
     <com.google.ads.AdView
                         android:id="@+id/adView3"
                         android:layout_width="wrap_content"
