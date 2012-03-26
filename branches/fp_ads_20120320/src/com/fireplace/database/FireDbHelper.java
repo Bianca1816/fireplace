@@ -26,7 +26,7 @@ public class FireDbHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		Log.v("FireDbHelper onCreate", "Creating all the tables");
+		Log.v("FireDbHelper onCreate", "Creating database tables");
 		try {
 			db.execSQL(CREATE_APPLICATION_TABLE);
 		} catch (SQLiteException ex) {
