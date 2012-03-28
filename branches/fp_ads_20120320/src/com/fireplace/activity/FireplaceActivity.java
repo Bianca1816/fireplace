@@ -57,6 +57,7 @@ import com.fireplace.adsup.R;
 import com.fireplace.receiver.AlarmReceiver;
 import com.fireplace.software.App;
 import com.fireplace.software.ChangeLog;
+import com.fireplace.software.ParcelableHolder;
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
 
@@ -73,8 +74,9 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	
 	private Handler mHandler;
 	private ProgressBar pBar;
+	private ParcelableHolder pHolder = new ParcelableHolder();
 	
-	private List<App> installedAppsList;
+	private List<App> installedAppsList = new ArrayList<App>();
 	private ArrayList<String> categoryListItems = new ArrayList<String>();
 
 	private ArrayAdapter<String> categoryAdapter;
@@ -85,7 +87,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	private final static String TAG = "FireplaceActivity";
 	private final static String FEATURED_URL = "http://www.google.com";
 
-	private boolean iconsLoaded;
+	private boolean iconsLoaded = false;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -108,6 +110,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		} else {
 			viewFlow.setAdapter(mainViewAdapter,
 					savedInstanceState.getInt("CurrentView"));
+			iconsLoaded = (boolean) savedInstanceState.getBoolean("iconsLoaded");
 		}
 
 		TitleFlowIndicator indicator = (TitleFlowIndicator) findViewById(R.id.viewflowindic);
@@ -187,8 +190,15 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		installedAppsListView.setOnItemClickListener(this);
 		installedAppsAdapter = new AppListAdapter(getApplicationContext());
 		
-		new LoadIconsTask().execute(new App[] {});
-
+		if (savedInstanceState != null && iconsLoaded) {
+			pHolder = (ParcelableHolder) savedInstanceState.getParcelable("parcel");
+			installedAppsList = (List<App>) pHolder.get("installedAppsList");
+			pBar.setVisibility(View.GONE);
+			installedAppsAdapter.setListItems(installedAppsList);
+			installedAppsAdapter.notifyDataSetChanged();
+		} else {		
+			new LoadIconsTask().execute(installedAppsList);
+		}
 		// -----------Decide to show static or dynamic content--------------
 //		if (hasGoodNetwork()) {
 //			featuredAppImageView.setVisibility(View.GONE);
@@ -481,11 +491,13 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	/**
 	 * An asynchronous task to load the icons of the installed applications.
 	 */
-	private class LoadIconsTask extends AsyncTask<App, Void, Void> {
+	private class LoadIconsTask extends AsyncTask<List<App>, Void, Void> {
 		@Override
-		protected Void doInBackground(App... apps) {
+		protected Void doInBackground(List<App>... apps) {
 
-			installedAppsList = loadInstalledApps(INCLUDE_SYSTEM_APPS);
+			installedAppsList = (apps[0] != null && apps[0].size() > 0) 
+					? apps[0]
+					: loadInstalledApps(INCLUDE_SYSTEM_APPS);
 			installedAppsAdapter.setListItems(installedAppsList);
 			mHandler.sendEmptyMessage(0);
 			
@@ -523,6 +535,10 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putInt("CurrentView", viewFlow.getCurrentView());
+		pHolder.put("installedAppsList", installedAppsList);
+		outState.putParcelable("parcel", pHolder);
+		outState.putBoolean("iconsLoaded", iconsLoaded);
+		
 		super.onSaveInstanceState(outState);
 	}
 }
