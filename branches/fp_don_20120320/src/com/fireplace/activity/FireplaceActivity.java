@@ -61,6 +61,7 @@ import com.fireplace.adapter.MainViewAdapter;
 import com.fireplace.receiver.AlarmReceiver;
 import com.fireplace.software.App;
 import com.fireplace.software.ChangeLog;
+import com.fireplace.software.ParcelableHolder;
 import com.fireplace.software.R;
 
 public class FireplaceActivity extends Activity implements OnItemClickListener,
@@ -75,6 +76,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	
 	private Handler mHandler;
 	private ProgressBar pBar;
+	private ParcelableHolder pHolder = new ParcelableHolder();
 
 	private List<App> installedAppsList;
 	private ArrayList<String> categoryListItems = new ArrayList<String>();
@@ -86,6 +88,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	private static final boolean INCLUDE_SYSTEM_APPS = false;
 	private final static String TAG = "FireplaceActivity";
 	private final static String FEATURED_URL = "http://www.google.com";
+	private Map<String, Drawable> icons = new HashMap<String, Drawable>();
 
 	private static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlJkXAwlWqWf1GHzIl00JjPYrG6cSN2VJrNm8Df97yU+KsxhT51xmI8bilwJ1BQTPBWTJ0CMcoY79rGiA1rOTXEXQRSintOQ8TePGBD1NL1G0nxAf1gqd7TEvsTSGaCMlT4Cx0lXL6wsktVgdcoRN/Z6NV1ZRKRX2yz18pg8q2ps2UT5Ur4IKNRMSL0rQT17QyRpzhBkitwRcl8IsQDr1j8/rC5VjiF48QkSVDEQ5DPO+7amsGLSI9GrhCl+BR09t37Ko37erjCkJmzgAaoYH7czc8MlPhB2/EKFVcTeEYVw3gVYdYGBUUhGqxJ/RSXoBqIpdBIC4AB4wEO37wniVKwIDAQAB";
 	private static final byte[] SALT = new byte[] { -26, 65, 30, -118, -113,
@@ -99,6 +102,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	private boolean iconsLoaded;
 
 	/** Called when the activity is first created. */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -119,6 +123,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		} else {
 			viewFlow.setAdapter(mainViewAdapter,
 					savedInstanceState.getInt("CurrentView"));
+			iconsLoaded = (boolean) savedInstanceState.getBoolean("iconsLoaded");
 		}
 
 		TitleFlowIndicator indicator = (TitleFlowIndicator) findViewById(R.id.viewflowindic);
@@ -190,7 +195,18 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		installedAppsListView.setOnItemClickListener(this);
 		installedAppsAdapter = new AppListAdapter(getApplicationContext());
 
-		new LoadIconsTask().execute(new App[] {});
+		if (savedInstanceState != null && iconsLoaded) {
+			pHolder = (ParcelableHolder) savedInstanceState.getParcelable("parcel");
+			installedAppsList = (List<App>) pHolder.get("installedAppsList");
+			icons = (HashMap<String, Drawable>) pHolder.get("icons");
+			installedAppsAdapter.setListItems(installedAppsList);
+			installedAppsAdapter.setIcons(icons);
+
+			installedAppsListView.setAdapter(installedAppsAdapter);
+			pBar.setVisibility(View.GONE);
+		} else {		
+			new LoadIconsTask().execute(installedAppsList);
+		}
 
 //		// -----------Decide to show static or dynamic content--------------
 //		if (hasGoodNetwork()) {
@@ -547,15 +563,17 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	/**
 	 * An asynchronous task to load the icons of the installed applications.
 	 */
-	private class LoadIconsTask extends AsyncTask<App, Void, Void> {
+	private class LoadIconsTask extends AsyncTask<List<App>, Void, Void> {
 		@Override
-		protected Void doInBackground(App... apps) {
+		protected Void doInBackground(List<App>... apps) {
 
-			installedAppsList = loadInstalledApps(INCLUDE_SYSTEM_APPS);
+			installedAppsList = (apps[0] != null && apps[0].size() > 0) 
+					? apps[0]
+					: loadInstalledApps(INCLUDE_SYSTEM_APPS);
 			installedAppsAdapter.setListItems(installedAppsList);
 			mHandler.sendEmptyMessage(0);
 			
-			Map<String, Drawable> icons = new HashMap<String, Drawable>();
+			icons = new HashMap<String, Drawable>();
 			PackageManager manager = getApplicationContext()
 					.getPackageManager();
 
@@ -589,6 +607,10 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putInt("CurrentView", viewFlow.getCurrentView());
+		pHolder.put("installedAppsList", installedAppsList);
+		pHolder.put("icons", icons);
+		outState.putParcelable("parcel", pHolder);
+		outState.putBoolean("iconsLoaded", iconsLoaded);
 		super.onSaveInstanceState(outState);
 	}
 

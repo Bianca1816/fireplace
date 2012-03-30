@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.fireplace.database.FireDB;
 import com.fireplace.software.ItemSkel;
+import com.fireplace.software.ParcelableHolder;
 import com.fireplace.software.R;
 
 public class GetContentLocalActivity extends ListActivity {
@@ -43,25 +44,42 @@ public class GetContentLocalActivity extends ListActivity {
 	private boolean iconsReceived, listReceived = false;
 	private ListView appListView;
 	private ImageView iconImageView;
+	private ParcelableHolder pHolder = new ParcelableHolder();
 		
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.listofappswithicons);
 		appListView = (ListView) findViewById(android.R.id.list);
-		
-		iconAdapter = new IconicAdapter();
 		Bundle extras = getIntent().getExtras();
 
 		itemSkelArrayList = new ArrayList<ItemSkel>();
 				
 		ptype = extras.getInt("position");
 		
-		new GetListTask().execute();
-		LoadData();
+		if (savedInstanceState != null) {
+			iconsReceived = (boolean)savedInstanceState.getBoolean("iconsReceived");
+			if (iconsReceived) {
+				pHolder = (ParcelableHolder) savedInstanceState.getParcelable("parcel");
+				iconArrayList = (ArrayList<Bitmap>) pHolder.get("iconArrayList");
+				appNameArrayList = (ArrayList<String>) pHolder.get("appNameArrayList");
+				itemSkelArrayList = (ArrayList<ItemSkel>) pHolder.get("itemSkelArrayList");
+				iconAdapter = new IconicAdapter();
+				setUpAppListView();
+			} else {
+				iconAdapter = new IconicAdapter();
+				new GetListTask().execute();
+				LoadData();
+			}
+		} else {
+			iconAdapter = new IconicAdapter();
+			new GetListTask().execute();
+			LoadData();
+		}
 	}
 
 	/**
@@ -159,27 +177,7 @@ public class GetContentLocalActivity extends ListActivity {
 					Log.e(TAG, "IconDL Task execution in LoadData", e);
 				}
 				
-				appListView.setAdapter(iconAdapter);
-				appListView.setOnItemClickListener(new OnItemClickListener() {
-					public void onItemClick(AdapterView<?> parent, View view,
-							int position, long id) {
-						ItemSkel currentItem = itemSkelArrayList.get(position);
-						Intent i = new Intent(getApplicationContext(),
-								DownloadFileActivity.class);
-						i.putExtra("title", currentItem.getLabel());
-						if (iconsReceived) {
-							i.putExtra("icon", iconArrayList.get(position));
-						} else {
-							i.putExtra("icon", ((BitmapDrawable) getResources()
-									.getDrawable(R.drawable.ic_no_icon)).getBitmap());
-						}
-						i.putExtra("link", currentItem.getPath());
-						i.putExtra("desc", currentItem.getDescription());
-						i.putExtra("ptype", currentItem.getPtype());
-						i.putExtra("devl", currentItem.getDeveloper());
-						startActivity(i);
-					}
-				});
+				setUpAppListView();
 
 			} catch (Exception ex) {
 				Log.e(TAG, "LoadData", ex);
@@ -189,6 +187,30 @@ public class GetContentLocalActivity extends ListActivity {
 			Toast.makeText(GetContentLocalActivity.this,
 					"No applications in this category...", Toast.LENGTH_LONG).show();
 		}
+	}
+	
+	private void setUpAppListView(){
+		appListView.setAdapter(iconAdapter);
+		appListView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				ItemSkel currentItem = itemSkelArrayList.get(position);
+				Intent i = new Intent(getApplicationContext(),
+						DownloadFileActivity.class);
+				i.putExtra("title", currentItem.getLabel());
+				if (iconsReceived) {
+					i.putExtra("icon", iconArrayList.get(position));
+				} else {
+					i.putExtra("icon", ((BitmapDrawable) getResources()
+							.getDrawable(R.drawable.ic_no_icon)).getBitmap());
+				}
+				i.putExtra("link", currentItem.getPath());
+				i.putExtra("desc", currentItem.getDescription());
+				i.putExtra("ptype", currentItem.getPtype());
+				i.putExtra("devl", currentItem.getDeveloper());
+				startActivity(i);
+			}
+		});
 	}
 
 	/**
@@ -266,5 +288,16 @@ public class GetContentLocalActivity extends ListActivity {
 						"Failed to Download Images", Toast.LENGTH_SHORT).show();
 			}
 		}
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		pHolder.put("iconArrayList", iconArrayList);
+		pHolder.put("appNameArrayList",appNameArrayList);
+		pHolder.put("itemSkelArrayList", itemSkelArrayList);
+		outState.putParcelable("parcel", pHolder);
+		outState.putBoolean("iconsReceived", iconsReceived);
+		
+		super.onSaveInstanceState(outState);
 	}
 }
