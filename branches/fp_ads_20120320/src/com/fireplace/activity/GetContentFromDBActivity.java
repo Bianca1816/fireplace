@@ -1,20 +1,11 @@
 package com.fireplace.activity;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.BasicHttpContext;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -35,14 +26,13 @@ import android.widget.Toast;
 
 import com.fireplace.adapter.AdChecker;
 import com.fireplace.adsup.R;
+import com.fireplace.software.DataFetch;
 import com.fireplace.software.ItemSkel;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
+import com.fireplace.software.ParcelableHolder;
 
 public class GetContentFromDBActivity extends ListActivity {
 	private final static String TAG = "GetContentFromDBActivty";
-	private final static String DATA_URL = "http://www.fireplace-market.com/getdata.php";
+	String dataUrl = "http://www.fireplace-market.com/";
 	
 	private ArrayList<String> appNameArrayList = new ArrayList<String>();
 	private ArrayList<String> iconLocationArrayList = new ArrayList<String>();
@@ -55,10 +45,12 @@ public class GetContentFromDBActivity extends ListActivity {
 	private boolean iconsReceived, listReceived = false;
 	private ListView appListView;
 	private ImageView iconImageView;
+	private ParcelableHolder pHolder = new ParcelableHolder();
 		
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -73,15 +65,34 @@ public class GetContentFromDBActivity extends ListActivity {
 		
 		appListView = (ListView) findViewById(android.R.id.list);
 		
-		iconAdapter = new IconicAdapter();
 		Bundle extras = getIntent().getExtras();
 
 		itemSkelArrayList = new ArrayList<ItemSkel>();
 				
 		ptype = extras.getInt("position");
 		
-		new GetListTask().execute();
-		LoadData();
+		if (savedInstanceState != null) {
+			iconsReceived = (boolean)savedInstanceState.getBoolean("iconsReceived");
+			if (iconsReceived) {
+				pHolder = (ParcelableHolder) savedInstanceState.getParcelable("parcel");
+				iconArrayList = (ArrayList<Bitmap>) pHolder.get("iconArrayList");
+				appNameArrayList = (ArrayList<String>) pHolder.get("appNameArrayList");
+				itemSkelArrayList = (ArrayList<ItemSkel>) pHolder.get("itemSkelArrayList");
+				iconAdapter = new IconicAdapter();
+				setUpAppListView();
+			} else {
+				iconAdapter = new IconicAdapter();
+				dataUrl = (extras.getString("repo") != null) ? extras.getString("repo") : dataUrl ;
+				new GetListTask().execute();
+				LoadData();
+			}
+		} else {
+			iconAdapter = new IconicAdapter();
+			dataUrl = (extras.getString("repo") != null) ? extras.getString("repo") : dataUrl ;
+			new GetListTask().execute();
+			LoadData();
+		}
+
 	}
 
 	/**
@@ -93,40 +104,17 @@ public class GetContentFromDBActivity extends ListActivity {
 
 		@Override
 		protected ArrayList<ItemSkel> doInBackground(String... params) {
-			try {
+			itemSkelArrayList = new DataFetch().getFromOtherRepo(dataUrl);
 
-				HttpResponse response = new DefaultHttpClient().execute(new HttpGet(DATA_URL),
-						new BasicHttpContext());
-				String result = "";
-
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(response.getEntity().getContent()));
-
-				String line = null;
-				while ((line = reader.readLine()) != null)
-					result += line;
-
-				itemSkelArrayList = new Gson().fromJson(result, new TypeToken<ArrayList<ItemSkel>>() {}.getType());
-
-				if (ptype != 0){
-					for(Iterator<?> it = itemSkelArrayList.iterator(); it.hasNext();){
-						if (!((ItemSkel)it.next()).getPtype().equalsIgnoreCase(ptype.toString())){
-							it.remove();
-						}
+			if (ptype != 0){
+				for(Iterator<?> it = itemSkelArrayList.iterator(); it.hasNext();){
+					if (!((ItemSkel)it.next()).getPtype().equalsIgnoreCase(ptype.toString())){
+						it.remove();
 					}
 				}
-				listReceived = true;				
-				return itemSkelArrayList;
-			} catch (JsonSyntaxException e) {
-				Log.e(TAG, "getListTask", e);
-			} catch (ClientProtocolException e) {
-				Log.e(TAG, "getListTask", e);
-			} catch (IllegalStateException e) {
-				Log.e(TAG, "getListTask", e);
-			} catch (IOException e) {
-				Log.e(TAG, "getListTask", e);
 			}
-			return null;
+			listReceived = true;				
+			return itemSkelArrayList;
 		}
 
 	}
@@ -164,27 +152,7 @@ public class GetContentFromDBActivity extends ListActivity {
 					Log.e(TAG, "IconDL Task execution in LoadData", e);
 				}
 				
-				appListView.setAdapter(iconAdapter);
-				appListView.setOnItemClickListener(new OnItemClickListener() {
-					public void onItemClick(AdapterView<?> parent, View view,
-							int position, long id) {
-						ItemSkel currentItem = itemSkelArrayList.get(position);
-						Intent i = new Intent(getApplicationContext(),
-								DownloadFileActivity.class);
-						i.putExtra("title", currentItem.getLabel());
-						if (iconsReceived) {
-							i.putExtra("icon", iconArrayList.get(position));
-						} else {
-							i.putExtra("icon", ((BitmapDrawable) getResources()
-									.getDrawable(R.drawable.ic_no_icon)).getBitmap());
-						}
-						i.putExtra("link", currentItem.getPath());
-						i.putExtra("desc", currentItem.getDescription());
-						i.putExtra("ptype", currentItem.getPtype());
-						i.putExtra("devl", currentItem.getDeveloper());
-						startActivity(i);
-					}
-				});
+				setUpAppListView();
 
 			} catch (Exception ex) {
 				Log.e(TAG, "LoadData", ex);
@@ -196,6 +164,30 @@ public class GetContentFromDBActivity extends ListActivity {
 		}
 	}
 
+	private void setUpAppListView(){
+		appListView.setAdapter(iconAdapter);
+		appListView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				ItemSkel currentItem = itemSkelArrayList.get(position);
+				Intent i = new Intent(getApplicationContext(),
+						DownloadFileActivity.class);
+				i.putExtra("title", currentItem.getLabel());
+				if (iconsReceived) {
+					i.putExtra("icon", iconArrayList.get(position));
+				} else {
+					i.putExtra("icon", ((BitmapDrawable) getResources()
+							.getDrawable(R.drawable.ic_no_icon)).getBitmap());
+				}
+				i.putExtra("link", currentItem.getPath());
+				i.putExtra("desc", currentItem.getDescription());
+				i.putExtra("ptype", currentItem.getPtype());
+				i.putExtra("devl", currentItem.getDeveloper());
+				startActivity(i);
+			}
+		});
+	}
+	
 	/**
 	 * This is a custom adapter that make sit easier to work with icon's
 	 * for the list.
@@ -271,5 +263,16 @@ public class GetContentFromDBActivity extends ListActivity {
 						"Failed to Download Images", Toast.LENGTH_SHORT).show();
 			}
 		}
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		pHolder.put("iconArrayList", iconArrayList);
+		pHolder.put("appNameArrayList",appNameArrayList);
+		pHolder.put("itemSkelArrayList", itemSkelArrayList);
+		outState.putParcelable("parcel", pHolder);
+		outState.putBoolean("iconsReceived", iconsReceived);
+		
+		super.onSaveInstanceState(outState);
 	}
 }

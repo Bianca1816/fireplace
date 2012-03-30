@@ -18,7 +18,7 @@ import android.util.Log;
 
 public class DataFetch{
 	
-	final static String TAG = "DatabaseSyncService";
+	final static String TAG = "DataFetch";
 	private String url = "http://www.fireplace-market.com/getdata.php";
 
 	public ArrayList<ItemSkel> getFromFirePlace(){

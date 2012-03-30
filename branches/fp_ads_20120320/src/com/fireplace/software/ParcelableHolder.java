@@ -6,18 +6,22 @@ import android.os.Parcel;
 import android.os.Parcelable;
  
 public class ParcelableHolder implements Parcelable {
+	@SuppressWarnings("rawtypes")
     private HashMap map = null;
  
+    @SuppressWarnings("rawtypes")
     public ParcelableHolder() {
         map = new HashMap();
     }
  
-    public ParcelableHolder(Parcel in) {
+    @SuppressWarnings("rawtypes")
+	public ParcelableHolder(Parcel in) {
         map = new HashMap();
         readFromParcel(in);
     }
  
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+    @SuppressWarnings("rawtypes")
+	public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public ParcelableHolder createFromParcel(Parcel in) {
             return new ParcelableHolder(in);
         }
@@ -27,7 +31,9 @@ public class ParcelableHolder implements Parcelable {
         }
     };
   
-    public void readFromParcel(Parcel in) {
+    
+    @SuppressWarnings("unchecked")
+	public void readFromParcel(Parcel in) {
         int count = in.readInt();
         for (int i = 0; i < count; i++) {
             map.put(in.readString(), in);
@@ -38,7 +44,8 @@ public class ParcelableHolder implements Parcelable {
         return map.get(key);
     }
  
-    public void put(String key, Object value) {
+    @SuppressWarnings("unchecked")
+	public void put(String key, Object value) {
         map.put(key, value);
     }
 
@@ -48,9 +55,13 @@ public class ParcelableHolder implements Parcelable {
 
 	public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(map.size());
-        for (Object s: map.keySet()) {
-            dest.writeString(s.toString());
-            dest.writeValue(map.get(s));
-        }
+        try {
+			for (Object s: map.keySet()) {
+			    dest.writeString(s.toString());
+			    dest.writeValue(map.get(s));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

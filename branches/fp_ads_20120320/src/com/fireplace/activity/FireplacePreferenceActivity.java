@@ -3,10 +3,8 @@ package com.fireplace.activity;
 import java.io.File;
 import java.io.IOException;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -16,7 +14,6 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.util.Log;
-import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 
