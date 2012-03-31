@@ -82,5 +82,5 @@
     <string name="about_pref_title">About</string>
     <string name="about_pref_summary">A little information about us.</string>
     <string name="sync_pref_title">Refresh Apps</string>
-    <string name="sync_pref_summary">Click to refresh the app lists.</string>
+    <string name="sync_pref_summary">Click to refresh the app list.</string>
 </resources>

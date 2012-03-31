@@ -82,4 +82,5 @@
     <string name="about_pref_title">Sur</string>
     <string name="about_pref_summary">Un peu d\'information sur nous.</string>
     <string name="sync_pref_title">Apps Actualiser</string>
+    <string name="sync_pref_summary">Cliquez ici pour rafraîchir la liste des applications.</string>
 </resources>

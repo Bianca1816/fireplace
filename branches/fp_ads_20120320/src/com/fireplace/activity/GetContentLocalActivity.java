@@ -30,22 +30,25 @@ import com.fireplace.adsup.R;
 import com.fireplace.database.FireDB;
 import com.fireplace.software.ItemSkel;
 import com.fireplace.software.ParcelableHolder;
+import com.fireplace.software.SecretFile;
+import com.google.ads.AdView;
 
 public class GetContentLocalActivity extends ListActivity {
 	private final static String TAG = "GetContentLocalActivity";
 	
-	private ArrayList<String> appNameArrayList = new ArrayList<String>();
-	private ArrayList<String> iconLocationArrayList = new ArrayList<String>();
-	private ArrayList<Bitmap> iconArrayList = new ArrayList<Bitmap>();
+	ArrayList<String> appNameArrayList = new ArrayList<String>();
+	ArrayList<String> iconLocationArrayList = new ArrayList<String>();
+	ArrayList<Bitmap> iconArrayList = new ArrayList<Bitmap>();
 	
-	private ArrayList<ItemSkel> itemSkelArrayList;
+	ArrayList<ItemSkel> itemSkelArrayList;
 	
-	private Integer ptype;
-	private IconicAdapter iconAdapter;
-	private boolean iconsReceived, listReceived = false;
-	private ListView appListView;
-	private ImageView iconImageView;
-	private ParcelableHolder pHolder = new ParcelableHolder();
+	Integer ptype;
+	IconicAdapter iconAdapter;
+	boolean iconsReceived, listReceived, secretFileExists = false;
+	ListView appListView;
+	ImageView iconImageView;
+	ParcelableHolder pHolder = new ParcelableHolder();
+	AdView adView;
 		
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -56,14 +59,24 @@ public class GetContentLocalActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.listofappswithicons);
 		
-		if(AdChecker.isAdsDisabled())
+		secretFileExists = SecretFile.check();
+		
+		if(AdChecker.isAdsDisabled() && !secretFileExists)
   		{
 			//Falied Attempt of Static Ad 
 			//Need a better pic and add onclick download link
 			findViewById(R.id.adView4).setBackgroundResource(R.drawable.staticad);
   		}  
 		
-		appListView = (ListView) findViewById(android.R.id.list);
+		adView = (AdView) findViewById(R.id.adView4);
+		
+		appListView = getListView();
+		
+		if (secretFileExists){
+			adView.setVisibility(View.GONE);
+			appListView.setPadding(0, 0, 0, 0);
+		}
+		
 		Bundle extras = getIntent().getExtras();
 
 		itemSkelArrayList = new ArrayList<ItemSkel>();
@@ -90,6 +103,14 @@ public class GetContentLocalActivity extends ListActivity {
 			LoadData();
 		}
 
+	}
+	
+	@Override
+	public void onDestroy() {
+		if (!secretFileExists) {
+			adView.destroy();
+		}
+		super.onDestroy();
 	}
 
 	/**

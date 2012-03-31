@@ -58,37 +58,38 @@ import com.fireplace.receiver.AlarmReceiver;
 import com.fireplace.software.App;
 import com.fireplace.software.ChangeLog;
 import com.fireplace.software.ParcelableHolder;
+import com.fireplace.software.SecretFile;
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
 
 public class FireplaceActivity extends Activity implements OnItemClickListener,
 		OnClickListener {
 
-	private ViewFlow viewFlow;
+	ViewFlow viewFlow;
 
-	private AdView adView1, adView2, adView3;
-	private ImageView googlePlusImageView, twitterImageView, facebookImageView,
+	AdView adView1, adView2, adView3;
+	ImageView googlePlusImageView, twitterImageView, facebookImageView,
 			featuredAppImageView;
-	private ListView categoryListView, installedAppsListView;
-	private WebView featuredAppWebView;
+	ListView categoryListView, installedAppsListView;
+	WebView featuredAppWebView;
 	
-	private Handler mHandler;
-	private ProgressBar pBar;
-	private ParcelableHolder pHolder = new ParcelableHolder();
+	Handler mHandler;
+	ProgressBar pBar;
+	ParcelableHolder pHolder = new ParcelableHolder();
 	
-	private List<App> installedAppsList = new ArrayList<App>();
-	private ArrayList<String> categoryListItems = new ArrayList<String>();
+	List<App> installedAppsList = new ArrayList<App>();
+	ArrayList<String> categoryListItems = new ArrayList<String>();
 
-	private ArrayAdapter<String> categoryAdapter;
-	private AppListAdapter installedAppsAdapter;
-	private MainViewAdapter mainViewAdapter;
+	ArrayAdapter<String> categoryAdapter;
+	AppListAdapter installedAppsAdapter;
+	MainViewAdapter mainViewAdapter;
 
 	private static final boolean INCLUDE_SYSTEM_APPS = false;
 	private final static String TAG = "FireplaceActivity";
 	private final static String FEATURED_URL = "http://www.google.com";
 
-	private Map<String, Drawable> icons = new HashMap<String, Drawable>();
-	private boolean iconsLoaded = false;
+	Map<String, Drawable> icons = new HashMap<String, Drawable>();
+	boolean iconsLoaded, secretFileExists = false;
 
 	/** Called when the activity is first created. */
 	@SuppressWarnings("unchecked")
@@ -129,13 +130,10 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		adView2 = (AdView) findViewById(R.id.adView2);
 		adView3 = (AdView) findViewById(R.id.adView3);
 
-		// Initiate a generic request to load it with an ad
-		adView1.loadAd(new AdRequest());
-		adView2.loadAd(new AdRequest());
-		adView3.loadAd(new AdRequest());
+		secretFileExists = SecretFile.check();
 		
 		//If /etc/hosts file has admob it does
-		if(AdChecker.isAdsDisabled())
+		if(AdChecker.isAdsDisabled() && !secretFileExists)
   		{
 			//Falied Attempt of Static Ad 
 			//Need a better pic and add onclick download link
@@ -191,6 +189,19 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 		installedAppsListView = (ListView) findViewById(R.id.listView1);
 		installedAppsListView.setOnItemClickListener(this);
 		installedAppsAdapter = new AppListAdapter(getApplicationContext());
+		
+		if (!secretFileExists) {
+			// Initiate a generic request to load it with an ad
+			adView1.loadAd(new AdRequest());
+			adView2.loadAd(new AdRequest());
+			adView3.loadAd(new AdRequest());
+		} else {
+			adView1.setVisibility(View.GONE);
+			adView2.setVisibility(View.GONE);
+			adView3.setVisibility(View.GONE);
+			installedAppsListView.setPadding(0, 0, 0, 0);
+			categoryListView.setPadding(0, 0, 0, 0);
+		}
 		
 		if (savedInstanceState != null && iconsLoaded) {
 			pHolder = (ParcelableHolder) savedInstanceState.getParcelable("parcel");
@@ -392,9 +403,11 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 
 	@Override
 	public void onDestroy() {
-		adView1.destroy();
-		adView2.destroy();
-		adView3.destroy();
+		if (!secretFileExists) {
+			adView1.destroy();
+			adView2.destroy();
+			adView3.destroy();
+		}
 		super.onDestroy();
 	}
 
