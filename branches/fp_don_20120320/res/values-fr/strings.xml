@@ -62,6 +62,14 @@
     <string name="storage_large_text">la taille du texte</string>
     <string name="storage_fp_market">Marché Cheminée: </string>
     <string name="storage_full_cl">Journal pleine mutation</string>
+    <string name="allow">Merci pour le don de la Dev Team enraciné</string>
+    <string name="dont_allow">Vous devez télécharger la version de Play don Google.</string>
+    <string name="checking_license">Vérification de licence&#8230;</string>
+    <string name="quit_button">Quitter</string>
+    <string name="buy_button">Donner</string>
+    <string name="unlicensed_dialog_title">Avertissement</string>
+    <string name="unlicensed_dialog_body">Votre copie de cette demande n\'est pas agréée.</string>
+    <string name="check_license">Licence Vérifiez</string>
     <string name="featured_app_promo_desc">Titre de l\'application vedette</string>
     <string name="menu_donate_button_text">Donner</string>
     <string name="menu_about_button_text">à propos</string>
@@ -79,4 +87,5 @@
     <string name="about_pref_title">Sur</string>
     <string name="about_pref_summary">Un peu d\'information sur nous.</string>
     <string name="sync_pref_title">Apps Actualiser</string>
+    <string name="sync_pref_summary">Cliquez ici pour rafraîchir la liste des applications.</string>
 </resources>
