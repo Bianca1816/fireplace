@@ -1,48 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="horizontal"
-    android:background="@drawable/background_holo_dark" >
-
-    <RelativeLayout
-        android:id="@+id/relativeLayout1"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
-
-        <Button
-            android:id="@+id/addBtn"
-            style="@style/button_holo_dark_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="@string/repo_add_button_text"
-            android:textColor="@color/white" />
-
-        <ListView
-            android:id="@android:id/list"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@+id/addBtn"
-            android:drawSelectorOnTop="false" />
-
-        <EditText
-            android:id="@+id/txtAddRepo"
-            style="@style/text_holo_dark_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/addBtn"
-            android:layout_alignBottom="@+id/addBtn"
-            android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/addBtn"
-            android:textColor="@color/white"
-            android:inputType="text" 
-            android:gravity="left"
-            android:hint="@string/repo_name_hint" >
-
-            <requestFocus />
-        </EditText>
-
-    </RelativeLayout>
-
-</LinearLayout>
