@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="app_name">Fireplace Market +</string>
+    <string-array name="Category">
+        <item>Tous</item>
+        <item>Applications</item>
+        <item>Outils de réseau</item>
+        <item>Utilitaires racines</item>
+        <item>Outils système</item>
+        <item>sécurité</item>
+        <item>Tweaks</item>
+        <item>Thèmes</item>
+    </string-array>
+    <string name="up_one_level">..</string>
+    <string name="current_dir">.</string>
+    <string name="version">2.4</string>
+    <string name="updateTo">2.4</string>
+    <string name="info_changelog">
+        Fireplace Market 2.4
+        \n- Ajouter vos propres dépôts, doit suivre la conception de notre JSON.
+        \n- Stocker des informations app localement dans SQLite.
+        \n- Synchronise la base de données sur la charge, puis tous les jours, sans nécessité d\'une interaction.
+        \n- Proposé plusieurs interactions à un seul menu.
+        \n- Aptitude à effacer la mémoire cache, faire un don, et mise à jour via le menu.
+        \n- L\'assurance-chômage plus lisse et plus rapide.</string>
+    <string name="app_icon">Application Icon</string>
+    <string name="category_label">Catégorie: </string>
+    <string name="developer_label">Developer</string>
+    <string name="download_label">Promoteur</string>
+    <string name="prev_activity_label">Infos de l\'activité précédente</string>
+    <string name="info_label">INFORMATION</string>
+    <string name="app_title_label">App Titre</string>
+    <string name="changelog_ok_button">Bien</string>
+    <string name="changelog_full_title">des modifications</string>
+    <string name="changelog_title">Quoi de neuf!</string>
+    <string name="share_label">Répartir</string>
+    <string name="btnSearchLabel">Recherche</string>
+    <string name="strSetUpComp">Mise en place des composants</string>
+    <string name="etSearchHint">Qu\'est-ce que vous cherchez?</string>
+    <string-array name="ViewTitles">
+        <item>Installé</item>
+        <item>En vedette</item>
+        <item>Catégorie</item>
+    </string-array>
+    <string name="empty_list_placeholder">Pas de données</string>
+    <string name="device_info_text">Modèle - OS</string>
+    <string name="twit_button_text">Twitter</string>
+    <string name="facebook_button_text">Facebook</string>
+    <string name="under_dev_text">En développement</string>
+    <string name="view_all_button_text">Tous Applications</string>
+    <string name="repo_button_text">Dépôt</string>
+    <string name="packages_button_text">Forfaits</string>
+    <string name="storage_button_text">Stockage</string>
+    <string name="pkgs_textview_two">Deux TextView</string>
+    <string name="pkgs_textview_one">Un TextView</string>
+    <string name="pkgs_button_one">Bouton On</string>
+    <string name="repo_add_button_text">Ajouter</string>
+    <string name="repo_name_hint">Nom Repo</string>
+    <string name="google_icon">Google Icône</string>
+    <string name="twitter_icon">Twitter Icône</string>
+    <string name="facebook_icon">Facebook Icône</string>
+    <string name="storage_text">Stockage: </string>
+    <string name="storage_android_text">Androïde: </string>
+    <string name="storage_device_text">Dispositif: </string>
+    <string name="storage_model_text">Modèle: </string>
+    <string name="storage_large_text">la taille du texte</string>
+    <string name="storage_fp_market">Marché Cheminée: </string>
+    <string name="storage_full_cl">Journal pleine mutation</string>
+    <string name="allow">Merci pour le don de la Dev Team enraciné</string>
+    <string name="dont_allow">Vous devez télécharger la version de Play don Google.</string>
+    <string name="checking_license">Vérification de licence&#8230;</string>
+    <string name="quit_button">Quitter</string>
+    <string name="buy_button">Donner</string>
+    <string name="unlicensed_dialog_title">Avertissement</string>
+    <string name="unlicensed_dialog_body">Votre copie de cette demande n\'est pas agréée.</string>
+    <string name="check_license">Licence Vérifiez</string>
+    <string name="featured_app_promo_desc">Titre de l\'application vedette</string>
+    <string name="menu_donate_button_text">Donner</string>
+    <string name="menu_about_button_text">à propos</string>
+    <string name="menu_update_button_text">Mise à jour</string>
+    <string name="menu_repo_button_text">Repo</string>
+    <string name="SettingsLabel">Paramètres</string>
+    <string name="repo_pref_title">Référentiels</string>
+    <string name="repo_pref_summary">Cliquez pour ajouter un dépôt.</string>
+    <string name="update_pref_title">Mise à jour</string>
+    <string name="update_pref_summary">Vérifiez la mise à jour.</string>
+    <string name="cache_pref_title">Vider le cache</string>
+    <string name="cache_pref_summary">Supprimer le contenu du répertoire de téléchargement.</string>
+    <string name="donate_pref_title">Donner</string>
+    <string name="donate_pref_summary">Cliquez pour un don.</string>
+    <string name="about_pref_title">Sur</string>
+    <string name="about_pref_summary">Un peu d\'information sur nous.</string>
+    <string name="sync_pref_title">Apps Actualiser</string>
+    <string name="sync_pref_summary">Cliquez ici pour rafraîchir la liste des applications.</string>
+</resources>

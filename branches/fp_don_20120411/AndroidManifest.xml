@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.fireplace.software"
+    android:versionCode="4"
+    android:versionName="2.4" >
+    <uses-sdk android:minSdkVersion="7"
+         android:targetSdkVersion="15" />
+	<uses-permission android:name="com.android.vending.CHECK_LICENSE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <application
+        android:icon="@drawable/ic_launcher_fire_in_box"
+        android:label="@string/app_name">
+             
+        <activity
+            android:name="com.fireplace.activity.FireplaceActivity"
+            android:label="@string/app_name"
+            android:alwaysRetainTaskState="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:label="@string/app_name"
+            android:name="com.fireplace.activity.RepoActivity" >
+        </activity>
+        <activity
+            android:label="@string/app_name"
+            android:name="com.fireplace.activity.FireplacePreferenceActivity" >
+        </activity>
+        <activity
+            android:label="@string/app_name"
+            android:name="com.fireplace.activity.ListInstalledAppsActivity" >
+        </activity>
+        <activity
+            android:label="@string/app_name"
+            android:name="com.fireplace.activity.StorageActivity" >
+        </activity>
+        <activity
+            android:label="@string/app_name"
+            android:name="com.fireplace.activity.ViewAllAppsActivity" >
+        </activity>
+        <activity
+      		android:label="@string/app_name"
+            android:name="com.fireplace.activity.DownloadFileActivity"> 
+        </activity>
+        <activity
+            android:label="@string/app_name"
+            android:name="com.fireplace.activity.GetContentFromDBActivity" >
+        </activity>
+        <activity
+            android:label="@string/app_name"
+            android:name="com.fireplace.activity.GetContentLocalActivity" >
+        </activity>
+        <activity
+            android:label="@string/app_name"
+            android:name="com.fireplace.activity.ViewInfoActivity" >
+        </activity>
+        <service android:name="com.fireplace.service.DatabaseSyncService" android:enabled="true"></service>
+        <receiver android:name="com.fireplace.receiver.AlarmReceiver"></receiver>
+    </application>
+
+</manifest>
+
