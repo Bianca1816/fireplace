@@ -11,7 +11,7 @@
 			android:id="@+id/viewflowindic" android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
 			app:footerLineHeight="2dip"
-			app:footerTriangleHeight="10dip"
+			app:footerTriangleHeight="0dip"
 			app:textColor="#ffffffff"
 			app:selectedColor="#ff33b5e5"
 			app:footerColor="#ff33b5e5"
@@ -23,5 +23,5 @@
 	</LinearLayout>
 	<org.taptwo.android.widget.ViewFlow
 		android:duplicateParentState="true" android:id="@+id/viewflow"
-		android:layout_width="fill_parent" android:layout_height="fill_parent" />
+		android:layout_width="fill_parent" android:layout_height="fill_parent"/>
 </LinearLayout>

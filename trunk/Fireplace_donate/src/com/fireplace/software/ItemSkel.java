@@ -8,18 +8,20 @@ public class ItemSkel {
 	private String description;
 	private String ptype;
 	private String devel;
+	private String status;
 	
 	public ItemSkel(){
 		
 	}
 	
-	public ItemSkel(String ID, String Label, String Path, String Description, String Ptype, String Developer) {
+	public ItemSkel(String ID, String Label, String Path, String Description, String Ptype, String Developer, String Status) {
 		this.id = ID;
 		this.label = Label;
 		this.path = Path;
 		this.description = Description;
 		this.ptype = Ptype;
 		this.devel = Developer;
+		this.status = Status;
 	}
 	
 	public String getId() {
@@ -58,12 +60,16 @@ public class ItemSkel {
 	public void setPtype(String ptype) {
 		this.ptype = ptype;
 	}
-
 	public String getDeveloper() {
 		return devel;
 	}
-
 	public void setDeveloper(String developer) {
 		this.devel = developer;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

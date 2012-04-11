@@ -12,4 +12,8 @@
     <color name="GreenD">#669900</color>
     <color name="PurpleL">#AA66CC</color>
     <color name="PurpleD">#9933CC</color>
+    <color name="Griddle">#555555</color>
+    <color name="Honest">#33B5E5</color>
+    <color name="Charcoal">#222222</color>
+    <color name="Roboto">#177BBD</color>
 </resources>

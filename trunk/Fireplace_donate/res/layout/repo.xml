@@ -37,6 +37,7 @@
             android:layout_toLeftOf="@+id/addBtn"
             android:textColor="@color/white"
             android:inputType="text" 
+            android:gravity="left"
             android:hint="@string/repo_name_hint" >
 
             <requestFocus />
