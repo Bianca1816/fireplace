@@ -5,14 +5,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import com.fireplace.activity.FireplacePreferenceActivity;
+
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.webkit.WebView;
+import android.widget.TextView;
 
 public class ChangeLog {
     
@@ -116,12 +121,13 @@ public class ChangeLog {
     private AlertDialog getDialog(boolean full) {
         
         WebView wv = new WebView(this.context);
-        wv.setBackgroundColor(R.color.black);// transparent
+        wv.setBackgroundColor(context.getResources().getColor(R.color.Charcoal));
         // wv.getSettings().setDefaultTextEncodingName("utf-8");
         wv.loadDataWithBaseURL(null, this.getLog(full), "text/html", "UTF-8",
         		null);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
+        ContextThemeWrapper ctw = new ContextThemeWrapper(context, R.style.DialogDark );
+        AlertDialog.Builder builder = new AlertDialog.Builder( ctw );
         builder.setTitle(context.getResources().getString(
                 full 
                     ? R.string.changelog_full_title
@@ -137,9 +143,15 @@ public class ChangeLog {
                     }
                 });
         return  builder.create();   
+        
     }
     
-    /**
+    private void setTheme(int dialogdark) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
      * @return  HTML displaying the changes since the previous
      *          installed version of your app (what's new)
      */

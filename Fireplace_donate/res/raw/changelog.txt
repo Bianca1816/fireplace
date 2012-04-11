@@ -19,6 +19,16 @@
     </style>
   </head>
   <body>
+$ 2.4
+  % Version 2.4
+  _ 2012-04-11
+	* Add your own repositories, must follow our JSON design.
+	* ~ See <a href="http://fireplace-market.com" target="_blank">http://fireplace-market.com</a> for details.
+    * Store app information locally in SQLite.
+    * Database syncs on load and then daily, without need for interaction.
+    * Moved several interactions to a single menu.
+    * Ability to clear cache, donate, and update through menu.
+    * Smoother and faster UI.
 $ 2.3.1
   % Version 2.3.1
   _ 2012-03-17
