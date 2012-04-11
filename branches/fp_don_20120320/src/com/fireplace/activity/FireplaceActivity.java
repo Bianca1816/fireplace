@@ -146,8 +146,7 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
 				BASE64_PUBLIC_KEY // Your public licensing key.
 		);
 
-		// disable doLicenseCheck(), to disable the licensing check
-//		doLicenseCheck();
+		doLicenseCheck();
 
 		/*----------------category view-----------------------*/
 		categoryListView = (ListView) findViewById(R.id.tabThreeListView);
