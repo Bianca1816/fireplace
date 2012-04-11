@@ -1,6 +1,6 @@
 package com.fireplace.software;
 
-public class App {
+public class App{
 
    private String title;
    private String packageName;

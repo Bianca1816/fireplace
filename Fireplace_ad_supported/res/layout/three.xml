@@ -3,14 +3,16 @@
     xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@drawable/background_holo_dark" >
 
     <ListView
         android:id="@+id/tabThreeListView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:paddingBottom="50dip"/>
+        android:paddingBottom="50dip"
+        android:cacheColorHint="#00000000"/>
     <com.google.ads.AdView
                         android:id="@+id/adView3"
                         android:layout_width="wrap_content"

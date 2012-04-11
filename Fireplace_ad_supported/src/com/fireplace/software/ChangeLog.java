@@ -118,7 +118,7 @@ public class ChangeLog {
     private AlertDialog getDialog(boolean full) {
         
         WebView wv = new WebView(this.context);
-        wv.setBackgroundColor(R.color.black);// transparent
+        wv.setBackgroundColor(context.getResources().getColor(R.color.Charcoal));
         // wv.getSettings().setDefaultTextEncodingName("utf-8");
         wv.loadDataWithBaseURL(null, this.getLog(full), "text/html", "UTF-8",
         		null);
