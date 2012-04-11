@@ -137,9 +137,9 @@ public class FireplaceActivity extends Activity implements OnItemClickListener,
   		{
 			//Falied Attempt of Static Ad 
 			//Need a better pic and add onclick download link
-			findViewById(R.id.adView1).setBackgroundResource(R.drawable.staticad);
-			findViewById(R.id.adView2).setBackgroundResource(R.drawable.staticad);
-			findViewById(R.id.adView3).setBackgroundResource(R.drawable.staticad);
+			//findViewById(R.id.adView1).setBackgroundResource(R.drawable.staticad);
+			//findViewById(R.id.adView2).setBackgroundResource(R.drawable.staticad);
+			//findViewById(R.id.adView3).setBackgroundResource(R.drawable.staticad);
   		}  	
 		
 
