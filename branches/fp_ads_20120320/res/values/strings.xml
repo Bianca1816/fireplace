@@ -13,15 +13,16 @@
     </string-array>
     <string name="up_one_level">..</string>
     <string name="current_dir">.</string>
-    <string name="version">2.3</string>
-    <string name="updateTo">2.3</string>
+    <string name="version">2.4</string>
+    <string name="updateTo">2.4</string>
     <string name="info_changelog">
-        Fireplace Market 2.3
-        \n- New UI (ICS-like)
-        \n- Download notifications
-        \n- Categories
-        \n- Featured Application
-        \n- Bug Fixes</string>
+        Fireplace Market 2.4
+        \n- Add your own repositories, must follow our JSON design.
+        \n- Store app information locally in SQLite.
+        \n- Database syncs on load and then daily, without need for interaction.
+        \n- Moved several interactions to a single menu.
+        \n- Ability to clear cache, donate, and update through menu.
+        \n- Smoother and faster UI.</string>
     <string name="app_icon">Application Icon</string>
     <string name="category_label">Category: </string>
     <string name="developer_label">Developer</string>

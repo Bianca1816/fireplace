@@ -13,15 +13,16 @@
     </string-array>
     <string name="up_one_level">..</string>
     <string name="current_dir">.</string>
-    <string name="version">2.3</string>
-    <string name="updateTo">2.3</string>
+    <string name="version">2.4</string>
+    <string name="updateTo">2.4</string>
     <string name="info_changelog">
-        Fireplace Market 2.3
-        \n- Nouvelle interface utilisateur
-        \n- Télécharger notifications
-        \n- Catégories
-        \n- Application en vedette
-        \n- Corrections de bugs</string>
+        Fireplace Market 2.4
+        \n- Ajouter vos propres dépôts, doit suivre la conception de notre JSON.
+        \n- Stocker des informations app localement dans SQLite.
+        \n- Synchronise la base de données sur la charge, puis tous les jours, sans nécessité d\'une interaction.
+        \n- Proposé plusieurs interactions à un seul menu.
+        \n- Aptitude à effacer la mémoire cache, faire un don, et mise à jour via le menu.
+        \n- L\'assurance-chômage plus lisse et plus rapide.</string>
     <string name="app_icon">Application Icon</string>
     <string name="category_label">Catégorie: </string>
     <string name="developer_label">Developer</string>
