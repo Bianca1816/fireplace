@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/background_holo_dark" >
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <TextView
+            android:id="@+id/lbAppTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/imageView1"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/imageView1"
+            android:text="@string/app_title_label"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/lbInfoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/lbAppTitle"
+            android:layout_marginTop="16dp"
+            android:isScrollContainer="true"
+            android:text="@string/info_label"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:contentDescription="@string/app_icon"
+            android:src="@drawable/icon" />
+
+        <TextView
+            android:id="@+id/lbInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/lbInfoText"
+            android:text="@string/prev_activity_label" />
+
+        <Button
+            android:id="@+id/btnDownload"
+            style="@style/button_holo_dark_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/lbInfoText"
+            android:layout_alignParentRight="true"
+            android:text="@string/download_label"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/lbDeveloper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/lbCategory"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/lbInfo"
+            android:paddingTop="16dp"
+            android:text="@string/developer_label"/>
+        <TextView
+            android:id="@+id/lbDevlName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/lbDeveloper"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+        <TextView
+            android:id="@+id/lbCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:text="@string/category_label"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Button
+            android:id="@+id/btnShare"
+            style="@style/button_holo_dark_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/lbInfoText"
+            android:layout_marginRight="15dp"
+            android:layout_toLeftOf="@+id/btnDownload"
+            android:text="@string/share_label"
+            android:textColor="@color/white" />
+
+    </RelativeLayout>
+
+</LinearLayout>
