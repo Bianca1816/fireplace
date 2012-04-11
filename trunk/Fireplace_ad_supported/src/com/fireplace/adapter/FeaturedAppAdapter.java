@@ -69,7 +69,7 @@ public class FeaturedAppAdapter extends BaseAdapter {
 		holder.setTitle(itemSkel.getLabel());
 		holder.setDescription(itemSkel.getDescription());
 		holder.setDeveloper(itemSkel.getDeveloper());
-		if (itemSkel.getIcon() == null || itemSkel.getIcon().isEmpty()) {
+		if (itemSkel.getIcon() == null || itemSkel.getIcon().length() == 0) {
 			holder.setIcon(mStdImg);
 		} else {
 			GetIconForHolderTask gifHolder = new GetIconForHolderTask(itemSkel);

@@ -9,6 +9,7 @@ import java.util.Iterator;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -26,15 +27,14 @@ import android.widget.Toast;
 
 import com.fireplace.adapter.AdChecker;
 import com.fireplace.adsup.R;
-import com.fireplace.software.DataFetch;
+import com.fireplace.database.FireDB;
 import com.fireplace.software.ItemSkel;
 import com.fireplace.software.ParcelableHolder;
 import com.fireplace.software.SecretFile;
 import com.google.ads.AdView;
 
-public class GetContentFromDBActivity extends ListActivity {
-	private final static String TAG = "GetContentFromDBActivty";
-	String dataUrl = "http://www.fireplace-market.com/";
+public class GetContentLocalActivity extends ListActivity {
+	private final static String TAG = "GetContentLocalActivity";
 	
 	ArrayList<String> appNameArrayList = new ArrayList<String>();
 	ArrayList<String> iconLocationArrayList = new ArrayList<String>();
@@ -45,10 +45,10 @@ public class GetContentFromDBActivity extends ListActivity {
 	Integer ptype;
 	IconicAdapter iconAdapter;
 	boolean iconsReceived, listReceived, secretFileExists = false;
-	AdView adView;
 	ListView appListView;
 	ImageView iconImageView;
 	ParcelableHolder pHolder = new ParcelableHolder();
+	AdView adView;
 		
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -69,6 +69,7 @@ public class GetContentFromDBActivity extends ListActivity {
   		}  
 		
 		adView = (AdView) findViewById(R.id.adView4);
+		
 		appListView = getListView();
 		
 		if (secretFileExists){
@@ -93,13 +94,11 @@ public class GetContentFromDBActivity extends ListActivity {
 				setUpAppListView();
 			} else {
 				iconAdapter = new IconicAdapter();
-				dataUrl = (extras.getString("repo") != null) ? extras.getString("repo") : dataUrl ;
 				new GetListTask().execute();
 				LoadData();
 			}
 		} else {
 			iconAdapter = new IconicAdapter();
-			dataUrl = (extras.getString("repo") != null) ? extras.getString("repo") : dataUrl ;
 			new GetListTask().execute();
 			LoadData();
 		}
@@ -115,7 +114,7 @@ public class GetContentFromDBActivity extends ListActivity {
 	}
 
 	/**
-	 * This Asynchronous task handles retrieving the list items from the server.
+	 * This Asynchronous task handles retrieving the list items from the local database.
 	 *
 	 */
 	private class GetListTask extends
@@ -123,19 +122,57 @@ public class GetContentFromDBActivity extends ListActivity {
 
 		@Override
 		protected ArrayList<ItemSkel> doInBackground(String... params) {
-			itemSkelArrayList = new DataFetch().getFromOtherRepo(dataUrl);
+			try {
 
-			if (ptype != 0){
-				for(Iterator<?> it = itemSkelArrayList.iterator(); it.hasNext();){
-					if (!((ItemSkel)it.next()).getPtype().equalsIgnoreCase(ptype.toString())){
-						it.remove();
+				itemSkelArrayList = getAppsFromFireDB();
+
+				if (ptype != 0){
+					for(Iterator<?> it = itemSkelArrayList.iterator(); it.hasNext();){
+						if (!((ItemSkel)it.next()).getPtype().equalsIgnoreCase(ptype.toString())){
+							it.remove();
+						}
 					}
 				}
+				listReceived = true;				
+				return itemSkelArrayList;
+
+			} catch (IllegalStateException e) {
+				Log.e(TAG, "getListTask", e);
 			}
-			listReceived = true;				
-			return itemSkelArrayList;
+			return null;
 		}
 
+	}
+	
+	private ArrayList<ItemSkel> getAppsFromFireDB(){
+		FireDB db = new FireDB(getApplicationContext());
+		ArrayList<ItemSkel> itemSkelArrayList = new ArrayList<ItemSkel>();
+		
+		db.open();
+		Cursor c = db.getApps();
+		
+		if(c.moveToFirst()){
+			for (int i = 0; i < c.getCount(); i++) {
+				ItemSkel item = new ItemSkel();
+				
+				item.setId(c.getString(0));
+				item.setLabel(c.getString(1));
+				item.setPath(c.getString(2));
+				item.setPtype(c.getString(3));
+				item.setIcon(c.getString(4));
+				item.setDescription(c.getString(5));
+				item.setDeveloper(c.getString(6));
+				item.setStatus(c.getString(7));
+				itemSkelArrayList.add(item);
+				
+				c.moveToNext();
+			}
+		}
+		
+		c.close();
+		db.close();
+		
+		return itemSkelArrayList;
 	}
 
 	/**
@@ -178,7 +215,7 @@ public class GetContentFromDBActivity extends ListActivity {
 
 			}
 		} else {
-			Toast.makeText(GetContentFromDBActivity.this,
+			Toast.makeText(GetContentLocalActivity.this,
 					"No applications in this category...", Toast.LENGTH_LONG).show();
 		}
 	}
@@ -208,12 +245,12 @@ public class GetContentFromDBActivity extends ListActivity {
 	}
 	
 	/**
-	 * This is a custom adapter that make sit easier to work with icon's
+	 * This is a custom adapter that makes it easier to work with icon's
 	 * for the list.
 	 */
 	private class IconicAdapter extends ArrayAdapter<String> {
 		IconicAdapter() {
-			super(GetContentFromDBActivity.this, R.layout.approw_row,
+			super(GetContentLocalActivity.this, R.layout.approw_row,
 					R.id.label, appNameArrayList);
 		}
 
@@ -221,7 +258,7 @@ public class GetContentFromDBActivity extends ListActivity {
 		 * 
 		 * @see android.widget.ArrayAdapter#getView(int, android.view.View, android.view.ViewGroup)
 		 * 
-		 * This is where we populate each view in the lsit view.
+		 * This is where we populate each view in the list view.
 		 */
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View row = super.getView(position, convertView, parent);
@@ -294,4 +331,5 @@ public class GetContentFromDBActivity extends ListActivity {
 		
 		super.onSaveInstanceState(outState);
 	}
+	
 }

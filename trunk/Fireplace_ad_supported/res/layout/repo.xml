@@ -37,6 +37,7 @@
             android:layout_alignBottom="@+id/addBtn"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/addBtn"
+            android:gravity="left"
             android:textColor="@color/white" >
 
             <requestFocus />

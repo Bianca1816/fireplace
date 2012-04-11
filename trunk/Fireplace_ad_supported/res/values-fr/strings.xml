@@ -13,15 +13,16 @@
     </string-array>
     <string name="up_one_level">..</string>
     <string name="current_dir">.</string>
-    <string name="version">2.3</string>
-    <string name="updateTo">2.3</string>
+    <string name="version">2.4</string>
+    <string name="updateTo">2.4</string>
     <string name="info_changelog">
-        Fireplace Market 2.3
-        \n- Nouvelle interface utilisateur
-        \n- Télécharger notifications
-        \n- Catégories
-        \n- Application en vedette
-        \n- Corrections de bugs</string>
+        Fireplace Market 2.4
+        \n- Ajouter vos propres dépôts, doit suivre la conception de notre JSON.
+        \n- Stocker des informations app localement dans SQLite.
+        \n- Synchronise la base de données sur la charge, puis tous les jours, sans nécessité d\'une interaction.
+        \n- Proposé plusieurs interactions à un seul menu.
+        \n- Aptitude à effacer la mémoire cache, faire un don, et mise à jour via le menu.
+        \n- L\'assurance-chômage plus lisse et plus rapide.</string>
     <string name="app_icon">Application Icon</string>
     <string name="category_label">Catégorie: </string>
     <string name="developer_label">Developer</string>
@@ -68,6 +69,19 @@
     <string name="featured_app_promo_desc">Titre de l\'application vedette</string>
     <string name="menu_donate_button_text">Donner</string>
     <string name="menu_about_button_text">à propos</string>
-    <string name="menu_update_button_text">mise à jour</string>
+    <string name="menu_update_button_text">Mise à jour</string>
     <string name="menu_repo_button_text">Repo</string>
+    <string name="SettingsLabel">Paramètres</string>
+    <string name="repo_pref_title">Référentiels</string>
+    <string name="repo_pref_summary">Cliquez pour ajouter un dépôt.</string>
+    <string name="update_pref_title">Mise à jour</string>
+    <string name="update_pref_summary">Vérifiez la mise à jour.</string>
+    <string name="cache_pref_title">Vider le cache</string>
+    <string name="cache_pref_summary">Supprimer le contenu du répertoire de téléchargement.</string>
+    <string name="donate_pref_title">Donner</string>
+    <string name="donate_pref_summary">Cliquez pour un don.</string>
+    <string name="about_pref_title">Sur</string>
+    <string name="about_pref_summary">Un peu d\'information sur nous.</string>
+    <string name="sync_pref_title">Apps Actualiser</string>
+    <string name="sync_pref_summary">Cliquez ici pour rafraîchir la liste des applications.</string>
 </resources>
