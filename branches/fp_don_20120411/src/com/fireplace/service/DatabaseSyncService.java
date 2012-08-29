@@ -60,7 +60,7 @@ public class DatabaseSyncService extends Service {
 				for (int i = 0; i < itemSkelArrayList.size(); i++) {
 					ItemSkel s = itemSkelArrayList.get(i);
 					fireDB.insertApp(s.getLabel(), s.getPath(),
-							Integer.parseInt(s.getPtype()), s.getIcon(),
+							Integer.parseInt(!("").equals(s.getPtype())?s.getPtype():"1"), s.getIcon(),
 							s.getDescription(), s.getDeveloper(),
 							Integer.parseInt(s.getStatus()));
 				}
